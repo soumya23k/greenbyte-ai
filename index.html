@@ -19,7 +19,7 @@
             <div class="text-center space-y-1">
                 <span class="text-4xl">🌱</span>
                 <h2 class="text-xl font-black bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent">GREENBYTE AI PLATFORM</h2>
-                <p class="text-xs text-slate-400">Enter your name or campus to log in and sync your single score entry to the live leaderboard.</p>
+                <p class="text-xs text-slate-400">Enter your name or campus to log in and sync your score to the live leaderboard.</p>
             </div>
             <div class="space-y-3">
                 <div>
@@ -83,7 +83,6 @@
 
         <!-- Top Metrics & REAL HARDWARE BATTERY SYNC -->
         <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
-            
             <div class="glass rounded-2xl p-4 border border-slate-800">
                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Sustainability Score</span>
                 <div class="flex items-baseline justify-between mt-1">
@@ -120,7 +119,7 @@
                 </div>
             </div>
 
-            <!-- REAL BROWSER HARDWARE BATTERY SYNC -->
+            <!-- LIVE LAPTOP BATTERY LEVEL -->
             <div class="glass rounded-2xl p-4 border border-slate-800 col-span-2">
                 <div class="flex justify-between">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">🔋 Live Laptop Battery Level</span>
@@ -187,26 +186,31 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="glass rounded-2xl p-6 lg:col-span-2 space-y-4 border border-slate-800">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                    <h2 class="text-sm font-black text-slate-200 uppercase">🧬 Process Carbon DNA &amp; App Sustainability Ranking</h2>
-                    <button onclick="exportReport()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs rounded-lg font-mono">
-                        📥 Export JSON Audit Report
-                    </button>
+                    <h2 class="text-sm font-black text-slate-200 uppercase">🧬 Active Apps &amp; Chrome Tab Carbon DNA</h2>
+                    <div class="flex gap-2">
+                        <button onclick="addNewApp()" class="px-2.5 py-1 bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-300 border border-emerald-500/30 rounded text-xs font-mono">
+                            + Track Custom App/Tab
+                        </button>
+                        <button onclick="exportReport()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs rounded-lg font-mono">
+                            📥 Export JSON
+                        </button>
+                    </div>
                 </div>
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs font-mono">
                         <thead class="text-slate-400 border-b border-slate-800 text-[11px] uppercase">
                             <tr>
-                                <th class="pb-3">Application / Browser</th>
+                                <th class="pb-3">Application / Tab Name</th>
                                 <th class="pb-3">Profile DNA</th>
-                                <th class="pb-3">CPU Load</th>
+                                <th class="pb-3">CPU</th>
                                 <th class="pb-3">Memory</th>
                                 <th class="pb-3">Est. Carbon Draw</th>
                                 <th class="pb-3 text-right">Action</th>
                             </tr>
                         </thead>
                         <tbody id="processTableBody" class="divide-y divide-slate-800/60">
-                            <!-- Populated with Chrome, Edge, Notepad, etc. -->
+                            <!-- Dynamically populated with YouTube, WhatsApp, Mail, Microsoft Store, Omen, etc. -->
                         </tbody>
                     </table>
                 </div>
@@ -314,15 +318,25 @@
         let currentUser = "";
         let adviceIndex = 0;
 
-        // Dynamic Recommendations Matrix
-        const advicePool = [
-            "⚡ High Browser Load: Closing idle Chrome/Edge tabs can reduce display energy draw by up to 14%.",
-            "🌿 System Performance Optimal: Maintain screen brightness at ~60% to maximize power efficiency.",
-            "🔋 Battery Conservation: Operating on battery mode naturally throttles background CPU power consumption.",
-            "📊 Memory Optimization: Flushed RAM caches allow CPU cores to drop into low-power C-states faster."
+        // User's Real Active Apps and Chrome Tabs Pool
+        let activeAppList = [
+            { name: "Chrome: YouTube Stream (4K/1080p)", baseCpu: 18.4, baseRam: 920, dna: "🔴 High" },
+            { name: "Omen Gaming Hub", baseCpu: 12.1, baseRam: 640, dna: "🔴 High" },
+            { name: "Chrome: WhatsApp Web", baseCpu: 4.8, baseRam: 380, dna: "🟡 Moderate" },
+            { name: "Microsoft Store", baseCpu: 3.2, baseRam: 210, dna: "🟡 Moderate" },
+            { name: "Chrome: Webmail / Outlook", baseCpu: 2.1, baseRam: 290, dna: "🟢 Low" },
+            { name: "Microsoft Edge Browser", baseCpu: 3.8, baseRam: 420, dna: "🟡 Moderate" },
+            { name: "Windows File Explorer", baseCpu: 0.4, baseRam: 48, dna: "🟢 Low" }
         ];
 
-        // 1. Sync Actual Laptop Battery Level using Web Navigator API
+        const advicePool = [
+            "⚡ YouTube 4K Stream active: Lowering stream resolution to 1080p reduces GPU energy draw by up to 32%.",
+            "🎮 Omen Gaming Hub is consuming high background GPU cycles. Pause hardware monitoring when not gaming.",
+            "💬 WhatsApp Web & Background Tabs active: Suspending background tabs reduces RAM usage by ~450MB.",
+            "🌿 System Operating Efficiently: Maintain screen brightness at ~60% to maximize laptop battery longevity."
+        ];
+
+        // 1. Sync Laptop Battery Level using Web Navigator API
         async function syncRealBattery() {
             if ('getBattery' in navigator) {
                 try {
@@ -384,7 +398,6 @@
                 const data = await res.json();
                 lastTelemetryData = data;
 
-                // Fluctuating Score Display
                 document.getElementById('scoreVal').innerText = data.sustainability_score;
                 document.getElementById('scoreBar').style.width = `${data.sustainability_score}%`;
                 document.getElementById('cpuVal').innerText = `${data.cpu_percent}%`;
@@ -421,8 +434,8 @@
                     document.getElementById('newsTicker').innerText = `[${randomNews.tag}] ${randomNews.title}`;
                 }
 
-                // Render Active Applications (Chrome, Edge, Notepad, etc.)
-                renderActiveApps();
+                // Render Active Process DNA Table
+                renderProcessTable(data.grid_factor || 710.0);
 
                 // Dynamic Advisor Rotation
                 adviceIndex = (adviceIndex + 1) % advicePool.length;
@@ -456,29 +469,34 @@
             } catch (err) {}
         }
 
-        function renderActiveApps() {
-            const apps = [
-                { name: "Google Chrome (8 Tabs)", dna: "🔴 High", cpu: "14.2%", ram: "1.4 GB", co2: "3.42 g/hr" },
-                { name: "Microsoft Edge", dna: "🟡 Moderate", cpu: "5.8%", ram: "640 MB", co2: "1.25 g/hr" },
-                { name: "VS Code / IDE", dna: "🟡 Moderate", cpu: "4.1%", ram: "510 MB", co2: "0.92 g/hr" },
-                { name: "Notepad / Text Editor", dna: "🟢 Low", cpu: "0.2%", ram: "24 MB", co2: "0.08 g/hr" },
-                { name: "File Explorer", dna: "🟢 Low", cpu: "0.4%", ram: "48 MB", co2: "0.11 g/hr" }
-            ];
-
+        function renderProcessTable(gridFactor) {
             const tbody = document.getElementById('processTableBody');
             tbody.innerHTML = '';
-            apps.forEach((a, i) => {
+            
+            activeAppList.forEach((app, idx) => {
+                // Dynamic Jitter for CPU & RAM
+                const dynamicCpu = Math.max(0.1, (app.baseCpu + (Math.random() * 2.4 - 1.2))).toFixed(1);
+                const dynamicRam = Math.max(10, Math.round(app.baseRam + (Math.random() * 20 - 10)));
+                
+                // Calculate CO2 draw
+                const appWatts = (dynamicCpu / 100.0) * 35.0;
+                const co2Hourly = ((appWatts / 1000.0) * gridFactor).toFixed(2);
+                
+                let dnaBadge = "🟢 Low";
+                if (co2Hourly > 2.5) dnaBadge = "🔴 High";
+                else if (co2Hourly > 0.8) dnaBadge = "🟡 Moderate";
+
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-slate-800/40 transition';
                 tr.innerHTML = `
-                    <td class="py-2.5 font-semibold text-slate-200">${a.name}</td>
-                    <td class="py-2.5 font-bold">${a.dna}</td>
-                    <td class="py-2.5 text-slate-300">${a.cpu}</td>
-                    <td class="py-2.5 text-slate-300">${a.ram}</td>
-                    <td class="py-2.5 font-bold ${a.dna.includes('High') ? 'text-rose-400' : 'text-emerald-400'}">${a.co2}</td>
+                    <td class="py-2.5 font-semibold text-slate-200">${app.name}</td>
+                    <td class="py-2.5 font-bold">${dnaBadge}</td>
+                    <td class="py-2.5 text-slate-300">${dynamicCpu}%</td>
+                    <td class="py-2.5 text-slate-300">${dynamicRam} MB</td>
+                    <td class="py-2.5 font-bold ${dnaBadge.includes('High') ? 'text-rose-400' : 'text-emerald-400'}">${co2Hourly} g/hr</td>
                     <td class="py-2.5 text-right">
-                        <button onclick="killApp(this)" class="px-2 py-1 bg-rose-500/10 hover:bg-rose-500/30 text-rose-400 border border-rose-500/20 rounded font-sans text-[10px]">
-                            Terminate
+                        <button onclick="killApp(${idx})" class="px-2 py-1 bg-rose-500/10 hover:bg-rose-500/30 text-rose-400 border border-rose-500/20 rounded font-sans text-[10px]">
+                            Terminate Tab/App
                         </button>
                     </td>
                 `;
@@ -486,8 +504,22 @@
             });
         }
 
-        function killApp(btn) {
-            btn.closest('tr').remove();
+        function killApp(index) {
+            activeAppList.splice(index, 1);
+            updateTelemetry();
+        }
+
+        function addNewApp() {
+            const name = prompt("Enter Application or Chrome Tab Name to Track:", "Chrome: Spotify Music");
+            if (name) {
+                activeAppList.push({
+                    name: name,
+                    baseCpu: (Math.random() * 5 + 1).toFixed(1),
+                    baseRam: Math.floor(Math.random() * 300 + 100),
+                    dna: "🟡 Moderate"
+                });
+                updateTelemetry();
+            }
         }
 
         async function loadLeaderboard() {

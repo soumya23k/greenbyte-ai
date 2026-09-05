@@ -53,38 +53,31 @@ def telemetry():
     selected_grid = request.args.get('grid', 'WB Grid (Thermal/Coal)')
     grid_factor = GRID_INTENSITY.get(selected_grid, GRID_INTENSITY["WB Grid (Thermal/Coal)"])["factor"]
 
-    # Dynamic Fluctuating CPU & Power Draw
-    raw_cpu = round(random.uniform(2.5, 48.0), 1)
-    current_watts = round(11.5 + (raw_cpu * 0.35) + random.uniform(-1.2, 1.8), 1)
+    raw_cpu = round(random.uniform(3.5, 52.0), 1)
+    current_watts = round(11.5 + (raw_cpu * 0.38) + random.uniform(-1.0, 2.0), 1)
     
-    # Session Calculations
     uptime_hours = (time.time() - BOOT_TIME) / 3600.0
     system_kwh = (current_watts * max(uptime_hours, 0.1)) / 1000.0
     co2_grams = round(system_kwh * grid_factor, 2)
     cost_saved = round(system_kwh * ELECTRICITY_RATE_PER_KWH_INR, 2)
 
-    # Dynamic Fluctuating Sustainability Score (52 to 92 range)
     score_samples = [53, 57, 70, 72, 75, 77, 83, 89]
     score = random.choice(score_samples)
 
-    # Dynamic Cloud Footprint Data
     cloud_est = {
         "google_drive_g": round(0.2 + random.uniform(0.01, 0.08), 2),
         "ai_queries_g": round(3.2 + random.uniform(-0.5, 0.9), 2),
         "video_streaming_g": round(24.5 + random.uniform(-1.5, 2.5), 1)
     }
 
-    # Digital Carbon Map Breakdown
     cpu_share = round(raw_cpu * 0.8, 1)
     ram_share = round(random.uniform(35.0, 58.0), 1)
     disk_share = round(random.uniform(12.0, 22.0), 1)
     cloud_share = round(max(100.0 - (cpu_share + ram_share + disk_share), 5.0), 1)
 
-    # Anomaly Detection Trigger
-    anomaly_detected = current_watts > 22.0
-    anomaly_msg = f"UNUSUAL CARBON SPIKE: Power consumption spiked to {current_watts}W due to background activity!" if anomaly_detected else ""
+    anomaly_detected = current_watts > 23.0
+    anomaly_msg = f"UNUSUAL CARBON SPIKE: Power consumption spiked to {current_watts}W due to high background tasks!" if anomaly_detected else ""
 
-    # Real-World Impact
     trees = round(co2_grams / 60.0, 2)
     car_km = round(co2_grams / 120.0, 2)
     led_hours = round(co2_grams / 7.0, 1)
@@ -95,6 +88,7 @@ def telemetry():
         "co2_grams": co2_grams,
         "cost_saved_inr": cost_saved,
         "sustainability_score": score,
+        "grid_factor": grid_factor,
         "anomaly": {"detected": anomaly_detected, "message": anomaly_msg},
         "carbon_map": {"cpu": cpu_share, "ram": ram_share, "disk": disk_share, "cloud": cloud_share},
         "cloud_est": cloud_est,
@@ -123,11 +117,11 @@ def chatbot():
     watts = data.get('watts', 18.0)
 
     if "high" in query or "why" in query:
-        ans = f"Your current power draw is {watts}W. Terminate resource-intensive applications in the Process Carbon DNA list to lower emissions."
+        ans = f"Your power draw is currently {watts}W. High-resource applications like Omen Gaming Hub and Chrome video streams increase system emissions. Terminate them to reduce carbon."
     elif "save" in query or "month" in query:
-        ans = "Reducing daily screen time by 2 hours can save approximately ₹120–₹180 and reduce ~8.5 kg CO₂ monthly!"
+        ans = "Closing inactive streaming tabs can save approximately ₹120–₹180 and lower monthly CO₂ footprint by ~8.5 kg!"
     else:
-        ans = f"Your Sustainability Score is currently {score}/100. Close idle browser tabs and enable eco-mode to boost your score."
+        ans = f"Your current Sustainability Score is {score}/100. Close background apps to maintain optimal performance."
 
     return jsonify({"answer": ans})
 
@@ -160,7 +154,6 @@ def analyze_url():
                 "green_rating": rating
             })
     except Exception:
-        # Fallback for protected websites (403 Forbidden bypass)
         mock_size = random.randint(500, 1600)
         mock_co2 = round((mock_size / 1024.0) * 0.8, 3)
         return jsonify({
