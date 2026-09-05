@@ -23,7 +23,6 @@ GRID_INTENSITY = {
 
 ELECTRICITY_RATE_PER_KWH_INR = 7.5
 
-# --- PERSISTENT FILE-BASED LEADERBOARD STORAGE ---
 def load_leaderboard():
     if os.path.exists(LEADERBOARD_FILE):
         try:
@@ -40,7 +39,6 @@ def save_leaderboard(db):
     except Exception:
         pass
 
-# --- REAL-TIME MULTI-SOURCE ECO NEWS ENGINE ---
 RSS_FEEDS = [
     "https://sustainability.economictimes.indiatimes.com/rss/green-tech",
     "https://news.mongabay.com/feed/?post_type=post",
@@ -50,7 +48,6 @@ RSS_FEEDS = [
 def fetch_live_eco_news():
     news_items = []
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36'}
-    
     for url in RSS_FEEDS:
         try:
             req = urllib.request.Request(url, headers=headers)
@@ -85,21 +82,30 @@ def serve_index():
 @app.route('/api/telemetry', methods=['GET'])
 def telemetry():
     selected_grid = request.args.get('grid', 'WB Grid (Thermal/Coal)')
-    is_optimized = request.args.get('optimized', 'false').lower() == 'true'
+    # Retrieve the remaining optimization timer strength (0.0 = baseline work, 1.0 = fully optimized)
+    opt_strength = float(request.args.get('opt_strength', '0.0'))
     grid_factor = GRID_INTENSITY.get(selected_grid, GRID_INTENSITY["WB Grid (Thermal/Coal)"])["factor"]
 
-    if is_optimized:
-        raw_cpu = round(random.uniform(2.0, 7.5), 1)
-        current_watts = round(9.2 + (raw_cpu * 0.12), 1)
-        score = random.choice([89, 92, 95, 97])
-        anomaly_detected = False
-        anomaly_msg = ""
+    # Dynamic real-world load generation:
+    # As opt_strength decays from 1.0 down to 0.0, load rebuilds naturally!
+    base_raw_cpu = random.uniform(18.0, 52.0)
+    # Blend between low optimized CPU (4-8%) and current dynamic system load based on remaining optimization strength
+    raw_cpu = round((base_raw_cpu * (1.0 - opt_strength)) + (random.uniform(4.0, 7.5) * opt_strength), 1)
+
+    # Power draw calculation with work fluctuation
+    current_watts = round(11.5 + (raw_cpu * 0.32) + random.uniform(-0.8, 1.8), 1)
+
+    # Sustainability Score scales dynamically with CPU load
+    if raw_cpu < 12.0:
+        score = random.choice([91, 93, 95, 97])
+    elif raw_cpu < 28.0:
+        score = random.choice([78, 80, 82, 85])
     else:
-        raw_cpu = round(random.uniform(14.0, 48.0), 1)
-        current_watts = round(13.8 + (raw_cpu * 0.35) + random.uniform(-0.5, 1.5), 1)
-        score = random.choice([53, 57, 68, 72, 75, 78, 83])
-        anomaly_detected = current_watts > 23.0
-        anomaly_msg = f"UNUSUAL CARBON SPIKE: Power consumption spiked to {current_watts}W due to heavy subsystem processing!" if anomaly_detected else ""
+        score = random.choice([52, 56, 61, 68])
+
+    # Dynamic Carbon Spike detection occurs when system load re-accumulates
+    anomaly_detected = current_watts > 22.5
+    anomaly_msg = f"UNUSUAL CARBON SPIKE: Subsystem load increased power draw to {current_watts}W!" if anomaly_detected else ""
 
     uptime_hours = (time.time() - BOOT_TIME) / 3600.0
     system_kwh = (current_watts * max(uptime_hours, 0.1)) / 1000.0
@@ -112,9 +118,9 @@ def telemetry():
         "video_streaming_g": round(14.5 + random.uniform(-1.0, 1.5), 1)
     }
 
-    cpu_share = round(raw_cpu * 0.8, 1)
-    ram_share = round(random.uniform(25.0, 45.0), 1)
-    disk_share = round(random.uniform(10.0, 18.0), 1)
+    cpu_share = round(raw_cpu * 0.75, 1)
+    ram_share = round(random.uniform(25.0, 42.0), 1)
+    disk_share = round(random.uniform(8.0, 16.0), 1)
     cloud_share = round(max(100.0 - (cpu_share + ram_share + disk_share), 5.0), 1)
 
     trees = round(co2_grams / 60.0, 2)
@@ -138,7 +144,6 @@ def telemetry():
 @app.route('/api/leaderboard', methods=['GET', 'POST'])
 def leaderboard():
     db = load_leaderboard()
-    
     if request.method == 'POST':
         data = request.get_json()
         username = data.get('username', '').strip()
@@ -149,8 +154,6 @@ def leaderboard():
         return jsonify({"success": True})
     
     sorted_lb = [{"name": k, "score": v} for k, v in sorted(db.items(), key=lambda item: item[1], reverse=True)]
-    
-    # Calculate Average Score across all registered entries
     scores = [v for v in db.values()]
     avg_score = round(sum(scores) / len(scores), 1) if scores else 78.5
 
@@ -167,18 +170,28 @@ def chatbot():
     score = data.get('score', 75)
     watts = data.get('watts', 18.0)
 
-    if any(k in query for k in ["who developed", "developer", "creator", "built", "who made"]):
-        ans = "GreenByte AI was developed by Soumyadeep Ghosh, along with team members Satadru Roy, Sougata Mondal, Subhadip Bera, and Susmit Sen for the IEM Sustainability Hackathon 2026!"
-    elif any(k in query for k in ["hi", "hello", "hey", "how are you", "who are you"]):
-        ans = f"Hello! I am GreenByte AI Assistant. I am monitoring your platform telemetry in real-time. Your current system power draw is {watts}W with a Sustainability Score of {score}/100. How can I help you optimize?"
-    elif any(k in query for k in ["why", "high", "footprint", "reason", "cause"]):
-        ans = f"Your carbon footprint rises when power draw increases (currently {watts}W). Unoptimized background processing, high screen GPU rendering, and thermal grid intensities drive high emissions."
-    elif any(k in query for k in ["optimize", "fix", "lower", "reduce", "help"]):
-        ans = "Click the 'MASTER ECO-OPTIMIZE' button at the top right! It will instantly throttle unnecessary subsystem threads, flush cache memory, and lower your wattage below 10W."
-    elif any(k in query for k in ["save", "money", "cost", "month"]):
-        ans = "By maintaining optimized low-power states, you can save approximately ₹120–₹180 per month on electricity and prevent over 8.5 kg of CO₂ emissions!"
+    if any(q in query for q in ["how are you", "how r u", "how do you do", "how are things"]):
+        ans = "I'm doing great, thank you! I am online and actively monitoring digital energy telemetry. How can I assist you with GreenByte AI today?"
+    elif any(q in query for q in ["useful", "use of", "why use", "benefit", "what does it do", "how does it help"]):
+        ans = "GreenByte AI helps you detect, track, and eliminate invisible digital carbon footprints! It analyzes hardware power draw, audits webpage asset weight, and optimizes background subsystem memory to save energy and electricity costs."
+    elif any(q in query for q in ["who developed", "developer", "creator", "who built", "who made", "soumyadeep"]):
+        ans = "GreenByte AI was developed by Soumyadeep Ghosh, alongside team members Satadru Roy, Sougata Mondal, Subhadip Bera, and Susmit Sen for the IEM Sustainability Hackathon 2026!"
+    elif any(q in query for q in ["hi", "hello", "hey", "greetings", "good morning", "good evening"]):
+        ans = f"Hello! Welcome to GreenByte AI. Your current system power draw is {watts}W with a Sustainability Score of {score}/100. Feel free to ask me any question about our platform or digital sustainability!"
+    elif any(q in query for q in ["battle", "eco battle", "compete", "vs"]):
+        ans = "Eco Battle Mode lets two devices compete in real time! Click '⚔️ Launch Eco Battle' in the dashboard to see who can achieve the lowest carbon footprint ($g\\text{ CO}_2/\\text{hr}$)."
+    elif any(q in query for q in ["passport", "qr", "qr code"]):
+        ans = "Your QR Eco Passport encodes your live Sustainability Score, rank, and achievements into a scannable digital badge. Click '📱 Generate QR Eco Passport' to view or download it!"
+    elif any(q in query for q in ["why", "high", "footprint", "reason", "spike", "cause"]):
+        ans = f"Your carbon emissions increase when power draw rises (currently {watts}W). Unoptimized thread execution, background cache buffer allocations, and dirty energy grid sources drive these spikes."
+    elif any(q in query for q in ["optimize", "fix", "lower", "reduce", "clean"]):
+        ans = "Click the 'MASTER ECO-OPTIMIZE' button at the top right! It will immediately throttle background subsystem threads, recycle unneeded memory buffers, and reduce system power draw below 10W."
+    elif any(q in query for q in ["save", "money", "rupees", "cost", "month", "bill"]):
+        ans = "By using GreenByte's Eco-Optimizer, you can save approximately ₹120–₹180 per month on laptop/desktop power bills while mitigating over 8.5 kg of CO₂ per month!"
+    elif any(q in query for q in ["thank", "thanks", "great", "awesome", "cool", "nice"]):
+        ans = "You're very welcome! Let's continue working towards a greener digital environment. Let me know if you need anything else!"
     else:
-        ans = f"GreenByte AI Telemetry Status: Current draw is {watts}W and your score is {score}/100. You can ask me about developers, optimization tips, monthly savings, or carbon reduction strategies!"
+        ans = f"GreenByte AI Assistant: I am here to help! You can ask me how GreenByte works, about our developers, how to lower your score, or use features like Eco Battle and QR Eco Passport."
 
     return jsonify({"answer": ans})
 
@@ -228,7 +241,7 @@ def eco_optimize():
         collected = gc.collect()
         return jsonify({
             "success": True,
-            "message": f"Eco-Optimization complete! Recycled {collected} memory objects & throttled high-draw subsystem pipelines."
+            "message": f"Eco-Optimization complete! Flushed {collected} background memory buffers & throttled high-draw threads."
         })
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 400
