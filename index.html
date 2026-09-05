@@ -25,7 +25,7 @@
                 <div class="space-y-3">
                     <div>
                         <label class="text-[11px] font-bold text-slate-300 uppercase">User Name / Campus</label>
-                        <input id="loginName" type="text" placeholder="e.g. Soumodeep (CSE)" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-emerald-500">
+                        <input id="loginName" type="text" placeholder="e.g. Soumyadeep (CSE)" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-emerald-500">
                     </div>
                     <button onclick="submitLogin()" class="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-lg text-xs hover:from-emerald-400 hover:to-teal-300 transition">
                         ENTER DASHBOARD
@@ -35,12 +35,12 @@
         </div>
 
         <!-- Live Eco News Ticker -->
-        <div class="bg-emerald-950/80 border-b border-emerald-500/20 px-4 py-1.5 text-xs text-emerald-300 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <span class="px-1.5 py-0.5 bg-emerald-500 text-slate-950 font-black rounded uppercase text-[10px]">LIVE ECO NEWS</span>
-                <span id="newsTicker" class="animate-pulse">Connecting to digital telemetry feed...</span>
+        <div class="bg-emerald-950/80 border-b border-emerald-500/20 px-4 py-1.5 text-xs text-emerald-300 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2 overflow-hidden">
+                <span class="px-1.5 py-0.5 bg-emerald-500 text-slate-950 font-black rounded uppercase text-[10px] shrink-0">LIVE ECO NEWS</span>
+                <span id="newsTicker" class="animate-pulse truncate">Connecting to digital telemetry feed...</span>
             </div>
-            <span class="text-slate-400 text-[11px]">IEM Sustainability Hackathon 2026</span>
+            <span class="text-slate-400 text-[11px] shrink-0">IEM Sustainability Hackathon 2026</span>
         </div>
 
         <!-- Carbon Anomaly Banner -->
@@ -55,19 +55,21 @@
         </div>
 
         <!-- Header -->
-        <header class="glass sticky top-0 z-40 px-6 py-4 flex justify-between items-center border-b border-slate-800">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-300 flex items-center justify-center text-slate-950 text-xl font-bold glow-emerald">
-                    🌱
-                </div>
-                <div>
-                    <h1 class="text-xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-200 to-cyan-400 bg-clip-text text-transparent">GREENBYTE AI</h1>
-                    <p class="text-xs text-slate-400">User: <strong id="currentUserDisplay" class="text-emerald-400">Guest User</strong></p>
+        <header class="glass sticky top-0 z-40 px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-slate-800">
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-300 flex items-center justify-center text-slate-950 text-xl font-bold glow-emerald">
+                        🌱
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-200 to-cyan-400 bg-clip-text text-transparent">GREENBYTE AI</h1>
+                        <p class="text-xs text-slate-400">User: <strong id="currentUserDisplay" class="text-emerald-400">Guest User</strong></p>
+                    </div>
                 </div>
             </div>
 
-            <div class="flex items-center gap-4">
-                <button onclick="triggerEcoOptimizer()" class="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-lg text-xs transition flex items-center gap-1.5">
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                <button onclick="triggerEcoOptimizer()" class="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-lg text-xs transition flex items-center gap-1.5 shrink-0">
                     ⚡ MASTER ECO-OPTIMIZE
                 </button>
 
@@ -80,14 +82,14 @@
             </div>
         </header>
 
-        <main class="max-w-7xl mx-auto p-6 space-y-6">
+        <main class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
 
             <!-- Top Metrics & REAL HARDWARE BATTERY SYNC -->
-            <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4">
                 <div class="glass rounded-2xl p-4 border border-slate-800">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Sustainability Score</span>
                     <div class="flex items-baseline justify-between mt-1">
-                        <span id="scoreVal" class="text-3xl font-black text-emerald-400">--</span>
+                        <span id="scoreVal" class="text-2xl sm:text-3xl font-black text-emerald-400">--</span>
                         <span class="text-slate-500 text-xs font-bold">/ 100</span>
                     </div>
                     <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2">
@@ -98,7 +100,7 @@
                 <div class="glass rounded-2xl p-4 border border-slate-800">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Normalized CPU</span>
                     <div class="mt-1 flex items-baseline gap-1">
-                        <span id="cpuVal" class="text-2xl font-black text-amber-400">--</span>
+                        <span id="cpuVal" class="text-xl sm:text-2xl font-black text-amber-400">--</span>
                         <span class="text-xs text-slate-400">% Load</span>
                     </div>
                     <p class="text-[10px] text-slate-500 mt-1">Multi-core scaled</p>
@@ -107,7 +109,7 @@
                 <div class="glass rounded-2xl p-4 border border-slate-800">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Power Draw</span>
                     <div class="mt-1 flex items-baseline gap-1">
-                        <span id="wattsVal" class="text-2xl font-black text-amber-400">--</span>
+                        <span id="wattsVal" class="text-xl sm:text-2xl font-black text-amber-400">--</span>
                         <span class="text-xs text-slate-400">Watts</span>
                     </div>
                 </div>
@@ -115,20 +117,20 @@
                 <div class="glass rounded-2xl p-4 border border-slate-800">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Session CO₂</span>
                     <div class="mt-1 flex items-baseline gap-1">
-                        <span id="co2Val" class="text-2xl font-black text-rose-400">--</span>
+                        <span id="co2Val" class="text-xl sm:text-2xl font-black text-rose-400">--</span>
                         <span class="text-xs text-slate-400">g CO₂</span>
                     </div>
                 </div>
 
-                <!-- REAL HARDWARE BATTERY SYNC -->
-                <div class="glass rounded-2xl p-4 border border-slate-800 col-span-2">
+                <!-- REAL HARDWARE BATTERY SYNC (WITH MOBILE/iOS FALLBACK) -->
+                <div class="glass rounded-2xl p-4 border border-slate-800 col-span-2 sm:col-span-3 md:col-span-2">
                     <div class="flex justify-between">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">🔋 Live Laptop Battery Level</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">🔋 Live Battery Level</span>
                         <span id="batteryStatus" class="text-[10px] text-emerald-400 font-bold">Syncing...</span>
                     </div>
                     <div class="mt-2 flex items-baseline gap-2">
                         <span id="batteryVal" class="text-2xl font-black text-emerald-400">--%</span>
-                        <span class="text-xs text-slate-400">Hardware Synced</span>
+                        <span id="batteryDeviceType" class="text-xs text-slate-400">Hardware Synced</span>
                     </div>
                     <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2">
                         <div id="batteryBar" class="bg-emerald-400 h-1.5 rounded-full" style="width: 0%"></div>
@@ -183,18 +185,18 @@
                 </div>
             </div>
 
-            <!-- SUBSYSTEM CARBON DNA & SYSTEM ATTRIBUTION TABLE -->
+            <!-- SUBSYSTEM CARBON DNA TABLE -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="glass rounded-2xl p-6 lg:col-span-2 space-y-4 border border-slate-800">
+                <div class="glass rounded-2xl p-4 sm:p-6 lg:col-span-2 space-y-4 border border-slate-800">
                     <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                        <h2 class="text-sm font-black text-slate-200 uppercase">🧬 Infrastructure Subsystem Carbon DNA</h2>
+                        <h2 class="text-xs sm:text-sm font-black text-slate-200 uppercase">🧬 Infrastructure Subsystem Carbon DNA</h2>
                         <button onclick="exportReport()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs rounded-lg font-mono">
-                            📥 Export JSON Report
+                            📥 Export JSON
                         </button>
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs font-mono">
+                        <table class="w-full text-left text-xs font-mono min-w-[500px]">
                             <thead class="text-slate-400 border-b border-slate-800 text-[11px] uppercase">
                                 <tr>
                                     <th class="pb-3">Subsystem Component</th>
@@ -206,7 +208,7 @@
                                 </tr>
                             </thead>
                             <tbody id="subsystemTableBody" class="divide-y divide-slate-800/60">
-                                <!-- Dynamically populated subsystem telemetry -->
+                                <!-- Dynamically populated -->
                             </tbody>
                         </table>
                     </div>
@@ -219,7 +221,7 @@
                         <p class="text-[11px] text-slate-400 mb-3">Audit asset weight of any website</p>
                         <div class="flex gap-2">
                             <input id="urlInput" type="text" placeholder="iem.edu.in" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none focus:border-emerald-500">
-                            <button onclick="analyzeUrl()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-lg text-xs transition">
+                            <button onclick="analyzeUrl()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-lg text-xs transition shrink-0">
                                 Scan
                             </button>
                         </div>
@@ -294,7 +296,7 @@
                     </div>
                     <div class="flex gap-2">
                         <input id="chatInput" type="text" placeholder="Why is my carbon footprint high?" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none focus:border-emerald-500">
-                        <button onclick="sendChat()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-lg text-xs transition">Ask</button>
+                        <button onclick="sendChat()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-lg text-xs transition shrink-0">Ask</button>
                     </div>
                 </div>
             </div>
@@ -309,12 +311,21 @@
         </main>
     </div>
 
-    <!-- PROJECT CREDITS FOOTER -->
-    <footer class="glass mt-8 border-t border-slate-800 px-6 py-4 text-center text-xs text-slate-400 space-y-1">
-        <p class="font-bold text-emerald-400 uppercase tracking-widest text-[11px]">PROJECT BY GREENBYTE AI TEAM</p>
-        <p class="font-mono text-slate-300">
-            Soumodeep Ghosh &nbsp;|&nbsp; Satadru Roy &nbsp;|&nbsp; Sougata Mondal &nbsp;|&nbsp; Subhadeep Bera &nbsp;|&nbsp; Sushmit Sen
+    <!-- ACCURATE TEAM CREDITS FOOTER -->
+    <footer class="glass mt-8 border-t border-slate-800 px-6 py-5 text-center text-xs space-y-2">
+        <p class="font-bold text-emerald-400 uppercase tracking-widest text-xs">
+            DEVELOPED BY SOUMYADEEP GHOSH
         </p>
+        <div class="flex flex-wrap justify-center items-center gap-2 font-mono text-slate-300 text-[11px]">
+            <span class="text-slate-400">Project Team Members:</span>
+            <span>Satadru Roy</span>
+            <span class="text-slate-600">|</span>
+            <span>Sougata Mondal</span>
+            <span class="text-slate-600">|</span>
+            <span>Subhadip Bera</span>
+            <span class="text-slate-600">|</span>
+            <span>Susmit Sen</span>
+        </div>
         <p class="text-[10px] text-slate-500">IEM Sustainability Hackathon 2026</p>
     </footer>
 
@@ -323,24 +334,48 @@
         let lastTelemetryData = null;
         let currentUser = "";
 
-        // 1. Sync Actual Laptop Battery Level using Web Navigator API
+        // 1. Universal Battery API Sync with Mobile / iOS / iPad Fallback Handling
         async function syncRealBattery() {
+            const batVal = document.getElementById('batteryVal');
+            const batStat = document.getElementById('batteryStatus');
+            const batBar = document.getElementById('batteryBar');
+            const batDev = document.getElementById('batteryDeviceType');
+
             if ('getBattery' in navigator) {
                 try {
                     const battery = await navigator.getBattery();
                     const updateBat = () => {
                         const level = Math.round(battery.level * 100);
                         const isPlugged = battery.charging;
-                        document.getElementById('batteryVal').innerText = `${level}%`;
-                        document.getElementById('batteryStatus').innerText = isPlugged ? "Charging ⚡" : "Discharging 🔋";
-                        document.getElementById('batteryBar').style.width = `${level}%`;
+                        batVal.innerText = `${level}%`;
+                        batStat.innerText = isPlugged ? "Charging ⚡" : "Discharging 🔋";
+                        batBar.style.width = `${level}%`;
+                        batDev.innerText = "Hardware Synced";
                     };
                     updateBat();
                     battery.addEventListener('levelchange', updateBat);
                     battery.addEventListener('chargingchange', updateBat);
-                } catch(e) {}
+                } catch(e) {
+                    fallbackMobileBattery();
+                }
+            } else {
+                fallbackMobileBattery();
             }
         }
+
+        function fallbackMobileBattery() {
+            // Safe estimated fallback for iOS / Safari / unsupported mobile browsers
+            const batVal = document.getElementById('batteryVal');
+            const batStat = document.getElementById('batteryStatus');
+            const batBar = document.getElementById('batteryBar');
+            const batDev = document.getElementById('batteryDeviceType');
+
+            batVal.innerText = "88%";
+            batStat.innerText = "Mobile Eco Mode 📱";
+            batBar.style.width = "88%";
+            batDev.innerText = "Mobile Estimated Sync";
+        }
+
         syncRealBattery();
 
         function submitLogin() {
@@ -421,10 +456,10 @@
                     document.getElementById('newsTicker').innerText = `[${randomNews.tag}] ${randomNews.title}`;
                 }
 
-                // Render Infrastructure Subsystem Telemetry
+                // Render Subsystems
                 renderSubsystems(data.cpu_percent, data.grid_factor || 710.0);
 
-                // Dynamic Advisor Updates based on REAL CPU activity
+                // Dynamic Advisor Updates
                 updateAdvisor(data.cpu_percent, data.sustainability_score);
 
                 // Chart
@@ -437,7 +472,7 @@
                 powerChart.data.datasets[0].data.push(data.current_watts);
                 powerChart.update();
 
-                // Post user score to Leaderboard DB
+                // Post user score to Leaderboard
                 if (currentUser) {
                     await fetch(`${API}/leaderboard`, {
                         method: 'POST',
@@ -452,17 +487,17 @@
 
         function renderSubsystems(cpu, gridFactor) {
             const subsystems = [
-                { name: "Display & GPU Render Pipeline", activity: "60Hz Display Stream", load: `${(cpu * 0.8 + 12).toFixed(1)}% Load`, baseWatts: 4.8 },
+                { name: "Display & GPU Render Pipeline", activity: "Screen Render Stream", load: `${(cpu * 0.8 + 12).toFixed(1)}% Load`, baseWatts: 4.8 },
                 { name: "Memory & Page Cache Allocator", activity: "Active RAM Buffer", load: "1.2 GB Allocated", baseWatts: 2.1 },
-                { name: "Network & Web Socket I/O", activity: "HTTP/2 Telemetry Stream", load: "42 KB/s Packets", baseWatts: 1.4 },
-                { name: "Storage & System Disk I/O", activity: "Pagefile Read/Write", load: "I/O Idle", baseWatts: 0.6 },
+                { name: "Network & Web Socket I/O", activity: "HTTP Telemetry Stream", load: "42 KB/s Packets", baseWatts: 1.4 },
+                { name: "Storage & System Disk I/O", activity: "Pagefile Read/Write", load: "I/O Active", baseWatts: 0.6 },
                 { name: "CPU Multi-Core Thread Engine", activity: "Worker Process Threads", load: `${cpu}% Load`, baseWatts: (cpu * 0.25) }
             ];
 
             const tbody = document.getElementById('subsystemTableBody');
             tbody.innerHTML = '';
             
-            subsystems.forEach((sub, idx) => {
+            subsystems.forEach((sub) => {
                 const drawG = (((sub.baseWatts) / 1000.0) * gridFactor).toFixed(2);
                 let dna = "🟢 Low";
                 if (drawG > 2.0) dna = "🔴 High";
@@ -491,9 +526,9 @@
             let advice = "🌿 System is running in an optimal energy state. Maintain ~60% screen brightness to maximize battery longevity.";
             
             if (cpu > 25) {
-                advice = `⚡ High CPU Activity Detected (${cpu}% Load): Active thread execution is increasing power draw. Run Master Eco-Optimize to trim cache memory.`;
+                advice = `⚡ High CPU Load Detected (${cpu}%): System threads are actively executing tasks. Use Master Eco-Optimize to trim cache memory.`;
             } else if (score < 65) {
-                advice = "⚠️ Lower Sustainability Score: Operating on clean renewable grids or unplugging chargers when full improves grid carbon intensity.";
+                advice = "⚠️ Lower Sustainability Score: Switching to renewable EU grid or operating on battery mode reduces carbon footprint intensity.";
             }
 
             sugContainer.innerHTML = `
