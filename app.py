@@ -346,7 +346,7 @@ def chatbot():
     elif any(k in q_lower for k in ["boss", "raid", "titan", "attack"]):
         ans = "In Infinite Campus Boss Raids (unlocked with >=2 players), AI-generated titans appear with scaling HP. Scores >75 deal up to 250 HP damage per tick!"
     elif any(k in q_lower for k in ["forest", "tree", "sapling", "game"]):
-        ans = "Play the 15-Second Sapling Catcher Arcade Game in the Eco-Forest modal! Catch rare, fast-falling trees while dodging smog hazards (-1 pt) to earn Sapling Tokens!"
+        ans = "Play the 15-Second Sapling Catcher Arcade Game in the Eco-Forest modal! Catch trees falling at a smooth, medium speed while dodging smog hazards (-1 pt) to earn Sapling Tokens!"
     else:
         ans = f"GreenByte AI Assistant: I am here to help! Current draw is {watts}W with a score of {score}/100. Ask me about optimization, games, or developers!"
 

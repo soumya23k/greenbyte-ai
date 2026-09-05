@@ -652,7 +652,7 @@
             } catch(e) {}
         }
 
-        // --- ARCADE SAPLING CATCHER MINI-GAME ENGINE (TUNED SPEEDS & BALANCED FREQUENCY) ---
+        // --- ARCADE SAPLING CATCHER MINI-GAME ENGINE (SLOW-TO-MEDIUM FALL SPEED) ---
         let gameCanvas = document.getElementById('gameCanvas');
         let gameCtx = gameCanvas.getContext('2d');
         let gameRunning = false;
@@ -713,13 +713,13 @@
 
             gameCtx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 
-            // Controlled, medium-hazard spawn engine with fast-falling items
-            if (Math.random() < 0.035) {
-                let isHazard = Math.random() < 0.65; // Medium hazard ratio
+            // Moderate spawn frequency with slow-to-medium fall speeds
+            if (Math.random() < 0.045) {
+                let isHazard = Math.random() < 0.55; // Balanced hazard ratio
                 fallingItems.push({
                     x: Math.random() * (gameCanvas.width - 24),
                     y: -20,
-                    speed: 5.5 + Math.random() * 4.0, // Very fast fall speed
+                    speed: 2.0 + Math.random() * 2.0, // Slow to medium fall speed (2.0 to 4.0 px/frame)
                     type: isHazard ? '💨' : (Math.random() > 0.5 ? '🌱' : '🌲')
                 });
             }
@@ -733,7 +733,6 @@
 
                 gameCtx.fillText(item.type, item.x, item.y);
 
-                // Catching Logic (-1 penalty for hazards)
                 if (item.y >= gameCanvas.height - 35 && item.y <= gameCanvas.height - 5 && item.x >= basketX - 15 && item.x <= basketX + 50) {
                     if (item.type === '💨') {
                         gameScore = Math.max(0, gameScore - 1);
