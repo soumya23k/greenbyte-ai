@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenByte AI — Digital Carbon & Energy Intelligence Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(51, 65, 85, 0.6); }
+        .glow-emerald { box-shadow: 0 0 25px rgba(16, 185, 129, 0.25); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-slate-950">
+
+    <!-- News Ticker -->
+    <div class="bg-emerald-950/80 border-b border-emerald-500/20 px-4 py-1.5 text-xs text-emerald-300 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <span class="px-1.5 py-0.5 bg-emerald-500 text-slate-950 font-black rounded uppercase text-[10px]">LIVE ECO NEWS</span>
+            <span id="newsTicker" class="animate-pulse">Connecting to digital telemetry feed...</span>
+        </div>
+        <span class="text-slate-400 text-[11px]">IEM Sustainability Hackathon 2026</span>
+    </div>
+
+    <!-- Header -->
+    <header class="glass sticky top-0 z-50 px-6 py-4 flex justify-between items-center border-b border-slate-800">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-300 flex items-center justify-center text-slate-950 text-xl font-bold glow-emerald">
+                🌱
+            </div>
+            <div>
+                <h1 class="text-xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-200 to-cyan-400 bg-clip-text text-transparent">GREENBYTE AI</h1>
+                <p class="text-xs text-slate-400">Process Carbon Attribution &amp; Web Intelligence Suite</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <button onclick="triggerEcoOptimizer()" class="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-lg text-xs transition flex items-center gap-1.5">
+                ⚡ MASTER ECO-OPTIMIZE
+            </button>
+
+            <select id="gridSelect" onchange="updateTelemetry()" class="bg-slate-900 border border-slate-700 text-xs text-emerald-400 rounded px-2.5 py-1.5 font-bold outline-none">
+                <option value="WB Grid (Thermal/Coal)">West Bengal Coal Grid (710g)</option>
+                <option value="India Avg Grid">India National Avg (650g)</option>
+                <option value="Global Avg Grid">Global Average (475g)</option>
+                <option value="EU Grid (Renewables)">EU Clean Grid (210g)</option>
+            </select>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-6 space-y-6">
+
+        <!-- Metrics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+            
+            <div class="glass rounded-2xl p-4 border border-slate-800">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Sustainability Score</span>
+                <div class="flex items-baseline justify-between mt-1">
+                    <span id="scoreVal" class="text-3xl font-black text-emerald-400">--</span>
+                    <span class="text-slate-500 text-xs font-bold">/ 100</span>
+                </div>
+                <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2">
+                    <div id="scoreBar" class="bg-emerald-400 h-1.5 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="glass rounded-2xl p-4 border border-slate-800">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Normalized CPU</span>
+                <div class="mt-1 flex items-baseline gap-1">
+                    <span id="cpuVal" class="text-2xl font-black text-amber-400">--</span>
+                    <span class="text-xs text-slate-400">% Load</span>
+                </div>
+                <p class="text-[10px] text-slate-500 mt-1">Multi-core scaled</p>
+            </div>
+
+            <div class="glass rounded-2xl p-4 border border-slate-800">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Power Draw</span>
+                <div class="mt-1 flex items-baseline gap-1">
+                    <span id="wattsVal" class="text-2xl font-black text-amber-400">--</span>
+                    <span class="text-xs text-slate-400">Watts</span>
+                </div>
+            </div>
+
+            <div class="glass rounded-2xl p-4 border border-slate-800">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Session CO₂</span>
+                <div class="mt-1 flex items-baseline gap-1">
+                    <span id="co2Val" class="text-2xl font-black text-rose-400">--</span>
+                    <span class="text-xs text-slate-400">g CO₂</span>
+                </div>
+            </div>
+
+            <div class="glass rounded-2xl p-4 border border-slate-800">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Electricity Saved</span>
+                <div class="mt-1 flex items-baseline gap-1">
+                    <span class="text-xs text-emerald-400 font-bold">₹</span>
+                    <span id="costVal" class="text-2xl font-black text-emerald-400">--</span>
+                </div>
+            </div>
+
+            <div class="glass rounded-2xl p-4 border border-slate-800">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">E-Waste Risk</span>
+                <div class="mt-1">
+                    <span id="wearVal" class="text-xs font-bold text-cyan-300">Scanning...</span>
+                </div>
+                <p class="text-[10px] text-slate-500 mt-1">Thermal wear</p>
+            </div>
+        </div>
+
+        <!-- REAL-WORLD IMPACT TRANSLATOR -->
+        <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
+            <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                <span>🌳</span> REAL-WORLD IMPACT TRANSLATOR
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+                <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center gap-3">
+                    <span class="text-2xl">🌲</span>
+                    <div>
+                        <p class="text-slate-400 text-[10px] uppercase">Tree Offset Equivalent</p>
+                        <p class="text-emerald-400 font-bold text-sm"><span id="impactTrees">--</span> Tree-Days Absorbed</p>
+                    </div>
+                </div>
+                <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center gap-3">
+                    <span class="text-2xl">🚗</span>
+                    <div>
+                        <p class="text-slate-400 text-[10px] uppercase">Car Travel Avoided</p>
+                        <p class="text-teal-300 font-bold text-sm"><span id="impactCar">--</span> km Driving Avoided</p>
+                    </div>
+                </div>
+                <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center gap-3">
+                    <span class="text-2xl">💡</span>
+                    <div>
+                        <p class="text-slate-400 text-[10px] uppercase">LED Bulb Energy</p>
+                        <p class="text-amber-300 font-bold text-sm"><span id="impactLed">--</span> Hours Powered</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Process Table vs URL Scanner & Chart -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="glass rounded-2xl p-6 lg:col-span-2 space-y-4 border border-slate-800">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <h2 class="text-sm font-black text-slate-200 uppercase">Process-Level Digital Carbon Footprint</h2>
+                    <button onclick="exportReport()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs rounded-lg font-mono">
+                        📥 Export JSON Audit Report
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs font-mono">
+                        <thead class="text-slate-400 border-b border-slate-800 text-[11px] uppercase">
+                            <tr>
+                                <th class="pb-3">Application</th>
+                                <th class="pb-3">CPU</th>
+                                <th class="pb-3">RAM</th>
+                                <th class="pb-3">Est. Carbon Draw</th>
+                                <th class="pb-3 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="processTableBody" class="divide-y divide-slate-800/60">
+                            <tr><td colspan="5" class="py-6 text-center text-slate-500">Scanning active processes...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="glass rounded-2xl p-5 border border-slate-800 flex flex-col justify-between space-y-4">
+                <div>
+                    <h2 class="text-xs font-bold text-slate-200 uppercase tracking-wider">🌐 AI Webpage Carbon Scanner</h2>
+                    <p class="text-[11px] text-slate-400 mb-3">Audit asset weight of any website</p>
+                    <div class="flex gap-2">
+                        <input id="urlInput" type="text" placeholder="iem.edu.in" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none focus:border-emerald-500">
+                        <button onclick="analyzeUrl()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-lg text-xs transition">
+                            Scan
+                        </button>
+                    </div>
+                </div>
+
+                <div id="urlResult" class="bg-slate-900/80 rounded-xl p-3 text-xs space-y-1.5 border border-slate-800 text-slate-400">
+                    <p class="text-center text-slate-500">Enter a site URL above to audit asset weight.</p>
+                </div>
+
+                <div class="h-32 pt-2 border-t border-slate-800">
+                    <canvas id="powerChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- WHAT-IF SIMULATOR & AI FORECAST -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <div class="glass rounded-2xl p-5 border border-slate-800 space-y-4">
+                <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                    <span>📈</span> WHAT-IF SUSTAINABILITY SIMULATOR
+                </h2>
+                <div class="space-y-3 text-xs">
+                    <div>
+                        <div class="flex justify-between text-slate-400 mb-1">
+                            <span>Reduce Usage by:</span>
+                            <span id="sliderHoursVal" class="font-bold text-emerald-400">2 Hours/Day</span>
+                        </div>
+                        <input id="sliderHours" type="range" min="1" max="8" value="2" oninput="runWhatIf()" class="w-full accent-emerald-500">
+                    </div>
+
+                    <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl space-y-1 font-mono">
+                        <p class="text-slate-400 text-[11px]">Simulated Monthly Impact:</p>
+                        <p class="text-emerald-400 font-bold">💰 Est. Money Saved: ₹<span id="simCost">--</span> / month</p>
+                        <p class="text-rose-400 font-bold">🌍 CO₂ Reduced: <span id="simCo2">--</span> kg / month</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass rounded-2xl p-5 border border-slate-800 space-y-4">
+                <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                    <span>🔮</span> AI 7-DAY SUSTAINABILITY FORECAST
+                </h2>
+                <div class="grid grid-cols-2 gap-3 text-xs font-mono">
+                    <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl">
+                        <p class="text-slate-400 text-[10px]">Predicted 7-Day Energy</p>
+                        <p id="foreKwh" class="text-amber-400 font-bold text-lg">-- kWh</p>
+                    </div>
+                    <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl">
+                        <p class="text-slate-400 text-[10px]">Predicted 7-Day Carbon</p>
+                        <p id="foreCo2" class="text-rose-400 font-bold text-lg">-- kg CO₂</p>
+                    </div>
+                </div>
+                <div class="p-2.5 bg-slate-900/60 border border-slate-800 rounded-lg text-xs flex justify-between items-center">
+                    <span class="text-slate-400">Weekly Trajectory:</span>
+                    <span id="foreTrend" class="font-bold text-emerald-400">--</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- GAMIFICATION & IEM LEADERBOARD -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider">🏆 GREENBYTE GAMIFICATION</h2>
+                    <span id="userLevel" class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold rounded">--</span>
+                </div>
+                <div class="flex items-center justify-between text-xs font-mono">
+                    <span class="text-slate-400">Earned XP: <strong id="userXp" class="text-emerald-400">--</strong></span>
+                    <span class="text-slate-400">Green Streak: <strong id="userStreak" class="text-amber-400">🔥 7 Days</strong></span>
+                </div>
+                <div id="badgesContainer" class="flex flex-wrap gap-2 pt-1">
+                    <span class="text-xs text-slate-500">Unlocking badges...</span>
+                </div>
+            </div>
+
+            <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
+                <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider">🌍 IEM CAMPUS LEADERBOARD</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs font-mono">
+                        <thead class="text-slate-500 border-b border-slate-800 text-[10px] uppercase">
+                            <tr>
+                                <th class="pb-1">Rank</th>
+                                <th class="pb-1">Department / Campus</th>
+                                <th class="pb-1 text-right">Avg Score</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/40 text-slate-300">
+                            <tr><td class="py-1.5">🥇 1</td><td>IEM IT Park Campus</td><td class="text-right text-emerald-400 font-bold">94</td></tr>
+                            <tr><td class="py-1.5">🥈 2</td><td>IEM Gurukul (CSE Dept)</td><td class="text-right text-teal-300 font-bold">91</td></tr>
+                            <tr class="bg-emerald-500/10"><td class="py-1.5">🥉 3</td><td>You (Current Laptop)</td><td id="leadScore" class="text-right text-emerald-400 font-bold">--</td></tr>
+                            <tr><td class="py-1.5">4</td><td>IEM Science House</td><td class="text-right text-slate-400 font-bold">86</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI ADVISOR -->
+        <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
+            <h2 class="text-xs font-black text-slate-200 uppercase">💡 AI GREEN ADVISOR</h2>
+            <div id="suggestionsContainer" class="space-y-2 text-xs">
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Use relative API pathing so it works smoothly on both local and Render production servers
+        const API = "/api";
+        let lastTelemetryData = null;
+
+        const ctx = document.getElementById('powerChart').getContext('2d');
+        const powerChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Watts',
+                    data: [],
+                    borderColor: '#34d399',
+                    backgroundColor: 'rgba(52, 211, 153, 0.08)',
+                    fill: true,
+                    tension: 0.35
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { ticks: { display: false }, grid: { display: false } },
+                    y: { ticks: { color: '#64748b', font: { size: 9 } }, grid: { color: '#1e293b' } }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        async function updateTelemetry() {
+            try {
+                const grid = document.getElementById('gridSelect').value;
+                const res = await fetch(`${API}/telemetry?grid=${encodeURIComponent(grid)}`);
+                const data = await res.json();
+                lastTelemetryData = data;
+
+                document.getElementById('scoreVal').innerText = data.sustainability_score;
+                document.getElementById('scoreBar').style.width = `${data.sustainability_score}%`;
+                document.getElementById('cpuVal').innerText = `${data.cpu_percent}%`;
+                document.getElementById('wattsVal').innerText = data.current_watts;
+                document.getElementById('co2Val').innerText = data.co2_grams;
+                document.getElementById('costVal').innerText = data.cost_saved_inr;
+                document.getElementById('wearVal').innerText = data.hardware_wear;
+
+                // Impact Translator
+                document.getElementById('impactTrees').innerText = data.impact.trees;
+                document.getElementById('impactCar').innerText = data.impact.car_km;
+                document.getElementById('impactLed').innerText = data.impact.led_hours;
+
+                // Gamification
+                document.getElementById('userLevel').innerText = data.gamification.level;
+                document.getElementById('userXp').innerText = `${data.gamification.xp} XP`;
+                document.getElementById('userStreak').innerText = `🔥 ${data.gamification.streak} Days`;
+                document.getElementById('leadScore').innerText = data.sustainability_score;
+
+                const badgeBox = document.getElementById('badgesContainer');
+                badgeBox.innerHTML = '';
+                data.gamification.badges.forEach(b => {
+                    const span = document.createElement('span');
+                    span.className = 'px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 rounded text-[11px] font-bold';
+                    span.innerText = b.title;
+                    badgeBox.appendChild(span);
+                });
+
+                // Forecast
+                document.getElementById('foreKwh').innerText = `${data.forecast.kwh_7day} kWh`;
+                document.getElementById('foreCo2').innerText = `${data.forecast.co2_7day_kg} kg CO₂`;
+                document.getElementById('foreTrend').innerText = data.forecast.trend;
+
+                if (data.news && data.news.length > 0) {
+                    const randomNews = data.news[Math.floor(Math.random() * data.news.length)];
+                    document.getElementById('newsTicker').innerText = `[${randomNews.tag}] ${randomNews.title}`;
+                }
+
+                // Table
+                const tbody = document.getElementById('processTableBody');
+                tbody.innerHTML = '';
+                data.top_processes.forEach(p => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-800/40 transition';
+                    tr.innerHTML = `
+                        <td class="py-2.5 font-semibold text-slate-200 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full ${p.co2_hourly_g > 2.0 ? 'bg-rose-400' : 'bg-emerald-400'}"></span>
+                            ${p.name}
+                        </td>
+                        <td class="py-2.5 text-slate-300">${p.cpu}%</td>
+                        <td class="py-2.5 text-slate-300">${p.memory}%</td>
+                        <td class="py-2.5 font-bold ${p.co2_hourly_g > 2.0 ? 'text-rose-400' : 'text-emerald-400'}">${p.co2_hourly_g} g/hr</td>
+                        <td class="py-2.5 text-right">
+                            <button onclick="killProc(${p.pid})" class="px-2 py-1 bg-rose-500/10 hover:bg-rose-500/30 text-rose-400 border border-rose-500/20 rounded font-sans text-[10px]">
+                                Terminate
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                // AI Suggestions
+                const sugContainer = document.getElementById('suggestionsContainer');
+                sugContainer.innerHTML = '';
+                data.suggestions.forEach(s => {
+                    const card = document.createElement('div');
+                    card.className = 'p-2.5 bg-slate-900 border border-slate-800 rounded-lg text-emerald-300 flex items-start gap-2';
+                    card.innerHTML = `<span>🌿</span><span>${s}</span>`;
+                    sugContainer.appendChild(card);
+                });
+
+                // Chart
+                const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                if (powerChart.data.labels.length > 8) {
+                    powerChart.data.labels.shift();
+                    powerChart.data.datasets[0].data.shift();
+                }
+                powerChart.data.labels.push(timeStr);
+                powerChart.data.datasets[0].data.push(data.current_watts);
+                powerChart.update();
+
+                runWhatIf();
+
+            } catch (err) {}
+        }
+
+        function runWhatIf() {
+            if (!lastTelemetryData) return;
+            const hrs = parseInt(document.getElementById('sliderHours').value);
+            document.getElementById('sliderHoursVal').innerText = `${hrs} Hours/Day`;
+            
+            const savedKwhMonthly = ((lastTelemetryData.current_watts * hrs * 30) / 1000.0);
+            const savedCostMonthly = roundVal(savedKwhMonthly * 7.5, 2);
+            const savedCo2KgMonthly = roundVal((savedKwhMonthly * 710.0) / 1000.0, 2);
+
+            document.getElementById('simCost').innerText = savedCostMonthly;
+            document.getElementById('simCo2').innerText = savedCo2KgMonthly;
+        }
+
+        function roundVal(v, p) { return Math.round(v * Math.pow(10, p)) / Math.pow(10, p); }
+
+        async function analyzeUrl() {
+            const url = document.getElementById('urlInput').value;
+            const resBox = document.getElementById('urlResult');
+            if(!url) return;
+
+            resBox.innerHTML = '<p class="text-amber-400 text-center">Auditing site footprint...</p>';
+            try {
+                const res = await fetch(`${API}/analyze-url`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                });
+                const data = await res.json();
+                if(data.success) {
+                    resBox.innerHTML = `
+                        <p>🌐 <strong>Site:</strong> ${data.url}</p>
+                        <p>📦 <strong>Page Size:</strong> ${data.size_kb} KB</p>
+                        <p>⚡ <strong>Est. Carbon / Visit:</strong> <span class="text-emerald-400 font-bold">${data.co2_per_visit_g} g CO₂</span></p>
+                        <p>🏅 <strong>Eco Rating:</strong> <span class="text-teal-300 font-bold">${data.green_rating}</span></p>
+                    `;
+                } else {
+                    resBox.innerHTML = `<p class="text-rose-400">${data.message}</p>`;
+                }
+            } catch(e) {
+                resBox.innerHTML = '<p class="text-rose-400">Scanner connection error.</p>';
+            }
+        }
+
+        async function triggerEcoOptimizer() {
+            try {
+                const res = await fetch(`${API}/eco-optimize`, { method: 'POST' });
+                const data = await res.json();
+                alert(data.message);
+                updateTelemetry();
+            } catch(e) {}
+        }
+
+        async function killProc(pid) {
+            if (confirm(`Terminate Process ${pid} to save power?`)) {
+                await fetch(`${API}/kill-process`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pid: pid })
+                });
+                updateTelemetry();
+            }
+        }
+
+        function exportReport() {
+            if (!lastTelemetryData) return;
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(lastTelemetryData, null, 2));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", `GreenByte_EcoAudit_Report.json`);
+            document.body.appendChild(dlAnchor);
+            dlAnchor.click();
+            dlAnchor.remove();
+        }
+
+        setInterval(updateTelemetry, 3000);
+        updateTelemetry();
+    </script>
+</body>
+</html>
