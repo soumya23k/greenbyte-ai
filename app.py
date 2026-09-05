@@ -79,6 +79,11 @@ def fallback_news():
 def serve_index():
     return send_from_directory('.', 'index.html')
 
+# Endpoint to serve the developer profile image
+@app.route('/Saez.jpg')
+def serve_developer_pic():
+    return send_from_directory('.', 'Saez.jpg')
+
 @app.route('/api/telemetry', methods=['POST'])
 def telemetry():
     data = request.get_json() or {}
