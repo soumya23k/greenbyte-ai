@@ -17,6 +17,7 @@ CORS(app)
 BOOT_TIME = time.time()
 LEADERBOARD_FILE = "leaderboard.json"
 GAME_DATA_FILE = "game_data.json"
+USER_IDS_FILE = "user_ids.json"
 
 GRID_INTENSITY = {
     "WB Grid (Thermal/Coal)": {"factor": 710.0, "status": "Critical"},
@@ -89,14 +90,18 @@ def generate_boss_info(boss_level):
         "damage_leaderboard": {}
     }
 
-game_data = load_json_file(GAME_DATA_FILE, {
-    "active_boss": generate_boss_info(1),
-    "defeated_bosses": [],
-    "forest_monthly": {},
-    "forest_yearly": {},
-    "last_monthly_reset": time.time(),
-    "daily_actions": {"optimizations": 14, "scans": 6, "boss_attacks": 8, "saplings": 22}
-})
+def get_default_game_data():
+    return {
+        "active_boss": generate_boss_info(1),
+        "defeated_bosses": [],
+        "forest_monthly": {},
+        "forest_yearly": {},
+        "last_monthly_reset": time.time(),
+        "daily_actions": {"optimizations": 0, "scans": 0, "boss_attacks": 0, "saplings": 0}
+    }
+
+game_data = load_json_file(GAME_DATA_FILE, get_default_game_data())
+user_ids_db = load_json_file(USER_IDS_FILE, {})
 
 def check_boss_rotation():
     global game_data
@@ -158,55 +163,84 @@ def serve_index():
 def serve_developer_pic():
     return send_from_directory('.', 'Saez.jpg')
 
+@app.route('/api/register-user', methods=['POST'])
+def register_user():
+    global user_ids_db
+    data = request.get_json() or {}
+    username = data.get('username', '').strip()
+    if not username:
+        return jsonify({"success": False, "error": "Username required"}), 400
+
+    if username not in user_ids_db:
+        next_seq = len(user_ids_db) + 1
+        formatted_id = f"GB-2026-{next_seq:02d}"
+        user_ids_db[username] = formatted_id
+        save_json_file(USER_IDS_FILE, user_ids_db)
+    else:
+        formatted_id = user_ids_db[username]
+
+    return jsonify({
+        "success": True,
+        "username": username,
+        "user_id": formatted_id
+    })
+
 @app.route('/api/telemetry', methods=['POST'])
 def telemetry():
     check_boss_rotation()
     data = request.get_json() or {}
     selected_grid = data.get('grid', 'WB Grid (Thermal/Coal)')
     selected_tz = data.get('timezone', 'IST')
-    subsystem_opt = data.get('subsystems', {})
     opt_timestamps = data.get('opt_timestamps', {})
     
     now = time.time()
     grid_factor = GRID_INTENSITY.get(selected_grid, GRID_INTENSITY["WB Grid (Thermal/Coal)"])["factor"]
 
-    most_recent_opt = max([opt_timestamps.get(k, 0) for k in ['gpu', 'ram', 'net', 'disk', 'cpu']] + [0])
-    time_since_opt = now - most_recent_opt if most_recent_opt > 0 else 999.0
+    # Check subsystem individual optimization expiry (12 sec duration)
+    subsystems_active_opt = {}
+    for sub in ['gpu', 'ram', 'net', 'disk', 'cpu']:
+        ts = opt_timestamps.get(sub, 0)
+        subsystems_active_opt[sub] = (now - ts) < 12.0
 
-    if time_since_opt < 10.0:
-        rare_roll = random.random()
-        if rare_roll > 0.92:
-            score = random.choice([97, 98])
-        else:
-            score = random.randint(86, 94)
-        watts = round(random.uniform(6.0, 9.5), 1)
-    elif time_since_opt < 25.0:
-        score = random.randint(78, 85)
-        watts = round(random.uniform(10.0, 14.5), 1)
+    num_optimized = sum(1 for v in subsystems_active_opt.values() if v)
+
+    if num_optimized == 5:
+        score = random.randint(88, 96)
+        watts = round(random.uniform(6.0, 9.0), 1)
+    elif num_optimized > 0:
+        score = random.randint(78, 86)
+        watts = round(random.uniform(10.0, 14.0), 1)
     else:
         fluctuation_pattern = [70, 65, 57, 80, 82, 67, 75, 72, 61, 79]
         base_choice = random.choice(fluctuation_pattern)
         score = max(52, min(85, base_choice + random.randint(-2, 2)))
         watts = round(15.0 + ((100 - score) * 0.22) + random.uniform(-1.0, 1.5), 1)
 
+    # Subsystem specific load & carbon DNA allocation
     sub_data = {}
+    sub_loads = {'gpu': 22, 'ram': 35, 'net': 18, 'disk': 15, 'cpu': 28}
+
     for sub in ['gpu', 'ram', 'net', 'disk', 'cpu']:
-        if score > 85:
+        is_opt = subsystems_active_opt[sub]
+        if is_opt:
             dna = "🟢 Low"
-            act = "Optimized Pipeline"
+            act = "Optimized Buffer Stream"
             load = f"{random.randint(4, 12)}% Load"
-            w = round(watts * 0.18, 2)
-        elif score > 72:
-            dna = "🟡 Moderate"
-            act = "Standard Activity"
-            load = f"{random.randint(18, 32)}% Load"
-            w = round(watts * 0.22, 2)
+            w = round(watts * 0.12, 2)
         else:
-            dna = "🔴 High" if random.random() > 0.4 else "🟡 Moderate"
+            base_l = sub_loads[sub] + random.randint(-5, 12)
+            dna = "🔴 High" if base_l > 32 else "🟡 Moderate"
             act = "Active Workload Stream"
-            load = f"{random.randint(35, 62)}% Load"
-            w = round(watts * 0.28, 2)
-        sub_data[sub] = {"dna": dna, "activity": act, "load": load, "watts": w}
+            load = f"{base_l}% Load"
+            w = round(watts * (base_l / 100.0), 2)
+            
+        sub_data[sub] = {
+            "dna": dna,
+            "activity": act,
+            "load": load,
+            "watts": w,
+            "is_optimized": is_opt
+        }
 
     avg_load = sum(float(item['load'].replace('% Load', '')) for item in sub_data.values()) / 5.0
     anomaly_detected = watts > 21.0
@@ -223,7 +257,6 @@ def telemetry():
         "video_streaming_g": round(14.5 + random.uniform(-1.0, 1.5), 1)
     }
 
-    # Timezone-aware date & time formatting without seconds
     tz_str = TIMEZONE_MAP.get(selected_tz, "Asia/Kolkata")
     try:
         tz_obj = zoneinfo.ZoneInfo(tz_str)
@@ -356,6 +389,21 @@ def leaderboard():
         "total_users": len(sorted_lb)
     })
 
+@app.route('/api/reset-data', methods=['POST'])
+def reset_data():
+    global game_data, user_ids_db
+    game_data = get_default_game_data()
+    user_ids_db = {}
+    
+    save_json_file(GAME_DATA_FILE, game_data)
+    save_json_file(LEADERBOARD_FILE, {})
+    save_json_file(USER_IDS_FILE, user_ids_db)
+    
+    return jsonify({
+        "success": True,
+        "message": "All GreenByte profile data, streaks, badges, and leaderboards have been permanently reset!"
+    })
+
 @app.route('/api/chatbot', methods=['POST'])
 def chatbot():
     data = request.get_json() or {}
@@ -380,7 +428,7 @@ def chatbot():
     elif any(k in q_lower for k in ["date", "day", "today"]):
         ans = f"📅 Today's Date ({selected_tz}): {date_str}"
     elif any(k in q_lower for k in ["explain", "how optimization works", "optimisation", "how it works"]):
-        ans = "⚡ Optimization Mechanic: Clicking 'Master Eco-Optimize' recycles inactive memory buffers and throttles background draws. Your score immediately jumps to 86-95 (rarely 97-98). Over 10-25 seconds as background tasks process, the score realistically decays and fluctuates (82 -> 70 -> 57 -> 80) to reflect active system workloads."
+        ans = "⚡ Optimization Mechanic: Clicking 'Optimize' throttles that specific subsystem for 12s before naturally reverting back. Clicking 'Master Eco-Optimize' recycles memory buffers and optimizes all subsystems at once!"
     elif any(k in q_lower for k in ["useful", "feature", "uses of", "benefit", "why use"]):
         ans = "💡 Features & Uses:\n1. Carbon Map: Audits GPU, CPU, RAM, Disk & Network power draw.\n2. Master Eco-Optimizer: Immediate memory recycling & energy reduction.\n3. Web Scanner: Audits site asset weights & CO2 emissions.\n4. Boss Raids: Gamified team attacks using high eco scores.\n5. Eco Forest: Arcade minigame to catch saplings and earn tokens.\n6. Badges & ID Card: Showcase your streaks and custom profile!"
     elif any(k in q_lower for k in ["developer", "creator", "who made", "soumyadeep"]):

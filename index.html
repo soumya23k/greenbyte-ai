@@ -23,12 +23,12 @@
                 <div class="text-center space-y-1">
                     <span class="text-4xl">🌱</span>
                     <h2 class="text-xl font-black bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent">GREENBYTE AI PLATFORM</h2>
-                    <p class="text-xs text-slate-400">Enter your name or campus to log in and sync your score to the live persistent leaderboard.</p>
+                    <p class="text-xs text-slate-400">Enter your name or campus to log in and generate your unique GB ID card.</p>
                 </div>
                 <div class="space-y-3">
                     <div>
                         <label class="text-[11px] font-bold text-slate-300 uppercase">User Name / Campus</label>
-                        <input id="loginName" type="text" placeholder="e.g. Soumyadeep Ghosh" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-emerald-500">
+                        <input id="loginName" type="text" placeholder="e.g. Soumyadeep" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-emerald-500">
                     </div>
                     <button onclick="submitLogin()" class="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-lg text-xs hover:from-emerald-400 hover:to-teal-300 transition">
                         ENTER DASHBOARD
@@ -56,9 +56,9 @@
                             </label>
                         </div>
                         <div class="space-y-1 flex-1">
-                            <h3 id="cardUserName" class="text-base font-black text-slate-100 truncate">Soumyadeep Ghosh</h3>
+                            <h3 id="cardUserName" class="text-base font-black text-slate-100 truncate">Soumyadeep</h3>
                             <p class="text-[10px] text-emerald-400 font-bold uppercase">VERIFIED GREEN CITIZEN</p>
-                            <p class="text-[9px] text-slate-400">ID: GB-2026-81001</p>
+                            <p class="text-[10px] text-teal-300 font-bold">ID: <span id="cardUserIdDisplay" class="text-emerald-400 font-mono">GB-2026-01</span></p>
                         </div>
                     </div>
 
@@ -75,7 +75,7 @@
 
                     <div class="space-y-1.5">
                         <p class="text-[10px] text-slate-400 uppercase font-bold">Earned Badges Showcase</p>
-                        <div class="flex gap-1.5 overflow-x-auto pb-1 text-base">
+                        <div id="cardBadgeShowcase" class="flex gap-1.5 overflow-x-auto pb-1 text-base">
                             <span title="7-Day Streak">⚡</span>
                             <span title="Clean Record">🧹</span>
                             <span title="Master Optimizer">🔌</span>
@@ -113,9 +113,14 @@
 
                 <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs font-mono">
                     <span>🔥 Current Active Streak: <strong id="streakDaysCount" class="text-amber-400 text-sm">7 Days</strong></span>
-                    <button onclick="openIdCardModal()" class="px-3 py-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded text-xs">
-                        💳 View My ID Card
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button onclick="openIdCardModal()" class="px-3 py-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded text-xs">
+                            💳 View ID Card
+                        </button>
+                        <button onclick="resetAllData()" class="px-3 py-1 bg-rose-500/20 hover:bg-rose-500/40 border border-rose-500/40 text-rose-300 font-bold rounded text-xs">
+                            ⚠️ Reset Badges
+                        </button>
+                    </div>
                 </div>
 
                 <div id="badgeGridContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 text-xs font-mono"></div>
@@ -267,7 +272,7 @@
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-300 flex items-center justify-center text-slate-950 text-xl font-bold glow-emerald">🌱</div>
                     <div>
                         <h1 class="text-xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-200 to-cyan-400 bg-clip-text text-transparent">GREENBYTE AI</h1>
-                        <p class="text-xs text-slate-400">User: <strong id="currentUserDisplay" class="text-emerald-400">Guest User</strong></p>
+                        <p class="text-xs text-slate-400">User: <strong id="currentUserDisplay" class="text-emerald-400">Guest User</strong> (<span id="userHeaderId" class="text-teal-300 font-mono">GB-2026-00</span>)</p>
                     </div>
                 </div>
             </div>
@@ -567,8 +572,10 @@
             <span>Subhadip Bera</span><span class="text-slate-600">|</span>
             <span>Susmit Sen</span>
         </div>
-        <div class="pt-1">
-            <button onclick="openContactModal()" class="text-emerald-400 hover:underline text-[11px]">📞 Contact Developer Details</button>
+        <div class="pt-2 flex justify-center gap-4 text-[11px]">
+            <button onclick="openContactModal()" class="text-emerald-400 hover:underline">📞 Contact Developer Details</button>
+            <span class="text-slate-600">|</span>
+            <button onclick="resetAllData()" class="text-rose-400 hover:underline font-bold">⚠️ Reset All Badges & Data</button>
         </div>
         <p class="text-[10px] text-slate-500">IEM Sustainability Hackathon 2026</p>
     </footer>
@@ -577,14 +584,14 @@
         const API = "/api";
         let lastTelemetryData = null;
         let currentUser = "";
+        let currentUserId = "GB-2026-01";
         let globalLeaderboard = [];
         let qrGenerated = false;
         let cardQrGenerated = false;
 
-        let subsystemOptimizedState = { gpu: false, ram: false, net: false, disk: false, cpu: false };
         let subsystemOptTimestamps = { gpu: 0, ram: 0, net: 0, disk: 0, cpu: 0 };
 
-        const ALL_BADGES = [
+        let ALL_BADGES = [
             { icon: "⚡", name: "7-Day Spark", unlocked: true },
             { icon: "🌱", name: "30-Day Sprout", unlocked: false, desc: "7/30 Days" },
             { icon: "🌿", name: "180-Day Growth", unlocked: false },
@@ -658,6 +665,7 @@
         function openIdCardModal() {
             document.getElementById('idCardModal').classList.remove('hidden');
             document.getElementById('cardUserName').innerText = currentUser || "Guest User";
+            document.getElementById('cardUserIdDisplay').innerText = currentUserId;
             
             if (!cardQrGenerated) {
                 new QRCode(document.getElementById("cardQrCode"), {
@@ -716,13 +724,45 @@
 
         syncRealBattery();
 
-        function submitLogin() {
+        async function submitLogin() {
             const input = document.getElementById('loginName').value.trim();
             if (input) {
                 currentUser = input;
                 document.getElementById('currentUserDisplay').innerText = currentUser;
+                
+                try {
+                    const res = await fetch(`${API}/register-user`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: currentUser })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        currentUserId = data.user_id;
+                        document.getElementById('userHeaderId').innerText = currentUserId;
+                    }
+                } catch(e) {}
+
                 document.getElementById('loginModal').classList.add('hidden');
                 updateTelemetry();
+            }
+        }
+
+        async function resetAllData() {
+            if (confirm("⚠️ Are you sure you want to permanently reset all badges, daily streaks, and user records?")) {
+                try {
+                    const res = await fetch(`${API}/reset-data`, { method: 'POST' });
+                    const data = await res.json();
+                    if (data.success) {
+                        ALL_BADGES.forEach(b => b.unlocked = false);
+                        renderBadgesGrid();
+                        document.getElementById('cardBadgeShowcase').innerHTML = '<span class="text-slate-500 text-xs">No unlocked badges</span>';
+                        alert("🧹 " + data.message);
+                        window.location.reload();
+                    }
+                } catch(e) {
+                    alert("Error resetting server data.");
+                }
             }
         }
 
@@ -767,15 +807,13 @@
         });
 
         function toggleSingleSubsystem(id) {
-            subsystemOptimizedState[id] = true;
             subsystemOptTimestamps[id] = Date.now() / 1000.0;
             updateTelemetry();
         }
 
         function triggerMasterEcoOptimizer() {
             const nowSec = Date.now() / 1000.0;
-            Object.keys(subsystemOptimizedState).forEach(k => {
-                subsystemOptimizedState[k] = true;
+            ['gpu', 'ram', 'net', 'disk', 'cpu'].forEach(k => {
                 subsystemOptTimestamps[k] = nowSec;
             });
 
@@ -798,7 +836,6 @@
                     body: JSON.stringify({ 
                         grid: grid, 
                         timezone: tz,
-                        subsystems: subsystemOptimizedState, 
                         opt_timestamps: subsystemOptTimestamps 
                     })
                 });
@@ -1067,7 +1104,7 @@
             list.forEach((item) => {
                 const sub = subDetails[item.id];
                 const drawG = (((sub.watts) / 1000.0) * gridFactor).toFixed(2);
-                const isOpt = subsystemOptimizedState[item.id];
+                const isOpt = sub.is_optimized;
 
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-slate-800/40 transition';
@@ -1078,7 +1115,7 @@
                     <td class="py-2.5 text-slate-300">${sub.load}</td>
                     <td class="py-2.5 font-bold ${sub.dna.includes('High') ? 'text-rose-400' : 'text-emerald-400'}">${drawG} g/hr</td>
                     <td class="py-2.5 text-right">
-                        <button onclick="toggleSingleSubsystem('${item.id}')" class="px-2.5 py-1 ${isOpt ? 'bg-slate-800 text-emerald-400 border border-emerald-500/30' : 'bg-emerald-500/10 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/20'} rounded font-sans text-[10px]">
+                        <button onclick="toggleSingleSubsystem('${item.id}')" class="px-2.5 py-1 ${isOpt ? 'bg-slate-800 text-emerald-400 border border-emerald-500/30 font-bold' : 'bg-emerald-500/10 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/20'} rounded font-sans text-[10px]">
                             ${isOpt ? 'Optimized ✓' : 'Optimize'}
                         </button>
                     </td>
