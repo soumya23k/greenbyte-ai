@@ -10,6 +10,7 @@
     <style>
         .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(51, 65, 85, 0.6); }
         .glow-emerald { box-shadow: 0 0 25px rgba(16, 185, 129, 0.25); }
+        .glow-rose { box-shadow: 0 0 25px rgba(244, 63, 94, 0.25); }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-slate-950 flex flex-col justify-between">
@@ -65,70 +66,82 @@
             </div>
         </div>
 
-        <!-- MULTI-PLAYER ECO BATTLE MODAL -->
-        <div id="battleModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
-            <div class="glass max-w-xl w-full p-6 rounded-2xl border border-emerald-500/30 space-y-5 glow-emerald">
-                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                    <h2 class="text-lg font-black text-emerald-400 flex items-center gap-2">⚔️ LIVE REAL-TIME ECO BATTLE MODE</h2>
-                    <button onclick="closeBattleModal()" class="text-slate-400 hover:text-slate-100 text-sm font-mono">✕ Close</button>
-                </div>
-                
-                <div id="battleRequirementNotice" class="hidden text-center p-3 bg-rose-950/80 border border-rose-500/40 rounded-xl text-xs text-rose-300 font-mono">
-                    ⚠️ At least 2 registered users are required in the leaderboard to initiate an Eco Battle. Please register another player!
+        <!-- INFINITE CAMPUS BOSS RAID MODAL -->
+        <div id="bossModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+            <div class="glass max-w-xl w-full p-6 rounded-2xl border border-rose-500/30 space-y-4 glow-rose">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <h2 class="text-sm font-black text-rose-400 uppercase tracking-wider flex items-center gap-2">
+                        ⚔️ 48-HOUR INFINITE CAMPUS BOSS RAID
+                    </h2>
+                    <button onclick="closeBossModal()" class="text-slate-400 hover:text-slate-100 text-xs font-mono">✕ Close</button>
                 </div>
 
-                <div id="battleControls" class="space-y-4">
-                    <div class="flex items-center justify-between gap-3 bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs">
-                        <span class="text-slate-300 font-bold">Select Competitor:</span>
-                        <select id="opponentSelect" onchange="changeOpponent()" class="bg-slate-950 border border-slate-700 text-xs text-emerald-400 rounded px-2.5 py-1.5 font-bold outline-none">
-                        </select>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4 text-center font-mono">
-                        <div class="p-4 bg-slate-900 border border-emerald-500/40 rounded-xl space-y-2">
-                            <p class="text-xs font-bold text-emerald-400">Player 1 (You: <span id="battleP1Name">User</span>)</p>
-                            <p id="battleP1Draw" class="text-2xl font-black text-slate-100">-- g/hr</p>
-                            <span id="battleP1Status" class="inline-block px-2 py-0.5 bg-emerald-500/20 text-emerald-300 text-[10px] rounded">Competing</span>
+                <div class="flex items-center gap-4 bg-slate-900/90 p-4 rounded-xl border border-slate-800">
+                    <img id="bossAvatarImg" src="" class="w-20 h-20 rounded-xl border border-rose-500/40 object-cover shadow-lg animate-pulse">
+                    <div class="space-y-1.5 flex-1">
+                        <div class="flex justify-between items-baseline">
+                            <h3 id="bossNameDisplay" class="text-base font-black text-slate-100">Loading Boss...</h3>
+                            <span id="bossHpText" class="text-xs font-mono text-rose-400 font-bold">0 / 0 HP</span>
                         </div>
-                        <div class="p-4 bg-slate-900 border border-amber-500/40 rounded-xl space-y-2">
-                            <p class="text-xs font-bold text-amber-400">Player 2 (<span id="battleP2Name">Opponent</span>)</p>
-                            <p id="battleP2Draw" class="text-2xl font-black text-slate-100">14.8 g/hr</p>
-                            <span id="battleP2Status" class="inline-block px-2 py-0.5 bg-amber-500/20 text-amber-300 text-[10px] rounded">Competing</span>
+                        <div class="w-full bg-slate-800 rounded-full h-3 border border-slate-700">
+                            <div id="bossHpBar" class="bg-gradient-to-r from-rose-500 to-amber-500 h-2.5 rounded-full transition-all duration-500" style="width: 100%"></div>
                         </div>
+                        <p class="text-[10px] text-slate-400 font-mono">Score >75 deals up to 250 HP damage per telemetry tick!</p>
                     </div>
+                </div>
 
-                    <div id="battleResult" class="text-center p-3 bg-slate-900/80 border border-slate-800 rounded-xl text-xs font-bold text-amber-300">
-                        Battle in progress... Run 'Master Eco-Optimize' to reduce your footprint!
+                <div id="bossAttackFeedback" class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl text-center text-xs font-mono font-bold text-amber-300">
+                    Attack Readiness: Maintain Sustainability Score >75 to strike!
+                </div>
+
+                <div class="space-y-2">
+                    <h4 class="text-xs font-bold text-slate-300 uppercase">🛡️ Top Campus Damage Dealers</h4>
+                    <div id="bossDamageList" class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 text-xs font-mono max-h-28 overflow-y-auto space-y-1 text-slate-300">
                     </div>
-                    
-                    <button onclick="triggerMasterEcoOptimizer()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-lg text-xs transition">
-                        ⚡ ACTIVATE MASTER ECO-OPTIMIZER FOR BATTLE
-                    </button>
+                </div>
+
+                <div class="border-t border-slate-800 pt-3">
+                    <h4 class="text-xs font-bold text-emerald-400 uppercase mb-2">🏆 Defeated Bosses Trophy Hall</h4>
+                    <div id="trophyHallList" class="flex gap-2 overflow-x-auto pb-1 text-[10px] font-mono">
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- QR ECO PASSPORT MODAL -->
-        <div id="passportModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
-            <div class="glass max-w-md w-full p-6 rounded-2xl border border-emerald-500/30 text-center space-y-4 glow-emerald">
+        <!-- VIRTUAL ECO-FOREST MODAL -->
+        <div id="forestModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+            <div class="glass max-w-xl w-full p-6 rounded-2xl border border-emerald-500/30 space-y-4 glow-emerald">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                    <h2 class="text-sm font-black text-emerald-400">📱 QR ECO PASSPORT & ACHIEVEMENTS</h2>
-                    <button onclick="closePassportModal()" class="text-slate-400 hover:text-slate-100 text-xs font-mono">✕ Close</button>
-                </div>
-                
-                <div class="p-3 bg-slate-900 border border-slate-800 rounded-xl text-left text-xs space-y-1 font-mono">
-                    <p>👤 <strong>User:</strong> <span id="passportUser" class="text-emerald-400">Guest User</span></p>
-                    <p>🌿 <strong>Sustainability Score:</strong> <span id="passportScore" class="text-emerald-400">--</span>/100</p>
+                    <h2 class="text-sm font-black text-emerald-400 uppercase tracking-wider flex items-center gap-2">
+                        🌲 12-HOUR VIRTUAL ECO-FOREST CHALLENGE
+                    </h2>
+                    <button onclick="closeForestModal()" class="text-slate-400 hover:text-slate-100 text-xs font-mono">✕ Close</button>
                 </div>
 
-                <div class="text-left space-y-1.5">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">🏆 Unlocked Achievements</p>
-                    <div id="achievementsContainer" class="grid grid-cols-2 gap-2 text-[10px] font-mono">
+                <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <div class="flex justify-between items-center text-xs font-mono">
+                        <span>Current Cycle Trees Collected:</span>
+                        <span id="forestTreeCount" class="text-emerald-400 font-bold text-base">0 / 20 🌲</span>
+                    </div>
+                    <div class="grid grid-cols-5 gap-2 text-center text-[10px] font-mono">
+                        <div class="p-2 bg-slate-950 border border-slate-800 rounded">5 Trees: +1 Token</div>
+                        <div class="p-2 bg-slate-950 border border-slate-800 rounded">10 Trees: +2 Tokens</div>
+                        <div class="p-2 bg-slate-950 border border-slate-800 rounded">15 Trees: +3 Tokens</div>
+                        <div class="p-2 bg-slate-950 border border-emerald-500/40 rounded text-emerald-300 font-bold">20 Trees: +5 Tokens</div>
+                        <button onclick="claimForestTokens()" class="p-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded uppercase">Claim</button>
                     </div>
                 </div>
 
-                <div class="flex justify-center p-3 bg-white rounded-xl" id="qrcode"></div>
-                <p class="text-[10px] text-slate-400">Scan this QR code with any smartphone to inspect user profile and eco badges live.</p>
+                <div class="grid grid-cols-2 gap-4 text-xs font-mono">
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-teal-300 uppercase">📅 Monthly Token Leaderboard</h4>
+                        <div id="forestMonthlyList" class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 max-h-32 overflow-y-auto space-y-1"></div>
+                    </div>
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-amber-300 uppercase">🏆 Yearly Hall of Fame</h4>
+                        <div id="forestYearlyList" class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 max-h-32 overflow-y-auto space-y-1"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -167,16 +180,16 @@
             </div>
 
             <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
+                <button onclick="openBossModal()" class="px-3 py-1.5 bg-rose-500/20 border border-rose-500/40 hover:bg-rose-500/30 text-rose-300 font-bold rounded-lg text-xs transition flex items-center gap-1">
+                    ⚔️ Boss Raid (<span id="navBossHp">100%</span>)
+                </button>
+
+                <button onclick="openForestModal()" class="px-3 py-1.5 bg-emerald-500/20 border border-emerald-500/40 hover:bg-emerald-500/30 text-emerald-300 font-bold rounded-lg text-xs transition flex items-center gap-1">
+                    🌲 Eco Forest
+                </button>
+
                 <button onclick="openContactModal()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold rounded-lg text-xs transition flex items-center gap-1">
-                    📞 Contact Dev
-                </button>
-
-                <button onclick="openBattleModal()" class="px-3 py-1.5 bg-amber-500/20 border border-amber-500/40 hover:bg-amber-500/30 text-amber-300 font-bold rounded-lg text-xs transition flex items-center gap-1">
-                    ⚔️ Eco Battle
-                </button>
-
-                <button onclick="openPassportModal()" class="px-3 py-1.5 bg-teal-500/20 border border-teal-500/40 hover:bg-teal-500/30 text-teal-300 font-bold rounded-lg text-xs transition flex items-center gap-1">
-                    📱 QR Passport
+                    📞 Dev
                 </button>
 
                 <button onclick="triggerMasterEcoOptimizer()" class="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-lg text-xs transition flex items-center gap-1.5 shrink-0">
@@ -406,7 +419,7 @@
                         <span>🤖</span> GREENBYTE REAL-TIME AI CHATBOT
                     </h2>
                     <div id="chatHistory" class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 h-36 overflow-y-auto text-xs space-y-2 font-mono">
-                        <p class="text-emerald-400">🤖: Hello! I am GreenByte AI. Ask me anything about digital footprint, optimization, eco battles, or developers!</p>
+                        <p class="text-emerald-400">🤖: Hello! I am GreenByte AI. Ask me anything about digital footprint, optimization, boss raids, or developers!</p>
                     </div>
                     <div class="flex gap-2">
                         <input id="chatInput" type="text" placeholder="Ask anything (e.g. How are you?)" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none focus:border-emerald-500" onkeypress="if(event.key==='Enter') sendChat()">
@@ -453,31 +466,10 @@
         let lastTelemetryData = null;
         let currentUser = "";
         let globalLeaderboard = [];
+        let sessionTreesCollected = 0;
 
-        let userAchievements = {
-            novice: true,
-            optimizer: false,
-            warrior: false,
-            battleWon: false
-        };
-
-        // Independent state tracker for each individual subsystem
-        let subsystemOptimizedState = {
-            gpu: false,
-            ram: false,
-            net: false,
-            disk: false,
-            cpu: false
-        };
-
-        // Time tracking for subsystem dynamic workload drift
-        let subsystemOptTimestamps = { 
-            gpu: 0, 
-            ram: 0, 
-            net: 0, 
-            disk: 0, 
-            cpu: 0 
-        };
+        let subsystemOptimizedState = { gpu: false, ram: false, net: false, disk: false, cpu: false };
+        let subsystemOptTimestamps = { gpu: 0, ram: 0, net: 0, disk: 0, cpu: 0 };
 
         async function syncRealBattery() {
             const batVal = document.getElementById('batteryVal');
@@ -522,13 +514,12 @@
             }
         }
 
-        function openContactModal() {
-            document.getElementById('contactModal').classList.remove('hidden');
-        }
-
-        function closeContactModal() {
-            document.getElementById('contactModal').classList.add('hidden');
-        }
+        function openContactModal() { document.getElementById('contactModal').classList.remove('hidden'); }
+        function closeContactModal() { document.getElementById('contactModal').classList.add('hidden'); }
+        function openBossModal() { document.getElementById('bossModal').classList.remove('hidden'); }
+        function closeBossModal() { document.getElementById('bossModal').classList.add('hidden'); }
+        function openForestModal() { document.getElementById('forestModal').classList.remove('hidden'); }
+        function closeForestModal() { document.getElementById('forestModal').classList.add('hidden'); }
 
         const ctx = document.getElementById('powerChart').getContext('2d');
         const powerChart = new Chart(ctx, {
@@ -558,7 +549,6 @@
         function toggleSingleSubsystem(id) {
             subsystemOptimizedState[id] = true;
             subsystemOptTimestamps[id] = Date.now() / 1000.0;
-            userAchievements.optimizer = true;
             updateTelemetry();
         }
 
@@ -568,7 +558,6 @@
                 subsystemOptimizedState[k] = true;
                 subsystemOptTimestamps[k] = nowSec;
             });
-            userAchievements.optimizer = true;
 
             fetch(`${API}/eco-optimize`, { method: 'POST' })
                 .then(r => r.json())
@@ -594,7 +583,6 @@
                 const data = await res.json();
                 lastTelemetryData = data;
 
-                // Reset state for subsystems that drifted back to active
                 const nowSec = Date.now() / 1000.0;
                 Object.keys(subsystemOptimizedState).forEach(k => {
                     if (nowSec - subsystemOptTimestamps[k] >= 20.0) {
@@ -608,8 +596,9 @@
                 document.getElementById('wattsVal').innerText = data.current_watts;
                 document.getElementById('co2Val').innerText = data.co2_grams;
 
-                if (data.sustainability_score >= 85 || data.current_watts < 12.0) {
-                    userAchievements.warrior = true;
+                if (data.sustainability_score >= 80) {
+                    sessionTreesCollected = Math.min(20, sessionTreesCollected + 1);
+                    document.getElementById('forestTreeCount').innerText = `${sessionTreesCollected} / 20 🌲`;
                 }
 
                 const anomalyBanner = document.getElementById('anomalyBanner');
@@ -640,7 +629,9 @@
 
                 renderSubsystems(data.subsystem_details, data.grid_factor || 710.0);
                 updateAdvisor(data.cpu_percent, data.sustainability_score, data.unopt_count);
-                updateEcoBattleUI(data.current_watts, data.grid_factor || 710.0);
+                
+                // Trigger Attack on Current Boss
+                triggerBossAttack(data.sustainability_score);
 
                 const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                 if (powerChart.data.labels.length > 8) {
@@ -661,6 +652,92 @@
                 loadLeaderboard();
 
             } catch (err) {}
+        }
+
+        async function triggerBossAttack(score) {
+            try {
+                const res = await fetch(`${API}/boss-attack`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUser || 'Guest User', score: score })
+                });
+                const data = await res.json();
+                const boss = data.active_boss;
+
+                document.getElementById('bossNameDisplay').innerText = boss.name;
+                document.getElementById('bossAvatarImg').src = boss.avatar;
+                document.getElementById('bossHpText').innerText = `${boss.current_hp} / ${boss.max_hp} HP`;
+                
+                const pct = Math.max(0, Math.round((boss.current_hp / boss.max_hp) * 100));
+                document.getElementById('bossHpBar').style.width = `${pct}%`;
+                document.getElementById('navBossHp').innerText = `${pct}%`;
+
+                const fb = document.getElementById('bossAttackFeedback');
+                if (data.damage_dealt > 0) {
+                    fb.innerText = `💥 CRITICAL STRIKE! Dealt ${data.damage_dealt} HP damage to ${boss.name}!`;
+                    fb.className = "p-2.5 bg-emerald-950 border border-emerald-500/40 rounded-xl text-center text-xs font-mono font-bold text-emerald-300";
+                } else {
+                    fb.innerText = "⚠️ Attack Blocked: Maintain Sustainability Score >75 to strike!";
+                    fb.className = "p-2.5 bg-slate-900 border border-slate-800 rounded-xl text-center text-xs font-mono font-bold text-amber-300";
+                }
+
+                // Render Raid Damage Dealers
+                const damageList = document.getElementById('bossDamageList');
+                damageList.innerHTML = '';
+                if (data.damage_leaderboard.length === 0) {
+                    damageList.innerHTML = '<p class="text-slate-500">No damage dealt yet.</p>';
+                } else {
+                    data.damage_leaderboard.forEach((item, idx) => {
+                        damageList.innerHTML += `<div class="flex justify-between"><span>${idx+1}. ${item.name}</span><span class="text-rose-400 font-bold">${item.damage} HP</span></div>`;
+                    });
+                }
+
+                // Render Trophy Hall
+                const trophyList = document.getElementById('trophyHallList');
+                trophyList.innerHTML = '';
+                if (data.defeated_bosses.length === 0) {
+                    trophyList.innerHTML = '<p class="text-slate-500 text-[10px]">No defeated bosses yet.</p>';
+                } else {
+                    data.defeated_bosses.forEach(b => {
+                        trophyList.innerHTML += `
+                            <div class="p-2 bg-slate-900 border border-emerald-500/40 rounded flex flex-col items-center min-w-[90px] text-center">
+                                <img src="${b.avatar}" class="w-8 h-8 rounded mb-1">
+                                <span class="text-emerald-400 font-bold truncate w-20">${b.name}</span>
+                                <span class="text-slate-500 text-[8px]">${b.defeated_at}</span>
+                            </div>
+                        `;
+                    });
+                }
+            } catch(e) {}
+        }
+
+        async function claimForestTokens() {
+            try {
+                const res = await fetch(`${API}/forest-claim`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUser || 'Guest User', trees_collected: sessionTreesCollected })
+                });
+                const data = await res.json();
+                alert(`🌲 Claimed ${data.tokens_earned} Sapling Tokens!`);
+                sessionTreesCollected = 0;
+                document.getElementById('forestTreeCount').innerText = "0 / 20 🌲";
+
+                renderForestLeaderboards(data.monthly_leaderboard, data.yearly_leaderboard);
+            } catch(e) {}
+        }
+
+        function renderForestLeaderboards(monthly, yearly) {
+            const mList = document.getElementById('forestMonthlyList');
+            const yList = document.getElementById('forestYearlyList');
+            mList.innerHTML = ''; yList.innerHTML = '';
+
+            monthly.forEach((item, i) => {
+                mList.innerHTML += `<div class="flex justify-between"><span>${i+1}. ${item.name}</span><span class="text-teal-300 font-bold">${item.tokens} Tokens</span></div>`;
+            });
+            yearly.forEach((item, i) => {
+                yList.innerHTML += `<div class="flex justify-between"><span>${i+1}. ${item.name}</span><span class="text-amber-300 font-bold">${item.tokens} Tokens</span></div>`;
+            });
         }
 
         function renderSubsystems(subDetails, gridFactor) {
@@ -715,99 +792,10 @@
             `;
         }
 
-        function openBattleModal() {
-            document.getElementById('battleModal').classList.remove('hidden');
-            document.getElementById('battleP1Name').innerText = currentUser || "You";
-
-            const reqNotice = document.getElementById('battleRequirementNotice');
-            const battleControls = document.getElementById('battleControls');
-            const selectBox = document.getElementById('opponentSelect');
-
-            const opponents = globalLeaderboard.filter(item => item.name !== currentUser);
-
-            if (opponents.length === 0) {
-                reqNotice.classList.remove('hidden');
-                battleControls.classList.add('hidden');
-            } else {
-                reqNotice.classList.add('hidden');
-                battleControls.classList.remove('hidden');
-
-                selectBox.innerHTML = '';
-                opponents.forEach(op => {
-                    const opt = document.createElement('option');
-                    opt.value = op.name;
-                    opt.innerText = `${op.name} (Score: ${op.score})`;
-                    selectBox.appendChild(opt);
-                });
-                changeOpponent();
-            }
-        }
-
-        function changeOpponent() {
-            const selectBox = document.getElementById('opponentSelect');
-            const p2Name = selectBox.value || "Opponent";
-            document.getElementById('battleP2Name').innerText = p2Name;
-        }
-
-        function closeBattleModal() {
-            document.getElementById('battleModal').classList.add('hidden');
-        }
-
-        function updateEcoBattleUI(watts, gridFactor) {
-            const p1DrawG = ((watts / 1000.0) * gridFactor).toFixed(2);
-            document.getElementById('battleP1Draw').innerText = `${p1DrawG} g/hr`;
-            
-            const p2DrawG = 14.2;
-            document.getElementById('battleP2Draw').innerText = `${p2DrawG} g/hr`;
-
-            const resultBox = document.getElementById('battleResult');
-            if (p1DrawG < p2DrawG) {
-                resultBox.className = "text-center p-3 bg-emerald-950/80 border border-emerald-500/40 rounded-xl text-xs font-bold text-emerald-300";
-                resultBox.innerText = `🏆 YOU ARE WINNING! Your emission (${p1DrawG} g/hr) is lower than ${document.getElementById('battleP2Name').innerText} (${p2DrawG} g/hr)!`;
-                userAchievements.battleWon = true;
-            } else {
-                resultBox.className = "text-center p-3 bg-rose-950/80 border border-rose-500/40 rounded-xl text-xs font-bold text-rose-300";
-                resultBox.innerText = `⚠️ YOU ARE BEHIND! Your emission (${p1DrawG} g/hr) is higher than ${document.getElementById('battleP2Name').innerText} (${p2DrawG} g/hr). Run Master Eco-Optimize!`;
-            }
-        }
-
         function openPassportModal() {
-            document.getElementById('passportModal').classList.remove('hidden');
             const score = lastTelemetryData ? lastTelemetryData.sustainability_score : 75;
-            document.getElementById('passportUser').innerText = currentUser || "Guest User";
-            document.getElementById('passportScore').innerText = score;
-
-            const achBox = document.getElementById('achievementsContainer');
-            achBox.innerHTML = `
-                <div class="p-2 border rounded ${userAchievements.novice ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-600'}">
-                    🥉 <strong>Eco Novice</strong> ${userAchievements.novice ? '✓' : '🔒'}
-                </div>
-                <div class="p-2 border rounded ${userAchievements.optimizer ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-600'}">
-                    ⚡ <strong>Optimizer</strong> ${userAchievements.optimizer ? '✓' : '🔒'}
-                </div>
-                <div class="p-2 border rounded ${userAchievements.warrior ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-600'}">
-                    🛡️ <strong>Carbon Warrior</strong> ${userAchievements.warrior ? '✓' : '🔒'}
-                </div>
-                <div class="p-2 border rounded ${userAchievements.battleWon ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-600'}">
-                    ⚔️ <strong>Battle Winner</strong> ${userAchievements.battleWon ? '✓' : '🔒'}
-                </div>
-            `;
-
-            const qrContainer = document.getElementById("qrcode");
-            qrContainer.innerHTML = "";
             const qrText = `GreenByte Eco Passport | User: ${currentUser || 'Guest'} | Score: ${score}/100 | Developer: Soumyadeep Ghosh (+91 8100127066)`;
-            
-            new QRCode(qrContainer, {
-                text: qrText,
-                width: 130,
-                height: 130,
-                colorDark : "#0f172a",
-                colorLight : "#ffffff"
-            });
-        }
-
-        function closePassportModal() {
-            document.getElementById('passportModal').classList.add('hidden');
+            alert(qrText);
         }
 
         async function loadLeaderboard() {
