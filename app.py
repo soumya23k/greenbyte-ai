@@ -3,6 +3,7 @@ import json
 import time
 import random
 import datetime
+import zoneinfo
 import urllib.request
 import urllib.parse
 import xml.etree.ElementTree as ET
@@ -25,6 +26,16 @@ GRID_INTENSITY = {
 }
 
 ELECTRICITY_RATE_PER_KWH_INR = 7.5
+
+TIMEZONE_MAP = {
+    "IST": "Asia/Kolkata",
+    "UTC": "UTC",
+    "EST": "America/New_York",
+    "PST": "America/Los_Angeles",
+    "GMT": "Europe/London",
+    "CET": "Europe/Paris",
+    "JST": "Asia/Tokyo"
+}
 
 BOSS_PREFIXES = ["Thermal", "Carbon", "Coal-Fired", "Smog", "Diesel", "Methane", "Grid-Overload", "E-Waste", "Smokestack", "Sulfur"]
 BOSS_TITANS = ["Goliath", "Daemon", "Titan", "Dragon", "Behemoth", "Colossus", "Leviathan", "Hydra", "Phantom", "Overlord"]
@@ -152,6 +163,7 @@ def telemetry():
     check_boss_rotation()
     data = request.get_json() or {}
     selected_grid = data.get('grid', 'WB Grid (Thermal/Coal)')
+    selected_tz = data.get('timezone', 'IST')
     subsystem_opt = data.get('subsystems', {})
     opt_timestamps = data.get('opt_timestamps', {})
     
@@ -211,11 +223,21 @@ def telemetry():
         "video_streaming_g": round(14.5 + random.uniform(-1.0, 1.5), 1)
     }
 
-    current_dt = datetime.datetime.now()
+    # Timezone-aware date & time formatting without seconds
+    tz_str = TIMEZONE_MAP.get(selected_tz, "Asia/Kolkata")
+    try:
+        tz_obj = zoneinfo.ZoneInfo(tz_str)
+        current_dt = datetime.datetime.now(tz_obj)
+    except Exception:
+        current_dt = datetime.datetime.now()
+
+    formatted_time = current_dt.strftime("%I:%M %p")
+    formatted_date = current_dt.strftime("%A, %B %d, %Y")
 
     return jsonify({
-        "current_time": current_dt.strftime("%H:%M:%S"),
-        "current_date": current_dt.strftime("%A, %B %d, %Y"),
+        "current_time": formatted_time,
+        "current_date": formatted_date,
+        "selected_timezone": selected_tz,
         "cpu_percent": round(avg_load, 1),
         "current_watts": watts,
         "co2_grams": co2_grams,
@@ -338,28 +360,35 @@ def leaderboard():
 def chatbot():
     data = request.get_json() or {}
     query = data.get('query', '').strip()
+    selected_tz = data.get('timezone', 'IST')
     q_lower = query.lower()
     score = data.get('score', 75)
     watts = data.get('watts', 18.0)
 
-    now_dt = datetime.datetime.now()
-    time_str = now_dt.strftime("%I:%M:%S %p")
+    tz_str = TIMEZONE_MAP.get(selected_tz, "Asia/Kolkata")
+    try:
+        tz_obj = zoneinfo.ZoneInfo(tz_str)
+        now_dt = datetime.datetime.now(tz_obj)
+    except Exception:
+        now_dt = datetime.datetime.now()
+
+    time_str = now_dt.strftime("%I:%M %p")
     date_str = now_dt.strftime("%A, %B %d, %Y")
 
     if any(k in q_lower for k in ["time", "clock"]):
-        ans = f"🕒 Current Local System Time: {time_str}"
+        ans = f"🕒 Current Local Time ({selected_tz}): {time_str}"
     elif any(k in q_lower for k in ["date", "day", "today"]):
-        ans = f"📅 Today's Date: {date_str}"
+        ans = f"📅 Today's Date ({selected_tz}): {date_str}"
     elif any(k in q_lower for k in ["explain", "how optimization works", "optimisation", "how it works"]):
         ans = "⚡ Optimization Mechanic: Clicking 'Master Eco-Optimize' recycles inactive memory buffers and throttles background draws. Your score immediately jumps to 86-95 (rarely 97-98). Over 10-25 seconds as background tasks process, the score realistically decays and fluctuates (82 -> 70 -> 57 -> 80) to reflect active system workloads."
     elif any(k in q_lower for k in ["useful", "feature", "uses of", "benefit", "why use"]):
-        ans = "💡 Features & Uses:\n1. Carbon Map: Audits GPU, CPU, RAM, Disk & Network power draw.\n2. Master Eco-Optimizer: Immediate memory recycling & energy reduction.\n3. Web Scanner: Audits site asset weights & CO2 emissions.\n4. Boss Raids: Gamified team attacks using high eco scores.\n5. Eco Forest: Arcade minigame to catch saplings and earn tokens.\n6. Badges & Streaks: Earn awards for maintaining 7-day to 5-year clean records!"
+        ans = "💡 Features & Uses:\n1. Carbon Map: Audits GPU, CPU, RAM, Disk & Network power draw.\n2. Master Eco-Optimizer: Immediate memory recycling & energy reduction.\n3. Web Scanner: Audits site asset weights & CO2 emissions.\n4. Boss Raids: Gamified team attacks using high eco scores.\n5. Eco Forest: Arcade minigame to catch saplings and earn tokens.\n6. Badges & ID Card: Showcase your streaks and custom profile!"
     elif any(k in q_lower for k in ["developer", "creator", "who made", "soumyadeep"]):
         ans = "GreenByte AI was built by Soumyadeep Ghosh (+91 8100127066 | soumyadeepghosh1tb@gmail.com) alongside team members Satadru Roy, Sougata Mondal, Subhadip Bera, and Susmit Sen for the IEM Sustainability Hackathon 2026!"
     elif any(k in q_lower for k in ["hi", "hello", "hey"]):
-        ans = f"Hello! It is currently {time_str} on {date_str}. Ask me about optimization, features, badges, or developer info!"
+        ans = f"Hello! It is currently {time_str} ({selected_tz}) on {date_str}. Ask me about time, date, timezone, optimization, or badges!"
     else:
-        ans = f"GreenByte AI Assistant: Current draw is {watts}W with a score of {score}/100. Local Time: {time_str}. Ask me about time, date, optimization, or features!"
+        ans = f"GreenByte AI Assistant: Current draw is {watts}W with a score of {score}/100. Time ({selected_tz}): {time_str}. Ask me about time, date, optimization, or features!"
 
     return jsonify({"answer": ans})
 
