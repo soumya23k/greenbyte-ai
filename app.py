@@ -62,7 +62,6 @@ def generate_boss_info(boss_level):
     name = f"{prefix} {titan} Mk-{boss_level}"
     max_hp = get_boss_max_hp(boss_level)
     
-    # Generate unique AI monster artwork using Pollinations AI
     prompt = f"cyberpunk dark smog monster {prefix} {titan} futuristic carbon monster glowing neon green dark background video game boss portrait"
     encoded_prompt = urllib.parse.quote(prompt)
     avatar_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=256&height=256&nologo=true&seed={boss_level * 777}"
@@ -157,13 +156,10 @@ def telemetry():
     now = time.time()
     grid_factor = GRID_INTENSITY.get(selected_grid, GRID_INTENSITY["WB Grid (Thermal/Coal)"])["factor"]
 
-    # Calculate system age since optimization
     most_recent_opt = max([opt_timestamps.get(k, 0) for k in ['gpu', 'ram', 'net', 'disk', 'cpu']] + [0])
     time_since_opt = now - most_recent_opt if most_recent_opt > 0 else 999.0
 
-    # Score Engine Matching User Request
     if time_since_opt < 10.0:
-        # High Optimized Window: Stays above 90 (fluctuates between 86 to 94, rarely 97-98)
         rare_roll = random.random()
         if rare_roll > 0.92:
             score = random.choice([97, 98])
@@ -171,11 +167,9 @@ def telemetry():
             score = random.randint(86, 94)
         watts = round(random.uniform(6.0, 9.5), 1)
     elif time_since_opt < 25.0:
-        # Gradual Decay Window: Slowly drifts down to 80-82
         score = random.randint(78, 85)
         watts = round(random.uniform(10.0, 14.5), 1)
     else:
-        # Normal System Operation: Fluctuates realistically (70, 65, 57, spikes back to 80-82, down to 67)
         fluctuation_pattern = [70, 65, 57, 80, 82, 67, 75, 72, 61, 79]
         base_choice = random.choice(fluctuation_pattern)
         score = max(52, min(85, base_choice + random.randint(-2, 2)))
@@ -352,7 +346,7 @@ def chatbot():
     elif any(k in q_lower for k in ["boss", "raid", "titan", "attack"]):
         ans = "In Infinite Campus Boss Raids (unlocked with >=2 players), AI-generated titans appear with scaling HP. Scores >75 deal up to 250 HP damage per tick!"
     elif any(k in q_lower for k in ["forest", "tree", "sapling", "game"]):
-        ans = "Play the 30-Second Sapling Catcher Arcade Game in the Eco-Forest modal! Catch falling trees while dodging smog hazards to earn Sapling Tokens for monthly & yearly leaderboards!"
+        ans = "Play the 15-Second Sapling Catcher Arcade Game in the Eco-Forest modal! Catch rare, fast-falling trees while dodging smog hazards (-1 pt) to earn Sapling Tokens!"
     else:
         ans = f"GreenByte AI Assistant: I am here to help! Current draw is {watts}W with a score of {score}/100. Ask me about optimization, games, or developers!"
 

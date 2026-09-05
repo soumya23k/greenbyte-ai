@@ -112,14 +112,14 @@
             <div class="glass max-w-lg w-full p-5 rounded-2xl border border-emerald-500/30 space-y-3 glow-emerald text-center">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                     <h2 class="text-sm font-black text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-                        🌲 ARCADE SAPLING CATCHER MINI-GAME
+                        🌲 15-SECOND SAPLING CATCHER MINI-GAME
                     </h2>
                     <button onclick="closeForestModal()" class="text-slate-400 hover:text-slate-100 text-xs font-mono">✕ Close</button>
                 </div>
 
                 <div class="flex justify-between items-center text-xs font-mono bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
                     <span>Trees Caught: <strong id="gameTreeCount" class="text-emerald-400">0</strong></span>
-                    <span>Time Left: <strong id="gameTimeLeft" class="text-amber-400">30s</strong></span>
+                    <span>Time Left: <strong id="gameTimeLeft" class="text-amber-400">15s</strong></span>
                     <button id="startGameBtn" onclick="startSaplingGame()" class="px-3 py-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded text-xs transition">START GAME</button>
                 </div>
 
@@ -652,12 +652,12 @@
             } catch(e) {}
         }
 
-        // --- ARCADE SAPLING CATCHER MINI-GAME ENGINE ---
+        // --- ARCADE SAPLING CATCHER MINI-GAME ENGINE (TUNED SPEEDS & BALANCED FREQUENCY) ---
         let gameCanvas = document.getElementById('gameCanvas');
         let gameCtx = gameCanvas.getContext('2d');
         let gameRunning = false;
         let gameScore = 0;
-        let gameTimeLeft = 30;
+        let gameTimeLeft = 15;
         let gameTimer = null;
         let basketX = 180;
         let fallingItems = [];
@@ -666,7 +666,7 @@
             if (gameRunning) return;
             gameRunning = true;
             gameScore = 0;
-            gameTimeLeft = 30;
+            gameTimeLeft = 15;
             fallingItems = [];
             basketX = 180;
 
@@ -713,12 +713,13 @@
 
             gameCtx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 
-            if (Math.random() < 0.08) {
-                let isHazard = Math.random() < 0.25;
+            // Controlled, medium-hazard spawn engine with fast-falling items
+            if (Math.random() < 0.035) {
+                let isHazard = Math.random() < 0.65; // Medium hazard ratio
                 fallingItems.push({
                     x: Math.random() * (gameCanvas.width - 24),
                     y: -20,
-                    speed: 2 + Math.random() * 3,
+                    speed: 5.5 + Math.random() * 4.0, // Very fast fall speed
                     type: isHazard ? '💨' : (Math.random() > 0.5 ? '🌱' : '🌲')
                 });
             }
@@ -732,9 +733,10 @@
 
                 gameCtx.fillText(item.type, item.x, item.y);
 
+                // Catching Logic (-1 penalty for hazards)
                 if (item.y >= gameCanvas.height - 35 && item.y <= gameCanvas.height - 5 && item.x >= basketX - 15 && item.x <= basketX + 50) {
                     if (item.type === '💨') {
-                        gameScore = Math.max(0, gameScore - 2);
+                        gameScore = Math.max(0, gameScore - 1);
                     } else {
                         gameScore++;
                     }
