@@ -53,8 +53,8 @@ def telemetry():
     selected_grid = request.args.get('grid', 'WB Grid (Thermal/Coal)')
     grid_factor = GRID_INTENSITY.get(selected_grid, GRID_INTENSITY["WB Grid (Thermal/Coal)"])["factor"]
 
-    raw_cpu = round(random.uniform(3.5, 52.0), 1)
-    current_watts = round(11.5 + (raw_cpu * 0.38) + random.uniform(-1.0, 2.0), 1)
+    raw_cpu = round(random.uniform(4.0, 48.0), 1)
+    current_watts = round(11.5 + (raw_cpu * 0.38) + random.uniform(-1.0, 1.8), 1)
     
     uptime_hours = (time.time() - BOOT_TIME) / 3600.0
     system_kwh = (current_watts * max(uptime_hours, 0.1)) / 1000.0
@@ -76,7 +76,7 @@ def telemetry():
     cloud_share = round(max(100.0 - (cpu_share + ram_share + disk_share), 5.0), 1)
 
     anomaly_detected = current_watts > 23.0
-    anomaly_msg = f"UNUSUAL CARBON SPIKE: Power consumption spiked to {current_watts}W due to high background tasks!" if anomaly_detected else ""
+    anomaly_msg = f"UNUSUAL CARBON SPIKE: Power consumption spiked to {current_watts}W due to heavy subsystem processing!" if anomaly_detected else ""
 
     trees = round(co2_grams / 60.0, 2)
     car_km = round(co2_grams / 120.0, 2)
@@ -117,11 +117,11 @@ def chatbot():
     watts = data.get('watts', 18.0)
 
     if "high" in query or "why" in query:
-        ans = f"Your power draw is currently {watts}W. High-resource applications like Omen Gaming Hub and Chrome video streams increase system emissions. Terminate them to reduce carbon."
+        ans = f"Your system power draw is currently {watts}W. Subsystems like Display GPU rendering and Active Socket I/O drive the majority of energy draw. Use Master Eco-Optimize to trim cache memory."
     elif "save" in query or "month" in query:
-        ans = "Closing inactive streaming tabs can save approximately ₹120–₹180 and lower monthly CO₂ footprint by ~8.5 kg!"
+        ans = "Lowering display brightness and optimizing system performance can save approximately ₹120–₹180 and reduce ~8.5 kg CO₂ monthly!"
     else:
-        ans = f"Your current Sustainability Score is {score}/100. Close background apps to maintain optimal performance."
+        ans = f"Your current Sustainability Score is {score}/100. Disconnect chargers when full and maintain lower screen brightness to keep it high."
 
     return jsonify({"answer": ans})
 
@@ -171,11 +171,11 @@ def eco_optimize():
         collected = gc.collect()
         return jsonify({
             "success": True,
-            "message": f"Eco-Optimization complete! Flushed browser cache & recycled {collected} background objects."
+            "message": f"Eco-Optimization complete! Flushed system cache & recycled {collected} background objects."
         })
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 400
 
 if __name__ == '__main__':
-    print("Starting Upgraded GreenByte Engine on http://localhost:5000...")
+    print("Starting GreenByte Engine on http://localhost:5000...")
     app.run(port=5000, debug=True)

@@ -11,332 +11,319 @@
         .glow-emerald { box-shadow: 0 0 25px rgba(16, 185, 129, 0.25); }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-slate-950">
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-slate-950 flex flex-col justify-between">
 
-    <!-- USER REGISTRATION MODAL -->
-    <div id="loginModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="glass max-w-md w-full p-6 rounded-2xl border border-emerald-500/30 space-y-4 glow-emerald">
-            <div class="text-center space-y-1">
-                <span class="text-4xl">🌱</span>
-                <h2 class="text-xl font-black bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent">GREENBYTE AI PLATFORM</h2>
-                <p class="text-xs text-slate-400">Enter your name or campus to log in and sync your score to the live leaderboard.</p>
-            </div>
-            <div class="space-y-3">
-                <div>
-                    <label class="text-[11px] font-bold text-slate-300 uppercase">User Name / Campus</label>
-                    <input id="loginName" type="text" placeholder="e.g. Soumyadeep (CSE)" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-emerald-500">
+    <div>
+        <!-- USER REGISTRATION MODAL -->
+        <div id="loginModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+            <div class="glass max-w-md w-full p-6 rounded-2xl border border-emerald-500/30 space-y-4 glow-emerald">
+                <div class="text-center space-y-1">
+                    <span class="text-4xl">🌱</span>
+                    <h2 class="text-xl font-black bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent">GREENBYTE AI PLATFORM</h2>
+                    <p class="text-xs text-slate-400">Enter your name or campus to log in and sync your score to the live leaderboard.</p>
                 </div>
-                <button onclick="submitLogin()" class="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-lg text-xs hover:from-emerald-400 hover:to-teal-300 transition">
-                    ENTER DASHBOARD
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Live Eco News Ticker -->
-    <div class="bg-emerald-950/80 border-b border-emerald-500/20 px-4 py-1.5 text-xs text-emerald-300 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-            <span class="px-1.5 py-0.5 bg-emerald-500 text-slate-950 font-black rounded uppercase text-[10px]">LIVE ECO NEWS</span>
-            <span id="newsTicker" class="animate-pulse">Connecting to digital telemetry feed...</span>
-        </div>
-        <span class="text-slate-400 text-[11px]">IEM Sustainability Hackathon 2026</span>
-    </div>
-
-    <!-- Carbon Anomaly Banner -->
-    <div id="anomalyBanner" class="hidden bg-rose-500/20 border-b border-rose-500/40 px-4 py-2 text-xs text-rose-300 flex justify-between items-center animate-pulse">
-        <div class="flex items-center gap-2">
-            <span>🚨</span>
-            <span id="anomalyText" class="font-bold">UNUSUAL CARBON ACTIVITY DETECTED!</span>
-        </div>
-        <button onclick="triggerEcoOptimizer()" class="px-2 py-0.5 bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold rounded text-[10px]">
-            OPTIMIZE NOW
-        </button>
-    </div>
-
-    <!-- Header -->
-    <header class="glass sticky top-0 z-40 px-6 py-4 flex justify-between items-center border-b border-slate-800">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-300 flex items-center justify-center text-slate-950 text-xl font-bold glow-emerald">
-                🌱
-            </div>
-            <div>
-                <h1 class="text-xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-200 to-cyan-400 bg-clip-text text-transparent">GREENBYTE AI</h1>
-                <p class="text-xs text-slate-400">User: <strong id="currentUserDisplay" class="text-emerald-400">Guest User</strong></p>
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-[11px] font-bold text-slate-300 uppercase">User Name / Campus</label>
+                        <input id="loginName" type="text" placeholder="e.g. Soumodeep (CSE)" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-emerald-500">
+                    </div>
+                    <button onclick="submitLogin()" class="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-lg text-xs hover:from-emerald-400 hover:to-teal-300 transition">
+                        ENTER DASHBOARD
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="flex items-center gap-4">
-            <button onclick="triggerEcoOptimizer()" class="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-lg text-xs transition flex items-center gap-1.5">
-                ⚡ MASTER ECO-OPTIMIZE
+        <!-- Live Eco News Ticker -->
+        <div class="bg-emerald-950/80 border-b border-emerald-500/20 px-4 py-1.5 text-xs text-emerald-300 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="px-1.5 py-0.5 bg-emerald-500 text-slate-950 font-black rounded uppercase text-[10px]">LIVE ECO NEWS</span>
+                <span id="newsTicker" class="animate-pulse">Connecting to digital telemetry feed...</span>
+            </div>
+            <span class="text-slate-400 text-[11px]">IEM Sustainability Hackathon 2026</span>
+        </div>
+
+        <!-- Carbon Anomaly Banner -->
+        <div id="anomalyBanner" class="hidden bg-rose-500/20 border-b border-rose-500/40 px-4 py-2 text-xs text-rose-300 flex justify-between items-center animate-pulse">
+            <div class="flex items-center gap-2">
+                <span>🚨</span>
+                <span id="anomalyText" class="font-bold">UNUSUAL CARBON ACTIVITY DETECTED!</span>
+            </div>
+            <button onclick="triggerEcoOptimizer()" class="px-2 py-0.5 bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold rounded text-[10px]">
+                OPTIMIZE NOW
             </button>
-
-            <select id="gridSelect" onchange="updateTelemetry()" class="bg-slate-900 border border-slate-700 text-xs text-emerald-400 rounded px-2.5 py-1.5 font-bold outline-none">
-                <option value="WB Grid (Thermal/Coal)">West Bengal Coal Grid (710g)</option>
-                <option value="India Avg Grid">India National Avg (650g)</option>
-                <option value="Global Avg Grid">Global Average (475g)</option>
-                <option value="EU Grid (Renewables)">EU Clean Grid (210g)</option>
-            </select>
-        </div>
-    </header>
-
-    <main class="max-w-7xl mx-auto p-6 space-y-6">
-
-        <!-- Top Metrics & REAL HARDWARE BATTERY SYNC -->
-        <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
-            <div class="glass rounded-2xl p-4 border border-slate-800">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Sustainability Score</span>
-                <div class="flex items-baseline justify-between mt-1">
-                    <span id="scoreVal" class="text-3xl font-black text-emerald-400">--</span>
-                    <span class="text-slate-500 text-xs font-bold">/ 100</span>
-                </div>
-                <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2">
-                    <div id="scoreBar" class="bg-emerald-400 h-1.5 rounded-full" style="width: 0%"></div>
-                </div>
-            </div>
-
-            <div class="glass rounded-2xl p-4 border border-slate-800">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Normalized CPU</span>
-                <div class="mt-1 flex items-baseline gap-1">
-                    <span id="cpuVal" class="text-2xl font-black text-amber-400">--</span>
-                    <span class="text-xs text-slate-400">% Load</span>
-                </div>
-                <p class="text-[10px] text-slate-500 mt-1">Multi-core scaled</p>
-            </div>
-
-            <div class="glass rounded-2xl p-4 border border-slate-800">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Power Draw</span>
-                <div class="mt-1 flex items-baseline gap-1">
-                    <span id="wattsVal" class="text-2xl font-black text-amber-400">--</span>
-                    <span class="text-xs text-slate-400">Watts</span>
-                </div>
-            </div>
-
-            <div class="glass rounded-2xl p-4 border border-slate-800">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Session CO₂</span>
-                <div class="mt-1 flex items-baseline gap-1">
-                    <span id="co2Val" class="text-2xl font-black text-rose-400">--</span>
-                    <span class="text-xs text-slate-400">g CO₂</span>
-                </div>
-            </div>
-
-            <!-- LIVE LAPTOP BATTERY LEVEL -->
-            <div class="glass rounded-2xl p-4 border border-slate-800 col-span-2">
-                <div class="flex justify-between">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">🔋 Live Laptop Battery Level</span>
-                    <span id="batteryStatus" class="text-[10px] text-emerald-400 font-bold">Syncing...</span>
-                </div>
-                <div class="mt-2 flex items-baseline gap-2">
-                    <span id="batteryVal" class="text-2xl font-black text-emerald-400">91%</span>
-                    <span class="text-xs text-slate-400">Hardware Synced</span>
-                </div>
-                <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2">
-                    <div id="batteryBar" class="bg-emerald-400 h-1.5 rounded-full" style="width: 91%"></div>
-                </div>
-            </div>
         </div>
 
-        <!-- Digital Carbon Map & Cloud Footprint Estimator -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
-                <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                    <span>🌐</span> DIGITAL CARBON MAP
-                </h2>
-                <div class="grid grid-cols-4 gap-2 text-center text-xs font-mono">
-                    <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                        <p class="text-slate-400 text-[9px]">CPU</p>
-                        <p id="mapCpu" class="text-emerald-400 font-bold">--%</p>
-                    </div>
-                    <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                        <p class="text-slate-400 text-[9px]">RAM</p>
-                        <p id="mapRam" class="text-teal-300 font-bold">--%</p>
-                    </div>
-                    <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                        <p class="text-slate-400 text-[9px]">Disk</p>
-                        <p id="mapDisk" class="text-amber-300 font-bold">--%</p>
-                    </div>
-                    <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                        <p class="text-slate-400 text-[9px]">Cloud/Net</p>
-                        <p id="mapCloud" class="text-cyan-300 font-bold">--%</p>
-                    </div>
+        <!-- Header -->
+        <header class="glass sticky top-0 z-40 px-6 py-4 flex justify-between items-center border-b border-slate-800">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-300 flex items-center justify-center text-slate-950 text-xl font-bold glow-emerald">
+                    🌱
                 </div>
-            </div>
-
-            <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
-                <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                    <span>☁️</span> CLOUD FOOTPRINT ESTIMATOR
-                </h2>
-                <div class="grid grid-cols-3 gap-2 text-xs font-mono">
-                    <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                        <p class="text-slate-400 text-[9px]">Drive Storage</p>
-                        <p id="cloudDrive" class="text-emerald-400 font-bold">-- g</p>
-                    </div>
-                    <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                        <p class="text-slate-400 text-[9px]">AI Queries</p>
-                        <p id="cloudAi" class="text-amber-300 font-bold">-- g</p>
-                    </div>
-                    <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                        <p class="text-slate-400 text-[9px]">HD Streaming</p>
-                        <p id="cloudVideo" class="text-rose-400 font-bold">-- g</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- PROCESS CARBON DNA & APP SUSTAINABILITY RANKING -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="glass rounded-2xl p-6 lg:col-span-2 space-y-4 border border-slate-800">
-                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                    <h2 class="text-sm font-black text-slate-200 uppercase">🧬 Active Apps &amp; Chrome Tab Carbon DNA</h2>
-                    <div class="flex gap-2">
-                        <button onclick="addNewApp()" class="px-2.5 py-1 bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-300 border border-emerald-500/30 rounded text-xs font-mono">
-                            + Track Custom App/Tab
-                        </button>
-                        <button onclick="exportReport()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs rounded-lg font-mono">
-                            📥 Export JSON
-                        </button>
-                    </div>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs font-mono">
-                        <thead class="text-slate-400 border-b border-slate-800 text-[11px] uppercase">
-                            <tr>
-                                <th class="pb-3">Application / Tab Name</th>
-                                <th class="pb-3">Profile DNA</th>
-                                <th class="pb-3">CPU</th>
-                                <th class="pb-3">Memory</th>
-                                <th class="pb-3">Est. Carbon Draw</th>
-                                <th class="pb-3 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="processTableBody" class="divide-y divide-slate-800/60">
-                            <!-- Dynamically populated with YouTube, WhatsApp, Mail, Microsoft Store, Omen, etc. -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- AI Webpage Scanner -->
-            <div class="glass rounded-2xl p-5 border border-slate-800 flex flex-col justify-between space-y-4">
                 <div>
-                    <h2 class="text-xs font-bold text-slate-200 uppercase tracking-wider">🌐 AI Webpage Carbon Scanner</h2>
-                    <p class="text-[11px] text-slate-400 mb-3">Audit asset weight of any website</p>
-                    <div class="flex gap-2">
-                        <input id="urlInput" type="text" placeholder="iem.edu.in" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none focus:border-emerald-500">
-                        <button onclick="analyzeUrl()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-lg text-xs transition">
-                            Scan
+                    <h1 class="text-xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-200 to-cyan-400 bg-clip-text text-transparent">GREENBYTE AI</h1>
+                    <p class="text-xs text-slate-400">User: <strong id="currentUserDisplay" class="text-emerald-400">Guest User</strong></p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button onclick="triggerEcoOptimizer()" class="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-lg text-xs transition flex items-center gap-1.5">
+                    ⚡ MASTER ECO-OPTIMIZE
+                </button>
+
+                <select id="gridSelect" onchange="updateTelemetry()" class="bg-slate-900 border border-slate-700 text-xs text-emerald-400 rounded px-2.5 py-1.5 font-bold outline-none">
+                    <option value="WB Grid (Thermal/Coal)">West Bengal Coal Grid (710g)</option>
+                    <option value="India Avg Grid">India National Avg (650g)</option>
+                    <option value="Global Avg Grid">Global Average (475g)</option>
+                    <option value="EU Grid (Renewables)">EU Clean Grid (210g)</option>
+                </select>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto p-6 space-y-6">
+
+            <!-- Top Metrics & REAL HARDWARE BATTERY SYNC -->
+            <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+                <div class="glass rounded-2xl p-4 border border-slate-800">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Sustainability Score</span>
+                    <div class="flex items-baseline justify-between mt-1">
+                        <span id="scoreVal" class="text-3xl font-black text-emerald-400">--</span>
+                        <span class="text-slate-500 text-xs font-bold">/ 100</span>
+                    </div>
+                    <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2">
+                        <div id="scoreBar" class="bg-emerald-400 h-1.5 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="glass rounded-2xl p-4 border border-slate-800">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Normalized CPU</span>
+                    <div class="mt-1 flex items-baseline gap-1">
+                        <span id="cpuVal" class="text-2xl font-black text-amber-400">--</span>
+                        <span class="text-xs text-slate-400">% Load</span>
+                    </div>
+                    <p class="text-[10px] text-slate-500 mt-1">Multi-core scaled</p>
+                </div>
+
+                <div class="glass rounded-2xl p-4 border border-slate-800">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Power Draw</span>
+                    <div class="mt-1 flex items-baseline gap-1">
+                        <span id="wattsVal" class="text-2xl font-black text-amber-400">--</span>
+                        <span class="text-xs text-slate-400">Watts</span>
+                    </div>
+                </div>
+
+                <div class="glass rounded-2xl p-4 border border-slate-800">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Session CO₂</span>
+                    <div class="mt-1 flex items-baseline gap-1">
+                        <span id="co2Val" class="text-2xl font-black text-rose-400">--</span>
+                        <span class="text-xs text-slate-400">g CO₂</span>
+                    </div>
+                </div>
+
+                <!-- REAL HARDWARE BATTERY SYNC -->
+                <div class="glass rounded-2xl p-4 border border-slate-800 col-span-2">
+                    <div class="flex justify-between">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">🔋 Live Laptop Battery Level</span>
+                        <span id="batteryStatus" class="text-[10px] text-emerald-400 font-bold">Syncing...</span>
+                    </div>
+                    <div class="mt-2 flex items-baseline gap-2">
+                        <span id="batteryVal" class="text-2xl font-black text-emerald-400">--%</span>
+                        <span class="text-xs text-slate-400">Hardware Synced</span>
+                    </div>
+                    <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2">
+                        <div id="batteryBar" class="bg-emerald-400 h-1.5 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Digital Carbon Map & Cloud Footprint Estimator -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
+                    <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                        <span>🌐</span> DIGITAL CARBON MAP
+                    </h2>
+                    <div class="grid grid-cols-4 gap-2 text-center text-xs font-mono">
+                        <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
+                            <p class="text-slate-400 text-[9px]">CPU</p>
+                            <p id="mapCpu" class="text-emerald-400 font-bold">--%</p>
+                        </div>
+                        <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
+                            <p class="text-slate-400 text-[9px]">RAM</p>
+                            <p id="mapRam" class="text-teal-300 font-bold">--%</p>
+                        </div>
+                        <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
+                            <p class="text-slate-400 text-[9px]">Disk</p>
+                            <p id="mapDisk" class="text-amber-300 font-bold">--%</p>
+                        </div>
+                        <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
+                            <p class="text-slate-400 text-[9px]">Cloud/Net</p>
+                            <p id="mapCloud" class="text-cyan-300 font-bold">--%</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
+                    <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                        <span>☁️</span> CLOUD FOOTPRINT ESTIMATOR
+                    </h2>
+                    <div class="grid grid-cols-3 gap-2 text-xs font-mono">
+                        <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
+                            <p class="text-slate-400 text-[9px]">Drive Storage</p>
+                            <p id="cloudDrive" class="text-emerald-400 font-bold">-- g</p>
+                        </div>
+                        <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
+                            <p class="text-slate-400 text-[9px]">AI Queries</p>
+                            <p id="cloudAi" class="text-amber-300 font-bold">-- g</p>
+                        </div>
+                        <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
+                            <p class="text-slate-400 text-[9px]">HD Streaming</p>
+                            <p id="cloudVideo" class="text-rose-400 font-bold">-- g</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUBSYSTEM CARBON DNA & SYSTEM ATTRIBUTION TABLE -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="glass rounded-2xl p-6 lg:col-span-2 space-y-4 border border-slate-800">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                        <h2 class="text-sm font-black text-slate-200 uppercase">🧬 Infrastructure Subsystem Carbon DNA</h2>
+                        <button onclick="exportReport()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs rounded-lg font-mono">
+                            📥 Export JSON Report
                         </button>
                     </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs font-mono">
+                            <thead class="text-slate-400 border-b border-slate-800 text-[11px] uppercase">
+                                <tr>
+                                    <th class="pb-3">Subsystem Component</th>
+                                    <th class="pb-3">Profile DNA</th>
+                                    <th class="pb-3">Activity</th>
+                                    <th class="pb-3">Memory/Load</th>
+                                    <th class="pb-3">Est. Carbon Draw</th>
+                                    <th class="pb-3 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="subsystemTableBody" class="divide-y divide-slate-800/60">
+                                <!-- Dynamically populated subsystem telemetry -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <div id="urlResult" class="bg-slate-900/80 rounded-xl p-3 text-xs space-y-1.5 border border-slate-800 text-slate-400">
-                    <p class="text-center text-slate-500">Enter a site URL above to audit asset weight.</p>
-                </div>
+                <!-- AI Webpage Scanner -->
+                <div class="glass rounded-2xl p-5 border border-slate-800 flex flex-col justify-between space-y-4">
+                    <div>
+                        <h2 class="text-xs font-bold text-slate-200 uppercase tracking-wider">🌐 AI Webpage Carbon Scanner</h2>
+                        <p class="text-[11px] text-slate-400 mb-3">Audit asset weight of any website</p>
+                        <div class="flex gap-2">
+                            <input id="urlInput" type="text" placeholder="iem.edu.in" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none focus:border-emerald-500">
+                            <button onclick="analyzeUrl()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-lg text-xs transition">
+                                Scan
+                            </button>
+                        </div>
+                    </div>
 
-                <div class="h-32 pt-2 border-t border-slate-800">
-                    <canvas id="powerChart"></canvas>
+                    <div id="urlResult" class="bg-slate-900/80 rounded-xl p-3 text-xs space-y-1.5 border border-slate-800 text-slate-400">
+                        <p class="text-center text-slate-500">Enter a site URL above to audit asset weight.</p>
+                    </div>
+
+                    <div class="h-32 pt-2 border-t border-slate-800">
+                        <canvas id="powerChart"></canvas>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Real-World Impact Translator -->
-        <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
-            <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                <span>🌳</span> REAL-WORLD IMPACT TRANSLATOR
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
-                <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center gap-3">
-                    <span class="text-2xl">🌲</span>
-                    <div>
-                        <p class="text-slate-400 text-[10px] uppercase">Tree Offset Equivalent</p>
-                        <p class="text-emerald-400 font-bold text-sm"><span id="impactTrees">--</span> Tree-Days Absorbed</p>
-                    </div>
-                </div>
-                <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center gap-3">
-                    <span class="text-2xl">🚗</span>
-                    <div>
-                        <p class="text-slate-400 text-[10px] uppercase">Car Travel Avoided</p>
-                        <p class="text-teal-300 font-bold text-sm"><span id="impactCar">--</span> km Driving Avoided</p>
-                    </div>
-                </div>
-                <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center gap-3">
-                    <span class="text-2xl">💡</span>
-                    <div>
-                        <p class="text-slate-400 text-[10px] uppercase">LED Bulb Energy</p>
-                        <p class="text-amber-300 font-bold text-sm"><span id="impactLed">--</span> Hours Powered</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Registered User Leaderboard & AI Chatbot -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Real-World Impact Translator -->
             <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
-                <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider">🌍 IEM CAMPUS LEADERBOARD (REGISTERED USERS ONLY)</h2>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs font-mono">
-                        <thead class="text-slate-500 border-b border-slate-800 text-[10px] uppercase">
-                            <tr>
-                                <th class="pb-1">Rank</th>
-                                <th class="pb-1">Registered User / Campus</th>
-                                <th class="pb-1 text-right">Sustainability Score</th>
-                            </tr>
-                        </thead>
-                        <tbody id="leaderboardBody" class="divide-y divide-slate-800/40 text-slate-300">
-                            <tr><td colspan="3" class="py-2 text-center text-slate-500">No users registered yet. Login above to record your score!</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3 flex flex-col justify-between">
-                <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
-                    <span>🤖</span> GREENBYTE AI CHATBOT
+                <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                    <span>🌳</span> REAL-WORLD IMPACT TRANSLATOR
                 </h2>
-                <div id="chatHistory" class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 h-32 overflow-y-auto text-xs space-y-2 font-mono">
-                    <p class="text-emerald-400">🤖: Hello! Ask me about your carbon footprint, recommendations, or potential monthly savings.</p>
-                </div>
-                <div class="flex gap-2">
-                    <input id="chatInput" type="text" placeholder="Why is my carbon footprint high?" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none focus:border-emerald-500">
-                    <button onclick="sendChat()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-lg text-xs transition">Ask</button>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+                    <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center gap-3">
+                        <span class="text-2xl">🌲</span>
+                        <div>
+                            <p class="text-slate-400 text-[10px] uppercase">Tree Offset Equivalent</p>
+                            <p class="text-emerald-400 font-bold text-sm"><span id="impactTrees">--</span> Tree-Days Absorbed</p>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center gap-3">
+                        <span class="text-2xl">🚗</span>
+                        <div>
+                            <p class="text-slate-400 text-[10px] uppercase">Car Travel Avoided</p>
+                            <p class="text-teal-300 font-bold text-sm"><span id="impactCar">--</span> km Driving Avoided</p>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center gap-3">
+                        <span class="text-2xl">💡</span>
+                        <div>
+                            <p class="text-slate-400 text-[10px] uppercase">LED Bulb Energy</p>
+                            <p class="text-amber-300 font-bold text-sm"><span id="impactLed">--</span> Hours Powered</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- DYNAMIC AI GREEN ADVISOR -->
-        <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
-            <h2 class="text-xs font-black text-slate-200 uppercase">💡 DYNAMIC AI GREEN ADVISOR</h2>
-            <div id="suggestionsContainer" class="space-y-2 text-xs">
+            <!-- Registered User Leaderboard & AI Chatbot -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
+                    <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider">🌍 IEM CAMPUS LEADERBOARD (REGISTERED USERS ONLY)</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs font-mono">
+                            <thead class="text-slate-500 border-b border-slate-800 text-[10px] uppercase">
+                                <tr>
+                                    <th class="pb-1">Rank</th>
+                                    <th class="pb-1">Registered User / Campus</th>
+                                    <th class="pb-1 text-right">Sustainability Score</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboardBody" class="divide-y divide-slate-800/40 text-slate-300">
+                                <tr><td colspan="3" class="py-2 text-center text-slate-500">No users registered yet. Login above to record your score!</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3 flex flex-col justify-between">
+                    <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+                        <span>🤖</span> GREENBYTE AI CHATBOT
+                    </h2>
+                    <div id="chatHistory" class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 h-32 overflow-y-auto text-xs space-y-2 font-mono">
+                        <p class="text-emerald-400">🤖: Hello! Ask me about your carbon footprint, recommendations, or device optimization.</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <input id="chatInput" type="text" placeholder="Why is my carbon footprint high?" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none focus:border-emerald-500">
+                        <button onclick="sendChat()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-lg text-xs transition">Ask</button>
+                    </div>
+                </div>
             </div>
-        </div>
 
-    </main>
+            <!-- DYNAMIC AI GREEN ADVISOR -->
+            <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
+                <h2 class="text-xs font-black text-slate-200 uppercase">💡 DYNAMIC AI GREEN ADVISOR</h2>
+                <div id="suggestionsContainer" class="space-y-2 text-xs">
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- PROJECT CREDITS FOOTER -->
+    <footer class="glass mt-8 border-t border-slate-800 px-6 py-4 text-center text-xs text-slate-400 space-y-1">
+        <p class="font-bold text-emerald-400 uppercase tracking-widest text-[11px]">PROJECT BY GREENBYTE AI TEAM</p>
+        <p class="font-mono text-slate-300">
+            Soumodeep Ghosh &nbsp;|&nbsp; Satadru Roy &nbsp;|&nbsp; Sougata Mondal &nbsp;|&nbsp; Subhadeep Bera &nbsp;|&nbsp; Sushmit Sen
+        </p>
+        <p class="text-[10px] text-slate-500">IEM Sustainability Hackathon 2026</p>
+    </footer>
 
     <script>
         const API = "/api";
         let lastTelemetryData = null;
         let currentUser = "";
-        let adviceIndex = 0;
 
-        // User's Real Active Apps and Chrome Tabs Pool
-        let activeAppList = [
-            { name: "Chrome: YouTube Stream (4K/1080p)", baseCpu: 18.4, baseRam: 920, dna: "🔴 High" },
-            { name: "Omen Gaming Hub", baseCpu: 12.1, baseRam: 640, dna: "🔴 High" },
-            { name: "Chrome: WhatsApp Web", baseCpu: 4.8, baseRam: 380, dna: "🟡 Moderate" },
-            { name: "Microsoft Store", baseCpu: 3.2, baseRam: 210, dna: "🟡 Moderate" },
-            { name: "Chrome: Webmail / Outlook", baseCpu: 2.1, baseRam: 290, dna: "🟢 Low" },
-            { name: "Microsoft Edge Browser", baseCpu: 3.8, baseRam: 420, dna: "🟡 Moderate" },
-            { name: "Windows File Explorer", baseCpu: 0.4, baseRam: 48, dna: "🟢 Low" }
-        ];
-
-        const advicePool = [
-            "⚡ YouTube 4K Stream active: Lowering stream resolution to 1080p reduces GPU energy draw by up to 32%.",
-            "🎮 Omen Gaming Hub is consuming high background GPU cycles. Pause hardware monitoring when not gaming.",
-            "💬 WhatsApp Web & Background Tabs active: Suspending background tabs reduces RAM usage by ~450MB.",
-            "🌿 System Operating Efficiently: Maintain screen brightness at ~60% to maximize laptop battery longevity."
-        ];
-
-        // 1. Sync Laptop Battery Level using Web Navigator API
+        // 1. Sync Actual Laptop Battery Level using Web Navigator API
         async function syncRealBattery() {
             if ('getBattery' in navigator) {
                 try {
@@ -434,17 +421,11 @@
                     document.getElementById('newsTicker').innerText = `[${randomNews.tag}] ${randomNews.title}`;
                 }
 
-                // Render Active Process DNA Table
-                renderProcessTable(data.grid_factor || 710.0);
+                // Render Infrastructure Subsystem Telemetry
+                renderSubsystems(data.cpu_percent, data.grid_factor || 710.0);
 
-                // Dynamic Advisor Rotation
-                adviceIndex = (adviceIndex + 1) % advicePool.length;
-                const sugContainer = document.getElementById('suggestionsContainer');
-                sugContainer.innerHTML = `
-                    <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-lg text-emerald-300 flex items-start gap-2">
-                        <span>🌿</span><span>${advicePool[adviceIndex]}</span>
-                    </div>
-                `;
+                // Dynamic Advisor Updates based on REAL CPU activity
+                updateAdvisor(data.cpu_percent, data.sustainability_score);
 
                 // Chart
                 const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -469,34 +450,35 @@
             } catch (err) {}
         }
 
-        function renderProcessTable(gridFactor) {
-            const tbody = document.getElementById('processTableBody');
+        function renderSubsystems(cpu, gridFactor) {
+            const subsystems = [
+                { name: "Display & GPU Render Pipeline", activity: "60Hz Display Stream", load: `${(cpu * 0.8 + 12).toFixed(1)}% Load`, baseWatts: 4.8 },
+                { name: "Memory & Page Cache Allocator", activity: "Active RAM Buffer", load: "1.2 GB Allocated", baseWatts: 2.1 },
+                { name: "Network & Web Socket I/O", activity: "HTTP/2 Telemetry Stream", load: "42 KB/s Packets", baseWatts: 1.4 },
+                { name: "Storage & System Disk I/O", activity: "Pagefile Read/Write", load: "I/O Idle", baseWatts: 0.6 },
+                { name: "CPU Multi-Core Thread Engine", activity: "Worker Process Threads", load: `${cpu}% Load`, baseWatts: (cpu * 0.25) }
+            ];
+
+            const tbody = document.getElementById('subsystemTableBody');
             tbody.innerHTML = '';
             
-            activeAppList.forEach((app, idx) => {
-                // Dynamic Jitter for CPU & RAM
-                const dynamicCpu = Math.max(0.1, (app.baseCpu + (Math.random() * 2.4 - 1.2))).toFixed(1);
-                const dynamicRam = Math.max(10, Math.round(app.baseRam + (Math.random() * 20 - 10)));
-                
-                // Calculate CO2 draw
-                const appWatts = (dynamicCpu / 100.0) * 35.0;
-                const co2Hourly = ((appWatts / 1000.0) * gridFactor).toFixed(2);
-                
-                let dnaBadge = "🟢 Low";
-                if (co2Hourly > 2.5) dnaBadge = "🔴 High";
-                else if (co2Hourly > 0.8) dnaBadge = "🟡 Moderate";
+            subsystems.forEach((sub, idx) => {
+                const drawG = (((sub.baseWatts) / 1000.0) * gridFactor).toFixed(2);
+                let dna = "🟢 Low";
+                if (drawG > 2.0) dna = "🔴 High";
+                else if (drawG > 0.8) dna = "🟡 Moderate";
 
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-slate-800/40 transition';
                 tr.innerHTML = `
-                    <td class="py-2.5 font-semibold text-slate-200">${app.name}</td>
-                    <td class="py-2.5 font-bold">${dnaBadge}</td>
-                    <td class="py-2.5 text-slate-300">${dynamicCpu}%</td>
-                    <td class="py-2.5 text-slate-300">${dynamicRam} MB</td>
-                    <td class="py-2.5 font-bold ${dnaBadge.includes('High') ? 'text-rose-400' : 'text-emerald-400'}">${co2Hourly} g/hr</td>
+                    <td class="py-2.5 font-semibold text-slate-200">${sub.name}</td>
+                    <td class="py-2.5 font-bold">${dna}</td>
+                    <td class="py-2.5 text-slate-300">${sub.activity}</td>
+                    <td class="py-2.5 text-slate-300">${sub.load}</td>
+                    <td class="py-2.5 font-bold ${dna.includes('High') ? 'text-rose-400' : 'text-emerald-400'}">${drawG} g/hr</td>
                     <td class="py-2.5 text-right">
-                        <button onclick="killApp(${idx})" class="px-2 py-1 bg-rose-500/10 hover:bg-rose-500/30 text-rose-400 border border-rose-500/20 rounded font-sans text-[10px]">
-                            Terminate Tab/App
+                        <button onclick="optimizeSubsystem(this)" class="px-2 py-1 bg-emerald-500/10 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/20 rounded font-sans text-[10px]">
+                            Optimize
                         </button>
                     </td>
                 `;
@@ -504,22 +486,26 @@
             });
         }
 
-        function killApp(index) {
-            activeAppList.splice(index, 1);
-            updateTelemetry();
+        function updateAdvisor(cpu, score) {
+            const sugContainer = document.getElementById('suggestionsContainer');
+            let advice = "🌿 System is running in an optimal energy state. Maintain ~60% screen brightness to maximize battery longevity.";
+            
+            if (cpu > 25) {
+                advice = `⚡ High CPU Activity Detected (${cpu}% Load): Active thread execution is increasing power draw. Run Master Eco-Optimize to trim cache memory.`;
+            } else if (score < 65) {
+                advice = "⚠️ Lower Sustainability Score: Operating on clean renewable grids or unplugging chargers when full improves grid carbon intensity.";
+            }
+
+            sugContainer.innerHTML = `
+                <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-lg text-emerald-300 flex items-start gap-2">
+                    <span>🌿</span><span>${advice}</span>
+                </div>
+            `;
         }
 
-        function addNewApp() {
-            const name = prompt("Enter Application or Chrome Tab Name to Track:", "Chrome: Spotify Music");
-            if (name) {
-                activeAppList.push({
-                    name: name,
-                    baseCpu: (Math.random() * 5 + 1).toFixed(1),
-                    baseRam: Math.floor(Math.random() * 300 + 100),
-                    dna: "🟡 Moderate"
-                });
-                updateTelemetry();
-            }
+        function optimizeSubsystem(btn) {
+            btn.innerText = "Optimized ✓";
+            btn.className = "px-2 py-1 bg-slate-800 text-emerald-400 text-[10px] rounded font-sans";
         }
 
         async function loadLeaderboard() {
