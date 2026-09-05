@@ -43,23 +43,18 @@
                     <h2 class="text-sm font-black text-emerald-400 uppercase">📞 Contact Lead Developer</h2>
                     <button onclick="closeContactModal()" class="text-slate-400 hover:text-slate-100 text-xs font-mono">✕ Close</button>
                 </div>
-                
                 <div class="space-y-3">
                     <img src="/Saez.jpg" onerror="this.src='https://ui-avatars.com/api/?name=Soumyadeep+Ghosh&background=10b981&color=0f172a&size=128'" alt="Soumyadeep Ghosh" class="w-24 h-24 rounded-full mx-auto border-2 border-emerald-400 object-cover shadow-lg glow-emerald">
-                    
                     <div>
                         <h3 class="text-base font-black text-slate-100">Soumyadeep Ghosh</h3>
                         <p class="text-[11px] text-emerald-400 font-bold uppercase tracking-wider">Lead Web Developer & AI Architect</p>
                     </div>
-
                     <div class="p-3 bg-slate-900/90 border border-slate-800 rounded-xl text-xs space-y-2 text-left font-mono">
                         <div class="flex items-center gap-2 text-slate-300">
-                            <span>📞</span>
-                            <a href="tel:8100127066" class="hover:text-emerald-400 transition">+91 8100127066</a>
+                            <span>📞</span><a href="tel:8100127066" class="hover:text-emerald-400 transition">+91 8100127066</a>
                         </div>
                         <div class="flex items-center gap-2 text-slate-300 truncate">
-                            <span>✉️</span>
-                            <a href="mailto:soumyadeepghosh1tb@gmail.com" class="hover:text-emerald-400 transition truncate">soumyadeepghosh1tb@gmail.com</a>
+                            <span>✉️</span><a href="mailto:soumyadeepghosh1tb@gmail.com" class="hover:text-emerald-400 transition truncate">soumyadeepghosh1tb@gmail.com</a>
                         </div>
                     </div>
                 </div>
@@ -76,70 +71,70 @@
                     <button onclick="closeBossModal()" class="text-slate-400 hover:text-slate-100 text-xs font-mono">✕ Close</button>
                 </div>
 
-                <div class="flex items-center gap-4 bg-slate-900/90 p-4 rounded-xl border border-slate-800">
-                    <img id="bossAvatarImg" src="" class="w-20 h-20 rounded-xl border border-rose-500/40 object-cover shadow-lg animate-pulse">
-                    <div class="space-y-1.5 flex-1">
-                        <div class="flex justify-between items-baseline">
-                            <h3 id="bossNameDisplay" class="text-base font-black text-slate-100">Loading Boss...</h3>
-                            <span id="bossHpText" class="text-xs font-mono text-rose-400 font-bold">0 / 0 HP</span>
+                <div id="bossLockNotice" class="hidden bg-rose-950/80 border border-rose-500/40 p-3 rounded-xl text-center text-xs font-mono text-rose-300">
+                    ⚠️ BOSS RAID LOCKED: At least 2 registered users are required on the campus leaderboard to challenge boss raids. Please log in another user!
+                </div>
+
+                <div id="bossContentArea">
+                    <div class="flex items-center gap-4 bg-slate-900/90 p-4 rounded-xl border border-slate-800">
+                        <img id="bossAvatarImg" src="" class="w-20 h-20 rounded-xl border border-rose-500/40 object-cover shadow-lg animate-pulse">
+                        <div class="space-y-1.5 flex-1">
+                            <div class="flex justify-between items-baseline">
+                                <h3 id="bossNameDisplay" class="text-base font-black text-slate-100">Loading AI Boss...</h3>
+                                <span id="bossHpText" class="text-xs font-mono text-rose-400 font-bold">0 / 0 HP</span>
+                            </div>
+                            <div class="w-full bg-slate-800 rounded-full h-3 border border-slate-700">
+                                <div id="bossHpBar" class="bg-gradient-to-r from-rose-500 to-amber-500 h-2.5 rounded-full transition-all duration-500" style="width: 100%"></div>
+                            </div>
+                            <p class="text-[10px] text-slate-400 font-mono">Score >75 deals up to 250 HP damage per telemetry tick!</p>
                         </div>
-                        <div class="w-full bg-slate-800 rounded-full h-3 border border-slate-700">
-                            <div id="bossHpBar" class="bg-gradient-to-r from-rose-500 to-amber-500 h-2.5 rounded-full transition-all duration-500" style="width: 100%"></div>
-                        </div>
-                        <p class="text-[10px] text-slate-400 font-mono">Score >75 deals up to 250 HP damage per telemetry tick!</p>
                     </div>
-                </div>
 
-                <div id="bossAttackFeedback" class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl text-center text-xs font-mono font-bold text-amber-300">
-                    Attack Readiness: Maintain Sustainability Score >75 to strike!
-                </div>
-
-                <div class="space-y-2">
-                    <h4 class="text-xs font-bold text-slate-300 uppercase">🛡️ Top Campus Damage Dealers</h4>
-                    <div id="bossDamageList" class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 text-xs font-mono max-h-28 overflow-y-auto space-y-1 text-slate-300">
+                    <div id="bossAttackFeedback" class="mt-3 p-2.5 bg-slate-900 border border-slate-800 rounded-xl text-center text-xs font-mono font-bold text-amber-300">
+                        Attack Readiness: Maintain Sustainability Score >75 to strike!
                     </div>
-                </div>
 
-                <div class="border-t border-slate-800 pt-3">
-                    <h4 class="text-xs font-bold text-emerald-400 uppercase mb-2">🏆 Defeated Bosses Trophy Hall</h4>
-                    <div id="trophyHallList" class="flex gap-2 overflow-x-auto pb-1 text-[10px] font-mono">
+                    <div class="mt-3 space-y-2">
+                        <h4 class="text-xs font-bold text-slate-300 uppercase">🛡️ Top Campus Damage Dealers</h4>
+                        <div id="bossDamageList" class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 text-xs font-mono max-h-28 overflow-y-auto space-y-1 text-slate-300"></div>
+                    </div>
+
+                    <div class="mt-3 border-t border-slate-800 pt-3">
+                        <h4 class="text-xs font-bold text-emerald-400 uppercase mb-2">🏆 Defeated Bosses Trophy Hall</h4>
+                        <div id="trophyHallList" class="flex gap-2 overflow-x-auto pb-1 text-[10px] font-mono"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- VIRTUAL ECO-FOREST MODAL -->
+        <!-- ARCADE "SAPLING CATCHER" ECO-FOREST MODAL -->
         <div id="forestModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
-            <div class="glass max-w-xl w-full p-6 rounded-2xl border border-emerald-500/30 space-y-4 glow-emerald">
+            <div class="glass max-w-lg w-full p-5 rounded-2xl border border-emerald-500/30 space-y-3 glow-emerald text-center">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                    <h2 class="text-sm font-black text-emerald-400 uppercase tracking-wider flex items-center gap-2">
-                        🌲 12-HOUR VIRTUAL ECO-FOREST CHALLENGE
+                    <h2 class="text-sm font-black text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                        🌲 ARCADE SAPLING CATCHER MINI-GAME
                     </h2>
                     <button onclick="closeForestModal()" class="text-slate-400 hover:text-slate-100 text-xs font-mono">✕ Close</button>
                 </div>
 
-                <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-3">
-                    <div class="flex justify-between items-center text-xs font-mono">
-                        <span>Current Cycle Trees Collected:</span>
-                        <span id="forestTreeCount" class="text-emerald-400 font-bold text-base">0 / 20 🌲</span>
-                    </div>
-                    <div class="grid grid-cols-5 gap-2 text-center text-[10px] font-mono">
-                        <div class="p-2 bg-slate-950 border border-slate-800 rounded">5 Trees: +1 Token</div>
-                        <div class="p-2 bg-slate-950 border border-slate-800 rounded">10 Trees: +2 Tokens</div>
-                        <div class="p-2 bg-slate-950 border border-slate-800 rounded">15 Trees: +3 Tokens</div>
-                        <div class="p-2 bg-slate-950 border border-emerald-500/40 rounded text-emerald-300 font-bold">20 Trees: +5 Tokens</div>
-                        <button onclick="claimForestTokens()" class="p-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded uppercase">Claim</button>
-                    </div>
+                <div class="flex justify-between items-center text-xs font-mono bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
+                    <span>Trees Caught: <strong id="gameTreeCount" class="text-emerald-400">0</strong></span>
+                    <span>Time Left: <strong id="gameTimeLeft" class="text-amber-400">30s</strong></span>
+                    <button id="startGameBtn" onclick="startSaplingGame()" class="px-3 py-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded text-xs transition">START GAME</button>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 text-xs font-mono">
-                    <div class="space-y-2">
-                        <h4 class="font-bold text-teal-300 uppercase">📅 Monthly Token Leaderboard</h4>
-                        <div id="forestMonthlyList" class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 max-h-32 overflow-y-auto space-y-1"></div>
+                <div class="relative flex justify-center">
+                    <canvas id="gameCanvas" width="420" height="260" class="bg-slate-900 border border-slate-800 rounded-xl shadow-inner cursor-pointer"></canvas>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 text-xs font-mono text-left pt-2 border-t border-slate-800">
+                    <div>
+                        <h4 class="font-bold text-teal-300 uppercase text-[10px]">📅 Monthly Leaderboard</h4>
+                        <div id="forestMonthlyList" class="bg-slate-900/60 p-2 rounded-lg border border-slate-800 max-h-24 overflow-y-auto space-y-1 text-[10px]"></div>
                     </div>
-                    <div class="space-y-2">
-                        <h4 class="font-bold text-amber-300 uppercase">🏆 Yearly Hall of Fame</h4>
-                        <div id="forestYearlyList" class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 max-h-32 overflow-y-auto space-y-1"></div>
+                    <div>
+                        <h4 class="font-bold text-amber-300 uppercase text-[10px]">🏆 Yearly Hall of Fame</h4>
+                        <div id="forestYearlyList" class="bg-slate-900/60 p-2 rounded-lg border border-slate-800 max-h-24 overflow-y-auto space-y-1 text-[10px]"></div>
                     </div>
                 </div>
             </div>
@@ -157,8 +152,7 @@
         <!-- Carbon Anomaly Banner -->
         <div id="anomalyBanner" class="hidden bg-rose-500/20 border-b border-rose-500/40 px-4 py-2 text-xs text-rose-300 flex justify-between items-center animate-pulse">
             <div class="flex items-center gap-2">
-                <span>🚨</span>
-                <span id="anomalyText" class="font-bold">UNUSUAL CARBON ACTIVITY DETECTED!</span>
+                <span>🚨</span><span id="anomalyText" class="font-bold">UNUSUAL CARBON ACTIVITY DETECTED!</span>
             </div>
             <button onclick="triggerMasterEcoOptimizer()" class="px-2 py-0.5 bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold rounded text-[10px]">
                 OPTIMIZE NOW
@@ -169,9 +163,7 @@
         <header class="glass sticky top-0 z-40 px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-slate-800">
             <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-300 flex items-center justify-center text-slate-950 text-xl font-bold glow-emerald">
-                        🌱
-                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-300 flex items-center justify-center text-slate-950 text-xl font-bold glow-emerald">🌱</div>
                     <div>
                         <h1 class="text-xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-200 to-cyan-400 bg-clip-text text-transparent">GREENBYTE AI</h1>
                         <p class="text-xs text-slate-400">User: <strong id="currentUserDisplay" class="text-emerald-400">Guest User</strong></p>
@@ -183,19 +175,15 @@
                 <button onclick="openBossModal()" class="px-3 py-1.5 bg-rose-500/20 border border-rose-500/40 hover:bg-rose-500/30 text-rose-300 font-bold rounded-lg text-xs transition flex items-center gap-1">
                     ⚔️ Boss Raid (<span id="navBossHp">100%</span>)
                 </button>
-
                 <button onclick="openForestModal()" class="px-3 py-1.5 bg-emerald-500/20 border border-emerald-500/40 hover:bg-emerald-500/30 text-emerald-300 font-bold rounded-lg text-xs transition flex items-center gap-1">
                     🌲 Eco Forest
                 </button>
-
                 <button onclick="openContactModal()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold rounded-lg text-xs transition flex items-center gap-1">
                     📞 Dev
                 </button>
-
                 <button onclick="triggerMasterEcoOptimizer()" class="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-lg text-xs transition flex items-center gap-1.5 shrink-0">
                     ⚡ MASTER ECO-OPTIMIZE
                 </button>
-
                 <select id="gridSelect" onchange="updateTelemetry()" class="bg-slate-900 border border-slate-700 text-xs text-emerald-400 rounded px-2.5 py-1.5 font-bold outline-none">
                     <option value="WB Grid (Thermal/Coal)">West Bengal Coal Grid (710g)</option>
                     <option value="India Avg Grid">India National Avg (650g)</option>
@@ -269,20 +257,16 @@
                     </h2>
                     <div class="grid grid-cols-4 gap-2 text-center text-xs font-mono">
                         <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                            <p class="text-slate-400 text-[9px]">CPU</p>
-                            <p id="mapCpu" class="text-emerald-400 font-bold">--%</p>
+                            <p class="text-slate-400 text-[9px]">CPU</p><p id="mapCpu" class="text-emerald-400 font-bold">--%</p>
                         </div>
                         <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                            <p class="text-slate-400 text-[9px]">RAM</p>
-                            <p id="mapRam" class="text-teal-300 font-bold">--%</p>
+                            <p class="text-slate-400 text-[9px]">RAM</p><p id="mapRam" class="text-teal-300 font-bold">--%</p>
                         </div>
                         <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                            <p class="text-slate-400 text-[9px]">Disk</p>
-                            <p id="mapDisk" class="text-amber-300 font-bold">--%</p>
+                            <p class="text-slate-400 text-[9px]">Disk</p><p id="mapDisk" class="text-amber-300 font-bold">--%</p>
                         </div>
                         <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                            <p class="text-slate-400 text-[9px]">Cloud/Net</p>
-                            <p id="mapCloud" class="text-cyan-300 font-bold">--%</p>
+                            <p class="text-slate-400 text-[9px]">Cloud/Net</p><p id="mapCloud" class="text-cyan-300 font-bold">--%</p>
                         </div>
                     </div>
                 </div>
@@ -293,16 +277,13 @@
                     </h2>
                     <div class="grid grid-cols-3 gap-2 text-xs font-mono">
                         <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                            <p class="text-slate-400 text-[9px]">Drive Storage</p>
-                            <p id="cloudDrive" class="text-emerald-400 font-bold">-- g</p>
+                            <p class="text-slate-400 text-[9px]">Drive Storage</p><p id="cloudDrive" class="text-emerald-400 font-bold">-- g</p>
                         </div>
                         <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                            <p class="text-slate-400 text-[9px]">AI Queries</p>
-                            <p id="cloudAi" class="text-amber-300 font-bold">-- g</p>
+                            <p class="text-slate-400 text-[9px]">AI Queries</p><p id="cloudAi" class="text-amber-300 font-bold">-- g</p>
                         </div>
                         <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                            <p class="text-slate-400 text-[9px]">HD Streaming</p>
-                            <p id="cloudVideo" class="text-rose-400 font-bold">-- g</p>
+                            <p class="text-slate-400 text-[9px]">HD Streaming</p><p id="cloudVideo" class="text-rose-400 font-bold">-- g</p>
                         </div>
                     </div>
                 </div>
@@ -313,11 +294,8 @@
                 <div class="glass rounded-2xl p-4 sm:p-6 lg:col-span-2 space-y-4 border border-slate-800">
                     <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                         <h2 class="text-xs sm:text-sm font-black text-slate-200 uppercase">🧬 Infrastructure Subsystem Carbon DNA</h2>
-                        <button onclick="exportReport()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs rounded-lg font-mono">
-                            📥 Export JSON
-                        </button>
+                        <button onclick="exportReport()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs rounded-lg font-mono">📥 Export JSON</button>
                     </div>
-
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs font-mono min-w-[500px]">
                             <thead class="text-slate-400 border-b border-slate-800 text-[11px] uppercase">
@@ -330,8 +308,7 @@
                                     <th class="pb-3 text-right">Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="subsystemTableBody" class="divide-y divide-slate-800/60">
-                            </tbody>
+                            <tbody id="subsystemTableBody" class="divide-y divide-slate-800/60"></tbody>
                         </table>
                     </div>
                 </div>
@@ -343,16 +320,12 @@
                         <p class="text-[11px] text-slate-400 mb-3">Audit asset weight of any website</p>
                         <div class="flex gap-2">
                             <input id="urlInput" type="text" placeholder="iem.edu.in" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none focus:border-emerald-500">
-                            <button onclick="analyzeUrl()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-lg text-xs transition shrink-0">
-                                Scan
-                            </button>
+                            <button onclick="analyzeUrl()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-lg text-xs transition shrink-0">Scan</button>
                         </div>
                     </div>
-
                     <div id="urlResult" class="bg-slate-900/80 rounded-xl p-3 text-xs space-y-1.5 border border-slate-800 text-slate-400">
                         <p class="text-center text-slate-500">Enter a site URL above to audit asset weight.</p>
                     </div>
-
                     <div class="h-32 pt-2 border-t border-slate-800">
                         <canvas id="powerChart"></canvas>
                     </div>
@@ -361,9 +334,7 @@
 
             <!-- Real-World Impact Translator -->
             <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
-                <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                    <span>🌳</span> REAL-WORLD IMPACT TRANSLATOR
-                </h2>
+                <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-2"><span>🌳</span> REAL-WORLD IMPACT TRANSLATOR</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
                     <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center gap-3">
                         <span class="text-2xl">🌲</span>
@@ -415,9 +386,7 @@
                 </div>
 
                 <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3 flex flex-col justify-between">
-                    <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
-                        <span>🤖</span> GREENBYTE REAL-TIME AI CHATBOT
-                    </h2>
+                    <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-1.5"><span>🤖</span> GREENBYTE REAL-TIME AI CHATBOT</h2>
                     <div id="chatHistory" class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 h-36 overflow-y-auto text-xs space-y-2 font-mono">
                         <p class="text-emerald-400">🤖: Hello! I am GreenByte AI. Ask me anything about digital footprint, optimization, boss raids, or developers!</p>
                     </div>
@@ -431,8 +400,7 @@
             <!-- DYNAMIC AI GREEN ADVISOR -->
             <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
                 <h2 class="text-xs font-black text-slate-200 uppercase">💡 DYNAMIC AI GREEN ADVISOR</h2>
-                <div id="suggestionsContainer" class="space-y-2 text-xs">
-                </div>
+                <div id="suggestionsContainer" class="space-y-2 text-xs"></div>
             </div>
 
         </main>
@@ -440,23 +408,16 @@
 
     <!-- TEAM CREDITS FOOTER -->
     <footer class="glass mt-8 border-t border-slate-800 px-6 py-5 text-center text-xs space-y-2">
-        <p class="font-bold text-emerald-400 uppercase tracking-widest text-xs">
-            DEVELOPED BY SOUMYADEEP GHOSH
-        </p>
+        <p class="font-bold text-emerald-400 uppercase tracking-widest text-xs">DEVELOPED BY SOUMYADEEP GHOSH</p>
         <div class="flex flex-wrap justify-center items-center gap-2 font-mono text-slate-300 text-[11px]">
             <span class="text-slate-400">Project Team Members:</span>
-            <span>Satadru Roy</span>
-            <span class="text-slate-600">|</span>
-            <span>Sougata Mondal</span>
-            <span class="text-slate-600">|</span>
-            <span>Subhadip Bera</span>
-            <span class="text-slate-600">|</span>
+            <span>Satadru Roy</span><span class="text-slate-600">|</span>
+            <span>Sougata Mondal</span><span class="text-slate-600">|</span>
+            <span>Subhadip Bera</span><span class="text-slate-600">|</span>
             <span>Susmit Sen</span>
         </div>
         <div class="pt-1">
-            <button onclick="openContactModal()" class="text-emerald-400 hover:underline text-[11px]">
-                📞 Contact Developer Details
-            </button>
+            <button onclick="openContactModal()" class="text-emerald-400 hover:underline text-[11px]">📞 Contact Developer Details</button>
         </div>
         <p class="text-[10px] text-slate-500">IEM Sustainability Hackathon 2026</p>
     </footer>
@@ -466,7 +427,6 @@
         let lastTelemetryData = null;
         let currentUser = "";
         let globalLeaderboard = [];
-        let sessionTreesCollected = 0;
 
         let subsystemOptimizedState = { gpu: false, ram: false, net: false, disk: false, cpu: false };
         let subsystemOptTimestamps = { gpu: 0, ram: 0, net: 0, disk: 0, cpu: 0 };
@@ -527,21 +487,12 @@
             data: {
                 labels: [],
                 datasets: [{
-                    label: 'Watts',
-                    data: [],
-                    borderColor: '#34d399',
-                    backgroundColor: 'rgba(52, 211, 153, 0.08)',
-                    fill: true,
-                    tension: 0.35
+                    label: 'Watts', data: [], borderColor: '#34d399', backgroundColor: 'rgba(52, 211, 153, 0.08)', fill: true, tension: 0.35
                 }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: { ticks: { display: false }, grid: { display: false } },
-                    y: { ticks: { color: '#64748b', font: { size: 9 } }, grid: { color: '#1e293b' } }
-                },
+                responsive: true, maintainAspectRatio: false,
+                scales: { x: { ticks: { display: false }, grid: { display: false } }, y: { ticks: { color: '#64748b', font: { size: 9 } }, grid: { color: '#1e293b' } } },
                 plugins: { legend: { display: false } }
             }
         });
@@ -573,33 +524,17 @@
                 const res = await fetch(`${API}/telemetry`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        grid: grid,
-                        subsystems: subsystemOptimizedState,
-                        opt_timestamps: subsystemOptTimestamps
-                    })
+                    body: JSON.stringify({ grid: grid, subsystems: subsystemOptimizedState, opt_timestamps: subsystemOptTimestamps })
                 });
                 
                 const data = await res.json();
                 lastTelemetryData = data;
-
-                const nowSec = Date.now() / 1000.0;
-                Object.keys(subsystemOptimizedState).forEach(k => {
-                    if (nowSec - subsystemOptTimestamps[k] >= 20.0) {
-                        subsystemOptimizedState[k] = false;
-                    }
-                });
 
                 document.getElementById('scoreVal').innerText = data.sustainability_score;
                 document.getElementById('scoreBar').style.width = `${data.sustainability_score}%`;
                 document.getElementById('cpuVal').innerText = `${data.cpu_percent}%`;
                 document.getElementById('wattsVal').innerText = data.current_watts;
                 document.getElementById('co2Val').innerText = data.co2_grams;
-
-                if (data.sustainability_score >= 80) {
-                    sessionTreesCollected = Math.min(20, sessionTreesCollected + 1);
-                    document.getElementById('forestTreeCount').innerText = `${sessionTreesCollected} / 20 🌲`;
-                }
 
                 const anomalyBanner = document.getElementById('anomalyBanner');
                 if (data.anomaly && data.anomaly.detected) {
@@ -628,9 +563,8 @@
                 }
 
                 renderSubsystems(data.subsystem_details, data.grid_factor || 710.0);
-                updateAdvisor(data.cpu_percent, data.sustainability_score, data.unopt_count);
+                updateAdvisor(data.cpu_percent, data.sustainability_score);
                 
-                // Trigger Attack on Current Boss
                 triggerBossAttack(data.sustainability_score);
 
                 const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -662,8 +596,17 @@
                     body: JSON.stringify({ username: currentUser || 'Guest User', score: score })
                 });
                 const data = await res.json();
-                const boss = data.active_boss;
+                
+                if (!data.success && data.error_type === "USER_REQUIREMENT") {
+                    document.getElementById('bossLockNotice').classList.remove('hidden');
+                    document.getElementById('bossContentArea').classList.add('hidden');
+                    return;
+                }
 
+                document.getElementById('bossLockNotice').classList.add('hidden');
+                document.getElementById('bossContentArea').classList.remove('hidden');
+
+                const boss = data.active_boss;
                 document.getElementById('bossNameDisplay').innerText = boss.name;
                 document.getElementById('bossAvatarImg').src = boss.avatar;
                 document.getElementById('bossHpText').innerText = `${boss.current_hp} / ${boss.max_hp} HP`;
@@ -681,7 +624,6 @@
                     fb.className = "p-2.5 bg-slate-900 border border-slate-800 rounded-xl text-center text-xs font-mono font-bold text-amber-300";
                 }
 
-                // Render Raid Damage Dealers
                 const damageList = document.getElementById('bossDamageList');
                 damageList.innerHTML = '';
                 if (data.damage_leaderboard.length === 0) {
@@ -692,7 +634,6 @@
                     });
                 }
 
-                // Render Trophy Hall
                 const trophyList = document.getElementById('trophyHallList');
                 trophyList.innerHTML = '';
                 if (data.defeated_bosses.length === 0) {
@@ -701,7 +642,7 @@
                     data.defeated_bosses.forEach(b => {
                         trophyList.innerHTML += `
                             <div class="p-2 bg-slate-900 border border-emerald-500/40 rounded flex flex-col items-center min-w-[90px] text-center">
-                                <img src="${b.avatar}" class="w-8 h-8 rounded mb-1">
+                                <img src="${b.avatar}" class="w-8 h-8 rounded mb-1 object-cover">
                                 <span class="text-emerald-400 font-bold truncate w-20">${b.name}</span>
                                 <span class="text-slate-500 text-[8px]">${b.defeated_at}</span>
                             </div>
@@ -711,20 +652,103 @@
             } catch(e) {}
         }
 
-        async function claimForestTokens() {
-            try {
-                const res = await fetch(`${API}/forest-claim`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: currentUser || 'Guest User', trees_collected: sessionTreesCollected })
-                });
-                const data = await res.json();
-                alert(`🌲 Claimed ${data.tokens_earned} Sapling Tokens!`);
-                sessionTreesCollected = 0;
-                document.getElementById('forestTreeCount').innerText = "0 / 20 🌲";
+        // --- ARCADE SAPLING CATCHER MINI-GAME ENGINE ---
+        let gameCanvas = document.getElementById('gameCanvas');
+        let gameCtx = gameCanvas.getContext('2d');
+        let gameRunning = false;
+        let gameScore = 0;
+        let gameTimeLeft = 30;
+        let gameTimer = null;
+        let basketX = 180;
+        let fallingItems = [];
 
+        function startSaplingGame() {
+            if (gameRunning) return;
+            gameRunning = true;
+            gameScore = 0;
+            gameTimeLeft = 30;
+            fallingItems = [];
+            basketX = 180;
+
+            document.getElementById('startGameBtn').disabled = true;
+            document.getElementById('gameTreeCount').innerText = gameScore;
+            document.getElementById('gameTimeLeft').innerText = gameTimeLeft + 's';
+
+            gameTimer = setInterval(() => {
+                gameTimeLeft--;
+                document.getElementById('gameTimeLeft').innerText = gameTimeLeft + 's';
+                if (gameTimeLeft <= 0) {
+                    endSaplingGame();
+                }
+            }, 1000);
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function endSaplingGame() {
+            gameRunning = false;
+            clearInterval(gameTimer);
+            document.getElementById('startGameBtn').disabled = false;
+            
+            fetch(`${API}/forest-claim`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: currentUser || 'Guest User', trees_collected: gameScore })
+            })
+            .then(r => r.json())
+            .then(data => {
+                alert(`🎉 Game Over! You caught ${gameScore} trees and earned ${data.tokens_earned} Sapling Tokens!`);
                 renderForestLeaderboards(data.monthly_leaderboard, data.yearly_leaderboard);
-            } catch(e) {}
+            });
+        }
+
+        gameCanvas.addEventListener('mousemove', (e) => {
+            let rect = gameCanvas.getBoundingClientRect();
+            basketX = e.clientX - rect.left - 30;
+            basketX = Math.max(0, Math.min(gameCanvas.width - 60, basketX));
+        });
+
+        function gameLoop() {
+            if (!gameRunning) return;
+
+            gameCtx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+            if (Math.random() < 0.08) {
+                let isHazard = Math.random() < 0.25;
+                fallingItems.push({
+                    x: Math.random() * (gameCanvas.width - 24),
+                    y: -20,
+                    speed: 2 + Math.random() * 3,
+                    type: isHazard ? '💨' : (Math.random() > 0.5 ? '🌱' : '🌲')
+                });
+            }
+
+            gameCtx.font = "28px sans-serif";
+            gameCtx.fillText("🧺", basketX, gameCanvas.height - 10);
+
+            for (let i = fallingItems.length - 1; i >= 0; i--) {
+                let item = fallingItems[i];
+                item.y += item.speed;
+
+                gameCtx.fillText(item.type, item.x, item.y);
+
+                if (item.y >= gameCanvas.height - 35 && item.y <= gameCanvas.height - 5 && item.x >= basketX - 15 && item.x <= basketX + 50) {
+                    if (item.type === '💨') {
+                        gameScore = Math.max(0, gameScore - 2);
+                    } else {
+                        gameScore++;
+                    }
+                    document.getElementById('gameTreeCount').innerText = gameScore;
+                    fallingItems.splice(i, 1);
+                    continue;
+                }
+
+                if (item.y > gameCanvas.height) {
+                    fallingItems.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(gameLoop);
         }
 
         function renderForestLeaderboards(monthly, yearly) {
@@ -777,12 +801,12 @@
             });
         }
 
-        function updateAdvisor(cpu, score, unoptCount) {
+        function updateAdvisor(cpu, score) {
             const sugContainer = document.getElementById('suggestionsContainer');
             let advice = "🌿 System is running in an optimal energy state. Maintain ~60% screen brightness to maximize battery longevity.";
             
-            if (unoptCount > 0) {
-                advice = `⚡ ${unoptCount} Subsystems Unoptimized: Target individual subsystem buttons or click 'MASTER ECO-OPTIMIZE' to lower power draw!`;
+            if (score < 80) {
+                advice = `⚡ Telemetry detects dynamic load spikes: Click 'MASTER ECO-OPTIMIZE' to recycle memory buffers and park high-draw threads!`;
             }
 
             sugContainer.innerHTML = `
@@ -790,12 +814,6 @@
                     <span>🌿</span><span>${advice}</span>
                 </div>
             `;
-        }
-
-        function openPassportModal() {
-            const score = lastTelemetryData ? lastTelemetryData.sustainability_score : 75;
-            const qrText = `GreenByte Eco Passport | User: ${currentUser || 'Guest'} | Score: ${score}/100 | Developer: Soumyadeep Ghosh (+91 8100127066)`;
-            alert(qrText);
         }
 
         async function loadLeaderboard() {

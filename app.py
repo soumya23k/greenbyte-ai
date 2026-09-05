@@ -3,6 +3,7 @@ import json
 import time
 import random
 import urllib.request
+import urllib.parse
 import xml.etree.ElementTree as ET
 import gc
 from flask import Flask, jsonify, request, send_from_directory
@@ -24,9 +25,8 @@ GRID_INTENSITY = {
 
 ELECTRICITY_RATE_PER_KWH_INR = 7.5
 
-# Base Boss Names for infinite dynamic name generation
-BOSS_PREFIXES = ["Thermal", "Carbon", "Coal-Fired", "Smog", "Diesel", "Methane", "Grid-Overload", "E-Waste"]
-BOSS_TITANS = ["Goliath", "Daemon", "Titan", "Dragon", "Behemoth", "Colossus", "Leviathan", "Hydra"]
+BOSS_PREFIXES = ["Thermal", "Carbon", "Coal-Fired", "Smog", "Diesel", "Methane", "Grid-Overload", "E-Waste", "Smokestack", "Sulfur"]
+BOSS_TITANS = ["Goliath", "Daemon", "Titan", "Dragon", "Behemoth", "Colossus", "Leviathan", "Hydra", "Phantom", "Overlord"]
 
 def load_json_file(filepath, fallback):
     if os.path.exists(filepath):
@@ -54,7 +54,6 @@ def get_boss_max_hp(boss_level):
     elif boss_level == 4:
         return 100000
     else:
-        # Boss 5+ scales infinitely by 50,000 HP per level (150k, 200k, 250k...)
         return 100000 + (boss_level - 4) * 50000
 
 def generate_boss_info(boss_level):
@@ -63,8 +62,10 @@ def generate_boss_info(boss_level):
     name = f"{prefix} {titan} Mk-{boss_level}"
     max_hp = get_boss_max_hp(boss_level)
     
-    # Generate dynamic AI avatar background SVG avatar
-    avatar_url = f"https://ui-avatars.com/api/?name={prefix}+{titan}&background=rose&color=fff&size=256&bold=true&font-size=0.33"
+    # Generate unique AI monster artwork using Pollinations AI
+    prompt = f"cyberpunk dark smog monster {prefix} {titan} futuristic carbon monster glowing neon green dark background video game boss portrait"
+    encoded_prompt = urllib.parse.quote(prompt)
+    avatar_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=256&height=256&nologo=true&seed={boss_level * 777}"
     
     return {
         "boss_level": boss_level,
@@ -77,7 +78,6 @@ def generate_boss_info(boss_level):
         "damage_leaderboard": {}
     }
 
-# Initialize Game State
 game_data = load_json_file(GAME_DATA_FILE, {
     "active_boss": generate_boss_info(1),
     "defeated_bosses": [],
@@ -91,7 +91,6 @@ def check_boss_rotation():
     now = time.time()
     active = game_data["active_boss"]
     
-    # Check 48-hour rotation limit (48 * 3600 = 172800 seconds)
     if (now - active.get("spawn_time", now) > 172800) or active.get("defeated", False):
         if active.get("defeated", False):
             game_data["defeated_bosses"].append({
@@ -102,7 +101,6 @@ def check_boss_rotation():
                 "defeated_at": time.strftime("%Y-%m-%d %H:%M")
             })
         
-        # Advance to next infinite boss level
         next_level = active.get("boss_level", 1) + 1
         game_data["active_boss"] = generate_boss_info(next_level)
         save_json_file(GAME_DATA_FILE, game_data)
@@ -159,61 +157,55 @@ def telemetry():
     now = time.time()
     grid_factor = GRID_INTENSITY.get(selected_grid, GRID_INTENSITY["WB Grid (Thermal/Coal)"])["factor"]
 
+    # Calculate system age since optimization
+    most_recent_opt = max([opt_timestamps.get(k, 0) for k in ['gpu', 'ram', 'net', 'disk', 'cpu']] + [0])
+    time_since_opt = now - most_recent_opt if most_recent_opt > 0 else 999.0
+
+    # Score Engine Matching User Request
+    if time_since_opt < 10.0:
+        # High Optimized Window: Stays above 90 (fluctuates between 86 to 94, rarely 97-98)
+        rare_roll = random.random()
+        if rare_roll > 0.92:
+            score = random.choice([97, 98])
+        else:
+            score = random.randint(86, 94)
+        watts = round(random.uniform(6.0, 9.5), 1)
+    elif time_since_opt < 25.0:
+        # Gradual Decay Window: Slowly drifts down to 80-82
+        score = random.randint(78, 85)
+        watts = round(random.uniform(10.0, 14.5), 1)
+    else:
+        # Normal System Operation: Fluctuates realistically (70, 65, 57, spikes back to 80-82, down to 67)
+        fluctuation_pattern = [70, 65, 57, 80, 82, 67, 75, 72, 61, 79]
+        base_choice = random.choice(fluctuation_pattern)
+        score = max(52, min(85, base_choice + random.randint(-2, 2)))
+        watts = round(15.0 + ((100 - score) * 0.22) + random.uniform(-1.0, 1.5), 1)
+
     sub_data = {}
+    for sub in ['gpu', 'ram', 'net', 'disk', 'cpu']:
+        if score > 85:
+            dna = "🟢 Low"
+            act = "Optimized Pipeline"
+            load = f"{random.randint(4, 12)}% Load"
+            w = round(watts * 0.18, 2)
+        elif score > 72:
+            dna = "🟡 Moderate"
+            act = "Standard Activity"
+            load = f"{random.randint(18, 32)}% Load"
+            w = round(watts * 0.22, 2)
+        else:
+            dna = "🔴 High" if random.random() > 0.4 else "🟡 Moderate"
+            act = "Active Workload Stream"
+            load = f"{random.randint(35, 62)}% Load"
+            w = round(watts * 0.28, 2)
+        sub_data[sub] = {"dna": dna, "activity": act, "load": load, "watts": w}
 
-    def is_currently_optimized(sub_key):
-        if not subsystem_opt.get(sub_key, False):
-            return False
-        # Drift back to active workload after 20 seconds
-        time_since_opt = now - opt_timestamps.get(sub_key, now)
-        return time_since_opt < 20.0
-
-    # 1. GPU / Display
-    if is_currently_optimized('gpu'):
-        sub_data['gpu'] = {"dna": "🟢 Low", "activity": "Eco Frame Throttle", "load": f"{round(random.uniform(3.0, 6.0), 1)}% Load", "watts": 1.1}
-    else:
-        load_val = round(random.uniform(22.0, 36.0), 1)
-        sub_data['gpu'] = {"dna": "🔴 High" if load_val > 25 else "🟡 Moderate", "activity": "Screen Render Stream", "load": f"{load_val}% Load", "watts": round(2.5 + (load_val * 0.05), 2)}
-
-    # 2. RAM / Memory
-    if is_currently_optimized('ram'):
-        sub_data['ram'] = {"dna": "🟢 Low", "activity": "Cache Recycled", "load": "420 MB Allocated", "watts": 0.7}
-    else:
-        ram_mb = round(random.uniform(1.3, 1.9), 2)
-        sub_data['ram'] = {"dna": "🔴 High" if ram_mb > 1.5 else "🟡 Moderate", "activity": "Active RAM Buffer", "load": f"{ram_mb} GB Allocated", "watts": round(1.2 + ram_mb, 2)}
-
-    # 3. Network / I/O
-    if is_currently_optimized('net'):
-        sub_data['net'] = {"dna": "🟢 Low", "activity": "Compressed Packets", "load": "8 KB/s Packets", "watts": 0.3}
-    else:
-        pkts = random.randint(35, 90)
-        sub_data['net'] = {"dna": "🟡 Moderate" if pkts > 45 else "🟢 Low", "activity": "HTTP Telemetry Stream", "load": f"{pkts} KB/s Packets", "watts": round(0.5 + (pkts * 0.01), 2)}
-
-    # 4. Storage / Disk
-    if is_currently_optimized('disk'):
-        sub_data['disk'] = {"dna": "🟢 Low", "activity": "I/O Low Power", "load": "I/O Idle", "watts": 0.2}
-    else:
-        active = random.choice([True, False])
-        sub_data['disk'] = {"dna": "🟡 Moderate" if active else "🟢 Low", "activity": "Pagefile Read/Write" if active else "I/O Standby", "load": "I/O Active" if active else "I/O Idle", "watts": 0.6 if active else 0.3}
-
-    # 5. CPU Engine
-    if is_currently_optimized('cpu'):
-        sub_data['cpu'] = {"dna": "🟢 Low", "activity": "C-State Parked", "load": f"{round(random.uniform(3.0, 7.0), 1)}% Load", "watts": 0.8}
-    else:
-        cpu_load = round(random.uniform(18.0, 42.0), 1)
-        sub_data['cpu'] = {"dna": "🔴 High" if cpu_load > 25 else "🟡 Moderate", "activity": "Worker Threads", "load": f"{cpu_load}% Load", "watts": round(1.2 + (cpu_load * 0.08), 2)}
-
-    total_watts = round(sum(item['watts'] for item in sub_data.values()) + random.uniform(2.5, 4.0), 1)
-    cpu_percent = float(sub_data['cpu']['load'].replace('% Load', ''))
-    
-    unopt_count = sum(1 for sub in ['gpu', 'ram', 'net', 'disk', 'cpu'] if not is_currently_optimized(sub))
-    score = max(50, 98 - (unopt_count * 8) - int(cpu_percent * 0.25))
-
-    anomaly_detected = total_watts > 22.0
-    anomaly_msg = f"UNUSUAL CARBON SPIKE: Subsystem workload boosted power draw to {total_watts}W!" if anomaly_detected else ""
+    avg_load = sum(float(item['load'].replace('% Load', '')) for item in sub_data.values()) / 5.0
+    anomaly_detected = watts > 21.0
+    anomaly_msg = f"UNUSUAL CARBON SPIKE: Subsystem workload boosted power draw to {watts}W!" if anomaly_detected else ""
 
     uptime_hours = (time.time() - BOOT_TIME) / 3600.0
-    system_kwh = (total_watts * max(uptime_hours, 0.1)) / 1000.0
+    system_kwh = (watts * max(uptime_hours, 0.1)) / 1000.0
     co2_grams = round(system_kwh * grid_factor, 2)
     cost_saved = round(system_kwh * ELECTRICITY_RATE_PER_KWH_INR, 2)
 
@@ -223,23 +215,18 @@ def telemetry():
         "video_streaming_g": round(14.5 + random.uniform(-1.0, 1.5), 1)
     }
 
-    trees = round(co2_grams / 60.0, 2)
-    car_km = round(co2_grams / 120.0, 2)
-    led_hours = round(co2_grams / 7.0, 1)
-
     return jsonify({
-        "cpu_percent": cpu_percent,
-        "current_watts": total_watts,
+        "cpu_percent": round(avg_load, 1),
+        "current_watts": watts,
         "co2_grams": co2_grams,
         "cost_saved_inr": cost_saved,
         "sustainability_score": score,
         "grid_factor": grid_factor,
         "subsystem_details": sub_data,
-        "unopt_count": unopt_count,
         "anomaly": {"detected": anomaly_detected, "message": anomaly_msg},
-        "carbon_map": {"cpu": round(cpu_percent * 0.7, 1), "ram": 32.5, "disk": 12.0, "cloud": 18.2},
+        "carbon_map": {"cpu": round(avg_load * 0.7, 1), "ram": 32.5, "disk": 12.0, "cloud": 18.2},
         "cloud_est": cloud_est,
-        "impact": {"trees": trees, "car_km": car_km, "led_hours": led_hours},
+        "impact": {"trees": round(co2_grams / 60.0, 2), "car_km": round(co2_grams / 120.0, 2), "led_hours": round(co2_grams / 7.0, 1)},
         "news": fetch_live_eco_news(),
         "active_boss": game_data["active_boss"]
     })
@@ -247,24 +234,26 @@ def telemetry():
 @app.route('/api/boss-attack', methods=['POST'])
 def boss_attack():
     check_boss_rotation()
+    db = load_json_file(LEADERBOARD_FILE, {})
+    
+    if len(db) < 2:
+        return jsonify({
+            "success": False,
+            "error_type": "USER_REQUIREMENT",
+            "message": "⚠️ Boss Raid locked! At least 2 registered users are required in the campus leaderboard to initiate attacks."
+        })
+
     data = request.get_json() or {}
     username = data.get('username', 'Guest User').strip()
     score = data.get('score', 75)
     
-    # Damage calculation table based on exact user specification
     damage = 0
-    if score >= 98:
-        damage = 250
-    elif score >= 95:
-        damage = 100
-    elif score >= 90:
-        damage = 50
-    elif score >= 85:
-        damage = 20
-    elif score >= 80:
-        damage = 15
-    elif score >= 75:
-        damage = 2
+    if score >= 98: damage = 250
+    elif score >= 95: damage = 100
+    elif score >= 90: damage = 50
+    elif score >= 85: damage = 20
+    elif score >= 80: damage = 15
+    elif score >= 75: damage = 2
 
     boss = game_data["active_boss"]
     if damage > 0 and not boss["defeated"]:
@@ -299,19 +288,13 @@ def forest_claim():
     username = data.get('username', 'Guest User').strip()
     trees = data.get('trees_collected', 0)
     
-    # Sapling token award tiers: 5+ -> 1, 10+ -> 2, 15+ -> 3, 20 -> 5
     tokens = 0
-    if trees >= 20:
-        tokens = 5
-    elif trees >= 15:
-        tokens = 3
-    elif trees >= 10:
-        tokens = 2
-    elif trees >= 5:
-        tokens = 1
+    if trees >= 20: tokens = 5
+    elif trees >= 15: tokens = 3
+    elif trees >= 10: tokens = 2
+    elif trees >= 5: tokens = 1
 
     if tokens > 0 and username:
-        # Update monthly & yearly token tallies
         game_data["forest_monthly"][username] = game_data["forest_monthly"].get(username, 0) + tokens
         game_data["forest_yearly"][username] = game_data["forest_yearly"].get(username, 0) + tokens
         save_json_file(GAME_DATA_FILE, game_data)
@@ -357,23 +340,21 @@ def chatbot():
     watts = data.get('watts', 18.0)
 
     if any(k in q_lower for k in ["explain", "about website", "about this website", "what is this site", "overview", "project"]):
-        ans = "GreenByte AI is a real-time digital carbon intelligence platform! It tracks hardware power draw across 5 subsystems (CPU, GPU, RAM, Network, Disk), converts energy consumption into carbon emissions (g CO2/hr), audits web asset weights, and lets you compete in infinite boss raids and eco battles."
+        ans = "GreenByte AI is a real-time digital carbon intelligence platform! It tracks hardware power draw across 5 subsystems (CPU, GPU, RAM, Network, Disk), converts energy consumption into carbon emissions (g CO2/hr), audits web asset weights, and features infinite boss raids & an arcade Sapling Catcher mini-game."
     elif any(k in q_lower for k in ["useful", "helpful", "beneficial", "benefit", "why use", "use of"]):
-        ans = "GreenByte AI helps you cut digital energy waste, reduce software carbon emissions, and extend battery life. It gives software engineers and users clear visibility into hidden resource consumption so they can optimize background processes effectively."
-    elif any(k in q_lower for k in ["optimized", "optimization", "optimize", "how does optimization work", "how to optimize"]):
-        ans = "When you click 'Optimize', GreenByte AI flushes unneeded RAM buffers, parks idle CPU threads, and throttles render loops. Over 20 seconds, background workloads naturally drift back up, simulating active device usage."
+        ans = "GreenByte AI helps you cut digital energy waste, reduce software carbon emissions, and extend device battery life. It gives software engineers and users clear visibility into hidden resource consumption so they can optimize background processes effectively."
     elif any(k in q_lower for k in ["developer", "creator", "who made", "who built", "soumyadeep", "team"]):
         ans = "GreenByte AI was architected and developed by Soumyadeep Ghosh (Phone: +91 8100127066 | Email: soumyadeepghosh1tb@gmail.com) alongside team members Satadru Roy, Sougata Mondal, Subhadip Bera, and Susmit Sen for the IEM Sustainability Hackathon 2026!"
     elif any(k in q_lower for k in ["how are you", "how r u", "how do you do"]):
         ans = f"I'm operating efficiently! Telemetry shows current system draw at {watts}W with a sustainability score of {score}/100. How can I assist your eco audit today?"
     elif any(k in q_lower for k in ["hi", "hello", "hey", "greetings"]):
-        ans = "Hello! I am GreenByte AI. Ask me how this website works, why it is useful, how boss raids function, or details about the developers!"
+        ans = "Hello! I am GreenByte AI. Ask me how this website works, why it is useful, boss raid mechanics, or developer contact info!"
     elif any(k in q_lower for k in ["boss", "raid", "titan", "attack"]):
-        ans = "In Infinite Campus Boss Raids, every 48 hours a titan appears with scaling HP (10k, 25k, 50k, 100k, 150k+). Maintaining high sustainability scores (>75 to >98) deals up to 250 HP damage per tick!"
-    elif any(k in q_lower for k in ["forest", "tree", "sapling", "token"]):
-        ans = "In the 12-Hour Virtual Eco-Forest Mini-Game, collecting 5 to 20 trees earns Sapling Tokens that rank you on monthly and yearly campus leaderboards!"
+        ans = "In Infinite Campus Boss Raids (unlocked with >=2 players), AI-generated titans appear with scaling HP. Scores >75 deal up to 250 HP damage per tick!"
+    elif any(k in q_lower for k in ["forest", "tree", "sapling", "game"]):
+        ans = "Play the 30-Second Sapling Catcher Arcade Game in the Eco-Forest modal! Catch falling trees while dodging smog hazards to earn Sapling Tokens for monthly & yearly leaderboards!"
     else:
-        ans = f"GreenByte AI Assistant: I can explain how this website works, why it is useful, boss raid mechanics, or developer contact info. Current draw: {watts}W | Score: {score}/100."
+        ans = f"GreenByte AI Assistant: I am here to help! Current draw is {watts}W with a score of {score}/100. Ask me about optimization, games, or developers!"
 
     return jsonify({"answer": ans})
 
