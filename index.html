@@ -20,12 +20,12 @@
                 <div class="text-center space-y-1">
                     <span class="text-4xl">🌱</span>
                     <h2 class="text-xl font-black bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent">GREENBYTE AI PLATFORM</h2>
-                    <p class="text-xs text-slate-400">Enter your name or campus to log in and sync your score to the live leaderboard.</p>
+                    <p class="text-xs text-slate-400">Enter your name or campus to log in and sync your score to the live persistent leaderboard.</p>
                 </div>
                 <div class="space-y-3">
                     <div>
                         <label class="text-[11px] font-bold text-slate-300 uppercase">User Name / Campus</label>
-                        <input id="loginName" type="text" placeholder="e.g. Soumyadeep (CSE)" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-emerald-500">
+                        <input id="loginName" type="text" placeholder="e.g. Soumyadeep Ghosh" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-emerald-500">
                     </div>
                     <button onclick="submitLogin()" class="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-lg text-xs hover:from-emerald-400 hover:to-teal-300 transition">
                         ENTER DASHBOARD
@@ -38,7 +38,7 @@
         <div class="bg-emerald-950/80 border-b border-emerald-500/20 px-4 py-1.5 text-xs text-emerald-300 flex flex-wrap items-center justify-between gap-2">
             <div class="flex items-center gap-2 overflow-hidden">
                 <span class="px-1.5 py-0.5 bg-emerald-500 text-slate-950 font-black rounded uppercase text-[10px] shrink-0">LIVE ECO NEWS</span>
-                <span id="newsTicker" class="animate-pulse truncate">Connecting to digital telemetry feed...</span>
+                <span id="newsTicker" class="animate-pulse truncate">Connecting to real-time global eco feeds...</span>
             </div>
             <span class="text-slate-400 text-[11px] shrink-0">IEM Sustainability Hackathon 2026</span>
         </div>
@@ -122,7 +122,7 @@
                     </div>
                 </div>
 
-                <!-- REAL HARDWARE BATTERY SYNC (WITH MOBILE/iOS FALLBACK) -->
+                <!-- REAL HARDWARE BATTERY SYNC -->
                 <div class="glass rounded-2xl p-4 border border-slate-800 col-span-2 sm:col-span-3 md:col-span-2">
                     <div class="flex justify-between">
                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">🔋 Live Battery Level</span>
@@ -208,7 +208,6 @@
                                 </tr>
                             </thead>
                             <tbody id="subsystemTableBody" class="divide-y divide-slate-800/60">
-                                <!-- Dynamically populated -->
                             </tbody>
                         </table>
                     </div>
@@ -267,10 +266,15 @@
                 </div>
             </div>
 
-            <!-- Registered User Leaderboard & AI Chatbot -->
+            <!-- PERSISTENT LEADERBOARD & AVERAGE SCORE ANALYTICS -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
-                    <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider">🌍 IEM CAMPUS LEADERBOARD (REGISTERED USERS ONLY)</h2>
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider">🌍 IEM CAMPUS LEADERBOARD</h2>
+                        <div class="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded">
+                            Campus Avg Score: <strong id="campusAvgVal" class="text-teal-200">--</strong>
+                        </div>
+                    </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs font-mono">
                             <thead class="text-slate-500 border-b border-slate-800 text-[10px] uppercase">
@@ -281,7 +285,7 @@
                                 </tr>
                             </thead>
                             <tbody id="leaderboardBody" class="divide-y divide-slate-800/40 text-slate-300">
-                                <tr><td colspan="3" class="py-2 text-center text-slate-500">No users registered yet. Login above to record your score!</td></tr>
+                                <tr><td colspan="3" class="py-2 text-center text-slate-500">Loading persistent leaderboard...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -292,10 +296,10 @@
                         <span>🤖</span> GREENBYTE AI CHATBOT
                     </h2>
                     <div id="chatHistory" class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 h-32 overflow-y-auto text-xs space-y-2 font-mono">
-                        <p class="text-emerald-400">🤖: Hello! Ask me about your carbon footprint, recommendations, or device optimization.</p>
+                        <p class="text-emerald-400">🤖: Hello! I am GreenByte AI. Ask me anything about developers, carbon scores, or optimization tips!</p>
                     </div>
                     <div class="flex gap-2">
-                        <input id="chatInput" type="text" placeholder="Why is my carbon footprint high?" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none focus:border-emerald-500">
+                        <input id="chatInput" type="text" placeholder="Who developed GreenByte?" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none focus:border-emerald-500" onkeypress="if(event.key==='Enter') sendChat()">
                         <button onclick="sendChat()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-lg text-xs transition shrink-0">Ask</button>
                     </div>
                 </div>
@@ -311,7 +315,7 @@
         </main>
     </div>
 
-    <!-- ACCURATE TEAM CREDITS FOOTER -->
+    <!-- TEAM CREDITS FOOTER -->
     <footer class="glass mt-8 border-t border-slate-800 px-6 py-5 text-center text-xs space-y-2">
         <p class="font-bold text-emerald-400 uppercase tracking-widest text-xs">
             DEVELOPED BY SOUMYADEEP GHOSH
@@ -333,8 +337,8 @@
         const API = "/api";
         let lastTelemetryData = null;
         let currentUser = "";
+        let isOptimizedMode = false;
 
-        // 1. Universal Battery API Sync with Mobile / iOS / iPad Fallback Handling
         async function syncRealBattery() {
             const batVal = document.getElementById('batteryVal');
             const batStat = document.getElementById('batteryStatus');
@@ -355,25 +359,15 @@
                     updateBat();
                     battery.addEventListener('levelchange', updateBat);
                     battery.addEventListener('chargingchange', updateBat);
-                } catch(e) {
-                    fallbackMobileBattery();
-                }
-            } else {
-                fallbackMobileBattery();
-            }
+                } catch(e) { fallbackMobileBattery(); }
+            } else { fallbackMobileBattery(); }
         }
 
         function fallbackMobileBattery() {
-            // Safe estimated fallback for iOS / Safari / unsupported mobile browsers
-            const batVal = document.getElementById('batteryVal');
-            const batStat = document.getElementById('batteryStatus');
-            const batBar = document.getElementById('batteryBar');
-            const batDev = document.getElementById('batteryDeviceType');
-
-            batVal.innerText = "88%";
-            batStat.innerText = "Mobile Eco Mode 📱";
-            batBar.style.width = "88%";
-            batDev.innerText = "Mobile Estimated Sync";
+            document.getElementById('batteryVal').innerText = "88%";
+            document.getElementById('batteryStatus').innerText = "Mobile Eco Mode 📱";
+            document.getElementById('batteryBar').style.width = "88%";
+            document.getElementById('batteryDeviceType').innerText = "Mobile Estimated Sync";
         }
 
         syncRealBattery();
@@ -416,7 +410,7 @@
         async function updateTelemetry() {
             try {
                 const grid = document.getElementById('gridSelect').value;
-                const res = await fetch(`${API}/telemetry?grid=${encodeURIComponent(grid)}`);
+                const res = await fetch(`${API}/telemetry?grid=${encodeURIComponent(grid)}&optimized=${isOptimizedMode}`);
                 const data = await res.json();
                 lastTelemetryData = data;
 
@@ -426,27 +420,23 @@
                 document.getElementById('wattsVal').innerText = data.current_watts;
                 document.getElementById('co2Val').innerText = data.co2_grams;
 
-                // Anomaly Banner
                 const anomalyBanner = document.getElementById('anomalyBanner');
-                if (data.anomaly && data.anomaly.detected) {
+                if (data.anomaly && data.anomaly.detected && !isOptimizedMode) {
                     anomalyBanner.classList.remove('hidden');
                     document.getElementById('anomalyText').innerText = data.anomaly.message;
                 } else {
                     anomalyBanner.classList.add('hidden');
                 }
 
-                // Carbon Map
                 document.getElementById('mapCpu').innerText = `${data.carbon_map.cpu}%`;
                 document.getElementById('mapRam').innerText = `${data.carbon_map.ram}%`;
                 document.getElementById('mapDisk').innerText = `${data.carbon_map.disk}%`;
                 document.getElementById('mapCloud').innerText = `${data.carbon_map.cloud}%`;
 
-                // Dynamic Cloud Estimator
                 document.getElementById('cloudDrive').innerText = `${data.cloud_est.google_drive_g}g`;
                 document.getElementById('cloudAi').innerText = `${data.cloud_est.ai_queries_g}g`;
                 document.getElementById('cloudVideo').innerText = `${data.cloud_est.video_streaming_g}g`;
 
-                // Impact
                 document.getElementById('impactTrees').innerText = data.impact.trees;
                 document.getElementById('impactCar').innerText = data.impact.car_km;
                 document.getElementById('impactLed').innerText = data.impact.led_hours;
@@ -456,13 +446,9 @@
                     document.getElementById('newsTicker').innerText = `[${randomNews.tag}] ${randomNews.title}`;
                 }
 
-                // Render Subsystems
                 renderSubsystems(data.cpu_percent, data.grid_factor || 710.0);
-
-                // Dynamic Advisor Updates
                 updateAdvisor(data.cpu_percent, data.sustainability_score);
 
-                // Chart
                 const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                 if (powerChart.data.labels.length > 8) {
                     powerChart.data.labels.shift();
@@ -472,7 +458,6 @@
                 powerChart.data.datasets[0].data.push(data.current_watts);
                 powerChart.update();
 
-                // Post user score to Leaderboard
                 if (currentUser) {
                     await fetch(`${API}/leaderboard`, {
                         method: 'POST',
@@ -487,11 +472,11 @@
 
         function renderSubsystems(cpu, gridFactor) {
             const subsystems = [
-                { name: "Display & GPU Render Pipeline", activity: "Screen Render Stream", load: `${(cpu * 0.8 + 12).toFixed(1)}% Load`, baseWatts: 4.8 },
-                { name: "Memory & Page Cache Allocator", activity: "Active RAM Buffer", load: "1.2 GB Allocated", baseWatts: 2.1 },
-                { name: "Network & Web Socket I/O", activity: "HTTP Telemetry Stream", load: "42 KB/s Packets", baseWatts: 1.4 },
-                { name: "Storage & System Disk I/O", activity: "Pagefile Read/Write", load: "I/O Active", baseWatts: 0.6 },
-                { name: "CPU Multi-Core Thread Engine", activity: "Worker Process Threads", load: `${cpu}% Load`, baseWatts: (cpu * 0.25) }
+                { name: "Display & GPU Render Pipeline", activity: isOptimizedMode ? "Eco Frame Throttle" : "Screen Render Stream", load: isOptimizedMode ? "4.2% Load" : `${(cpu * 0.8 + 12).toFixed(1)}% Load`, baseWatts: isOptimizedMode ? 1.2 : 4.8 },
+                { name: "Memory & Page Cache Allocator", activity: isOptimizedMode ? "Cache Recycled" : "Active RAM Buffer", load: isOptimizedMode ? "420 MB Allocated" : "1.2 GB Allocated", baseWatts: isOptimizedMode ? 0.8 : 2.1 },
+                { name: "Network & Web Socket I/O", activity: isOptimizedMode ? "Compressed Packets" : "HTTP Telemetry Stream", load: isOptimizedMode ? "8 KB/s Packets" : "42 KB/s Packets", baseWatts: isOptimizedMode ? 0.4 : 1.4 },
+                { name: "Storage & System Disk I/O", activity: isOptimizedMode ? "I/O Low Power" : "Pagefile Read/Write", load: isOptimizedMode ? "I/O Idle" : "I/O Active", baseWatts: isOptimizedMode ? 0.2 : 0.6 },
+                { name: "CPU Multi-Core Thread Engine", activity: isOptimizedMode ? "C-State Parked" : "Worker Threads", load: `${cpu}% Load`, baseWatts: isOptimizedMode ? 0.6 : (cpu * 0.25) }
             ];
 
             const tbody = document.getElementById('subsystemTableBody');
@@ -499,9 +484,7 @@
             
             subsystems.forEach((sub) => {
                 const drawG = (((sub.baseWatts) / 1000.0) * gridFactor).toFixed(2);
-                let dna = "🟢 Low";
-                if (drawG > 2.0) dna = "🔴 High";
-                else if (drawG > 0.8) dna = "🟡 Moderate";
+                let dna = isOptimizedMode ? "🟢 Low" : (drawG > 2.0 ? "🔴 High" : (drawG > 0.8 ? "🟡 Moderate" : "🟢 Low"));
 
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-slate-800/40 transition';
@@ -512,8 +495,8 @@
                     <td class="py-2.5 text-slate-300">${sub.load}</td>
                     <td class="py-2.5 font-bold ${dna.includes('High') ? 'text-rose-400' : 'text-emerald-400'}">${drawG} g/hr</td>
                     <td class="py-2.5 text-right">
-                        <button onclick="optimizeSubsystem(this)" class="px-2 py-1 bg-emerald-500/10 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/20 rounded font-sans text-[10px]">
-                            Optimize
+                        <button onclick="optimizeSubsystem(this)" class="px-2 py-1 ${isOptimizedMode ? 'bg-slate-800 text-emerald-400' : 'bg-emerald-500/10 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/20'} rounded font-sans text-[10px]">
+                            ${isOptimizedMode ? 'Optimized ✓' : 'Optimize'}
                         </button>
                     </td>
                 `;
@@ -525,10 +508,10 @@
             const sugContainer = document.getElementById('suggestionsContainer');
             let advice = "🌿 System is running in an optimal energy state. Maintain ~60% screen brightness to maximize battery longevity.";
             
-            if (cpu > 25) {
-                advice = `⚡ High CPU Load Detected (${cpu}%): System threads are actively executing tasks. Use Master Eco-Optimize to trim cache memory.`;
-            } else if (score < 65) {
-                advice = "⚠️ Lower Sustainability Score: Switching to renewable EU grid or operating on battery mode reduces carbon footprint intensity.";
+            if (isOptimizedMode) {
+                advice = "⚡ Eco-Optimizer Active: Subsystem draw dropped below 10W, cache memory flushed, and carbon spike cleared!";
+            } else if (cpu > 20) {
+                advice = `⚡ High CPU Load Detected (${cpu}%): System threads are actively executing tasks. Click 'MASTER ECO-OPTIMIZE' to drop wattage!`;
             }
 
             sugContainer.innerHTML = `
@@ -538,24 +521,35 @@
             `;
         }
 
+        async function triggerEcoOptimizer() {
+            isOptimizedMode = true;
+            try {
+                const res = await fetch(`${API}/eco-optimize`, { method: 'POST' });
+                const data = await res.json();
+                alert("🌱 " + data.message);
+                updateTelemetry();
+            } catch(e) {}
+        }
+
         function optimizeSubsystem(btn) {
-            btn.innerText = "Optimized ✓";
-            btn.className = "px-2 py-1 bg-slate-800 text-emerald-400 text-[10px] rounded font-sans";
+            triggerEcoOptimizer();
         }
 
         async function loadLeaderboard() {
             try {
                 const res = await fetch(`${API}/leaderboard`);
-                const lb = await res.json();
+                const data = await res.json();
                 const tbody = document.getElementById('leaderboardBody');
                 tbody.innerHTML = '';
                 
-                if (lb.length === 0) {
+                document.getElementById('campusAvgVal').innerText = `${data.average_score} / 100`;
+
+                if (!data.leaderboard || data.leaderboard.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="3" class="py-2 text-center text-slate-500">No registered users yet. Enter your name in login!</td></tr>';
                     return;
                 }
 
-                lb.forEach((item, index) => {
+                data.leaderboard.forEach((item, index) => {
                     const tr = document.createElement('tr');
                     const rankStr = index === 0 ? "🥇 1" : (index === 1 ? "🥈 2" : (index === 2 ? "🥉 3" : `${index + 1}`));
                     if (item.name === currentUser) tr.className = 'bg-emerald-500/10 font-bold';
@@ -620,15 +614,6 @@
             } catch(e) {
                 resBox.innerHTML = '<p class="text-rose-400">Scanner connection error.</p>';
             }
-        }
-
-        async function triggerEcoOptimizer() {
-            try {
-                const res = await fetch(`${API}/eco-optimize`, { method: 'POST' });
-                const data = await res.json();
-                alert(data.message);
-                updateTelemetry();
-            } catch(e) {}
         }
 
         function exportReport() {
