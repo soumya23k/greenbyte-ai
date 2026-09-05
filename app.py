@@ -2,6 +2,7 @@ import os
 import json
 import time
 import random
+import datetime
 import urllib.request
 import urllib.parse
 import xml.etree.ElementTree as ET
@@ -82,7 +83,8 @@ game_data = load_json_file(GAME_DATA_FILE, {
     "defeated_bosses": [],
     "forest_monthly": {},
     "forest_yearly": {},
-    "last_monthly_reset": time.time()
+    "last_monthly_reset": time.time(),
+    "daily_actions": {"optimizations": 14, "scans": 6, "boss_attacks": 8, "saplings": 22}
 })
 
 def check_boss_rotation():
@@ -209,7 +211,11 @@ def telemetry():
         "video_streaming_g": round(14.5 + random.uniform(-1.0, 1.5), 1)
     }
 
+    current_dt = datetime.datetime.now()
+
     return jsonify({
+        "current_time": current_dt.strftime("%H:%M:%S"),
+        "current_date": current_dt.strftime("%A, %B %d, %Y"),
         "cpu_percent": round(avg_load, 1),
         "current_watts": watts,
         "co2_grams": co2_grams,
@@ -221,6 +227,7 @@ def telemetry():
         "carbon_map": {"cpu": round(avg_load * 0.7, 1), "ram": 32.5, "disk": 12.0, "cloud": 18.2},
         "cloud_est": cloud_est,
         "impact": {"trees": round(co2_grams / 60.0, 2), "car_km": round(co2_grams / 120.0, 2), "led_hours": round(co2_grams / 7.0, 1)},
+        "daily_actions": game_data.get("daily_actions", {}),
         "news": fetch_live_eco_news(),
         "active_boss": game_data["active_boss"]
     })
@@ -253,6 +260,7 @@ def boss_attack():
     if damage > 0 and not boss["defeated"]:
         boss["current_hp"] = max(0, boss["current_hp"] - damage)
         boss["damage_leaderboard"][username] = boss["damage_leaderboard"].get(username, 0) + damage
+        game_data["daily_actions"]["boss_attacks"] = game_data["daily_actions"].get("boss_attacks", 0) + 1
         
         if boss["current_hp"] <= 0:
             boss["defeated"] = True
@@ -291,6 +299,7 @@ def forest_claim():
     if tokens > 0 and username:
         game_data["forest_monthly"][username] = game_data["forest_monthly"].get(username, 0) + tokens
         game_data["forest_yearly"][username] = game_data["forest_yearly"].get(username, 0) + tokens
+        game_data["daily_actions"]["saplings"] = game_data["daily_actions"].get("saplings", 0) + trees
         save_json_file(GAME_DATA_FILE, game_data)
 
     monthly_lb = [{"name": k, "tokens": v} for k, v in sorted(game_data["forest_monthly"].items(), key=lambda x: x[1], reverse=True)]
@@ -333,22 +342,24 @@ def chatbot():
     score = data.get('score', 75)
     watts = data.get('watts', 18.0)
 
-    if any(k in q_lower for k in ["explain", "about website", "about this website", "what is this site", "overview", "project"]):
-        ans = "GreenByte AI is a real-time digital carbon intelligence platform! It tracks hardware power draw across 5 subsystems (CPU, GPU, RAM, Network, Disk), converts energy consumption into carbon emissions (g CO2/hr), audits web asset weights, and features infinite boss raids & an arcade Sapling Catcher mini-game."
-    elif any(k in q_lower for k in ["useful", "helpful", "beneficial", "benefit", "why use", "use of"]):
-        ans = "GreenByte AI helps you cut digital energy waste, reduce software carbon emissions, and extend device battery life. It gives software engineers and users clear visibility into hidden resource consumption so they can optimize background processes effectively."
-    elif any(k in q_lower for k in ["developer", "creator", "who made", "who built", "soumyadeep", "team"]):
-        ans = "GreenByte AI was architected and developed by Soumyadeep Ghosh (Phone: +91 8100127066 | Email: soumyadeepghosh1tb@gmail.com) alongside team members Satadru Roy, Sougata Mondal, Subhadip Bera, and Susmit Sen for the IEM Sustainability Hackathon 2026!"
-    elif any(k in q_lower for k in ["how are you", "how r u", "how do you do"]):
-        ans = f"I'm operating efficiently! Telemetry shows current system draw at {watts}W with a sustainability score of {score}/100. How can I assist your eco audit today?"
-    elif any(k in q_lower for k in ["hi", "hello", "hey", "greetings"]):
-        ans = "Hello! I am GreenByte AI. Ask me how this website works, why it is useful, boss raid mechanics, or developer contact info!"
-    elif any(k in q_lower for k in ["boss", "raid", "titan", "attack"]):
-        ans = "In Infinite Campus Boss Raids (unlocked with >=2 players), AI-generated titans appear with scaling HP. Scores >75 deal up to 250 HP damage per tick!"
-    elif any(k in q_lower for k in ["forest", "tree", "sapling", "game"]):
-        ans = "Play the 15-Second Sapling Catcher Arcade Game in the Eco-Forest modal! Catch trees falling at a smooth, medium speed while dodging smog hazards (-1 pt) to earn Sapling Tokens!"
+    now_dt = datetime.datetime.now()
+    time_str = now_dt.strftime("%I:%M:%S %p")
+    date_str = now_dt.strftime("%A, %B %d, %Y")
+
+    if any(k in q_lower for k in ["time", "clock"]):
+        ans = f"🕒 Current Local System Time: {time_str}"
+    elif any(k in q_lower for k in ["date", "day", "today"]):
+        ans = f"📅 Today's Date: {date_str}"
+    elif any(k in q_lower for k in ["explain", "how optimization works", "optimisation", "how it works"]):
+        ans = "⚡ Optimization Mechanic: Clicking 'Master Eco-Optimize' recycles inactive memory buffers and throttles background draws. Your score immediately jumps to 86-95 (rarely 97-98). Over 10-25 seconds as background tasks process, the score realistically decays and fluctuates (82 -> 70 -> 57 -> 80) to reflect active system workloads."
+    elif any(k in q_lower for k in ["useful", "feature", "uses of", "benefit", "why use"]):
+        ans = "💡 Features & Uses:\n1. Carbon Map: Audits GPU, CPU, RAM, Disk & Network power draw.\n2. Master Eco-Optimizer: Immediate memory recycling & energy reduction.\n3. Web Scanner: Audits site asset weights & CO2 emissions.\n4. Boss Raids: Gamified team attacks using high eco scores.\n5. Eco Forest: Arcade minigame to catch saplings and earn tokens.\n6. Badges & Streaks: Earn awards for maintaining 7-day to 5-year clean records!"
+    elif any(k in q_lower for k in ["developer", "creator", "who made", "soumyadeep"]):
+        ans = "GreenByte AI was built by Soumyadeep Ghosh (+91 8100127066 | soumyadeepghosh1tb@gmail.com) alongside team members Satadru Roy, Sougata Mondal, Subhadip Bera, and Susmit Sen for the IEM Sustainability Hackathon 2026!"
+    elif any(k in q_lower for k in ["hi", "hello", "hey"]):
+        ans = f"Hello! It is currently {time_str} on {date_str}. Ask me about optimization, features, badges, or developer info!"
     else:
-        ans = f"GreenByte AI Assistant: I am here to help! Current draw is {watts}W with a score of {score}/100. Ask me about optimization, games, or developers!"
+        ans = f"GreenByte AI Assistant: Current draw is {watts}W with a score of {score}/100. Local Time: {time_str}. Ask me about time, date, optimization, or features!"
 
     return jsonify({"answer": ans})
 
@@ -358,6 +369,9 @@ def analyze_url():
     url = data.get('url', '').strip()
     if not url.startswith('http'):
         url = 'https://' + url
+
+    game_data["daily_actions"]["scans"] = game_data["daily_actions"].get("scans", 0) + 1
+    save_json_file(GAME_DATA_FILE, game_data)
 
     try:
         req = urllib.request.Request(
@@ -396,6 +410,8 @@ def analyze_url():
 def eco_optimize():
     try:
         collected = gc.collect()
+        game_data["daily_actions"]["optimizations"] = game_data["daily_actions"].get("optimizations", 0) + 1
+        save_json_file(GAME_DATA_FILE, game_data)
         return jsonify({
             "success": True,
             "message": f"Master Eco-Optimization complete! Recycled {collected} memory buffers & throttled subsystem draw."

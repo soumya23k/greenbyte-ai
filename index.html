@@ -11,6 +11,7 @@
         .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(51, 65, 85, 0.6); }
         .glow-emerald { box-shadow: 0 0 25px rgba(16, 185, 129, 0.25); }
         .glow-rose { box-shadow: 0 0 25px rgba(244, 63, 94, 0.25); }
+        .glow-amber { box-shadow: 0 0 25px rgba(245, 158, 11, 0.25); }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-slate-950 flex flex-col justify-between">
@@ -55,6 +56,92 @@
                         </div>
                         <div class="flex items-center gap-2 text-slate-300 truncate">
                             <span>✉️</span><a href="mailto:soumyadeepghosh1tb@gmail.com" class="hover:text-emerald-400 transition truncate">soumyadeepghosh1tb@gmail.com</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QR CODE MODAL -->
+        <div id="qrModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+            <div class="glass max-w-sm w-full p-6 rounded-2xl border border-teal-500/30 text-center space-y-4 glow-emerald">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <h2 class="text-sm font-black text-teal-300 uppercase flex items-center gap-1.5">📱 QR CODE SHARE</h2>
+                    <button onclick="closeQrModal()" class="text-slate-400 hover:text-slate-100 text-xs font-mono">✕ Close</button>
+                </div>
+                <p class="text-xs text-slate-400">Scan this QR code on your mobile device to open GreenByte AI live dashboard!</p>
+                <div class="flex justify-center p-4 bg-white rounded-2xl border border-slate-700 shadow-inner">
+                    <div id="qrcodeDisplay"></div>
+                </div>
+                <p class="text-[10px] text-slate-500 font-mono">http://localhost:5000</p>
+            </div>
+        </div>
+
+        <!-- ACHIEVEMENTS & BADGES MODAL -->
+        <div id="badgesModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+            <div class="glass max-w-2xl w-full p-6 rounded-2xl border border-amber-500/30 space-y-4 glow-amber">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <h2 class="text-sm font-black text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                        🏅 ACHIEVEMENTS & DAILY STREAK BADGES
+                    </h2>
+                    <button onclick="closeBadgesModal()" class="text-slate-400 hover:text-slate-100 text-xs font-mono">✕ Close</button>
+                </div>
+
+                <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs font-mono">
+                    <span>🔥 Current Daily Active Streak: <strong id="streakDaysCount" class="text-amber-400 text-sm">7 Days</strong></span>
+                    <span class="text-emerald-400 font-bold">Status: Active Clean Record ✓</span>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs font-mono">
+                    <div class="p-3 bg-slate-900 border border-amber-500/40 rounded-xl text-center space-y-1">
+                        <span class="text-2xl">⚡</span>
+                        <p class="font-bold text-amber-300 text-[11px]">7-Day Streak</p>
+                        <p class="text-[9px] text-emerald-400 font-bold">UNLOCKED ✓</p>
+                    </div>
+                    <div class="p-3 bg-slate-900 border border-slate-800 rounded-xl text-center space-y-1 opacity-75">
+                        <span class="text-2xl">🌱</span>
+                        <p class="font-bold text-slate-300 text-[11px]">1 Month (30d)</p>
+                        <p class="text-[9px] text-slate-500">Progress: 7 / 30d</p>
+                    </div>
+                    <div class="p-3 bg-slate-900 border border-slate-800 rounded-xl text-center space-y-1 opacity-60">
+                        <span class="text-2xl">🌿</span>
+                        <p class="font-bold text-slate-300 text-[11px]">6 Months (180d)</p>
+                        <p class="text-[9px] text-slate-500">Locked</p>
+                    </div>
+                    <div class="p-3 bg-slate-900 border border-slate-800 rounded-xl text-center space-y-1 opacity-50">
+                        <span class="text-2xl">🏆</span>
+                        <p class="font-bold text-slate-300 text-[11px]">1 Year (365d)</p>
+                        <p class="text-[9px] text-slate-500">Locked</p>
+                    </div>
+                    <div class="p-3 bg-slate-900 border border-slate-800 rounded-xl text-center space-y-1 opacity-40">
+                        <span class="text-2xl">👑</span>
+                        <p class="font-bold text-slate-300 text-[11px]">2 Years (730d)</p>
+                        <p class="text-[9px] text-slate-500">Locked</p>
+                    </div>
+                    <div class="p-3 bg-slate-900 border border-slate-800 rounded-xl text-center space-y-1 opacity-30">
+                        <span class="text-2xl">💎</span>
+                        <p class="font-bold text-slate-300 text-[11px]">5 Years (1825d)</p>
+                        <p class="text-[9px] text-slate-500">Locked</p>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-800 pt-3 space-y-2">
+                    <h4 class="text-xs font-bold text-emerald-400 uppercase">🛡️ Special Action Badges</h4>
+                    <div class="grid grid-cols-3 gap-2 text-[10px] font-mono text-center">
+                        <div class="p-2 bg-slate-900 border border-emerald-500/40 rounded-lg">
+                            <span class="text-lg">🧹</span>
+                            <p class="text-emerald-300 font-bold">Clean Record</p>
+                            <p class="text-slate-400 text-[8px]">0 Anomaly Violations</p>
+                        </div>
+                        <div class="p-2 bg-slate-900 border border-teal-500/40 rounded-lg">
+                            <span class="text-lg">⚡</span>
+                            <p class="text-teal-300 font-bold">Master Optimizer</p>
+                            <p class="text-slate-400 text-[8px]">10+ Optimizations</p>
+                        </div>
+                        <div class="p-2 bg-slate-900 border border-rose-500/40 rounded-lg">
+                            <span class="text-lg">⚔️</span>
+                            <p class="text-rose-300 font-bold">Titan Slayer</p>
+                            <p class="text-slate-400 text-[8px]">Raid Damage Dealt</p>
                         </div>
                     </div>
                 </div>
@@ -171,12 +258,25 @@
                 </div>
             </div>
 
+            <!-- Date & Time Interface Bar -->
+            <div class="flex items-center gap-3 px-3 py-1.5 bg-slate-900/90 border border-slate-800 rounded-xl text-xs font-mono">
+                <span class="text-emerald-400">📅 <span id="clockDate">--</span></span>
+                <span class="text-slate-600">|</span>
+                <span class="text-amber-400">🕒 <span id="clockTime">--</span></span>
+            </div>
+
             <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
+                <button onclick="openBadgesModal()" class="px-3 py-1.5 bg-amber-500/20 border border-amber-500/40 hover:bg-amber-500/30 text-amber-300 font-bold rounded-lg text-xs transition flex items-center gap-1">
+                    🏅 Badges
+                </button>
+                <button onclick="openQrModal()" class="px-3 py-1.5 bg-teal-500/20 border border-teal-500/40 hover:bg-teal-500/30 text-teal-300 font-bold rounded-lg text-xs transition flex items-center gap-1">
+                    📱 QR
+                </button>
                 <button onclick="openBossModal()" class="px-3 py-1.5 bg-rose-500/20 border border-rose-500/40 hover:bg-rose-500/30 text-rose-300 font-bold rounded-lg text-xs transition flex items-center gap-1">
                     ⚔️ Boss Raid (<span id="navBossHp">100%</span>)
                 </button>
                 <button onclick="openForestModal()" class="px-3 py-1.5 bg-emerald-500/20 border border-emerald-500/40 hover:bg-emerald-500/30 text-emerald-300 font-bold rounded-lg text-xs transition flex items-center gap-1">
-                    🌲 Eco Forest
+                    🌲 Forest
                 </button>
                 <button onclick="openContactModal()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold rounded-lg text-xs transition flex items-center gap-1">
                     📞 Dev
@@ -194,6 +294,31 @@
         </header>
 
         <main class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
+
+            <!-- DAILY ACTIONS DONE TODAY SUMMARY BAR -->
+            <div class="glass rounded-2xl p-4 border border-slate-800">
+                <h3 class="text-xs font-black text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-2">
+                    <span>📊</span> TODAY'S ACTIVITY SUMMARY ("DONE TODAY")
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono text-center">
+                    <div class="p-2.5 bg-slate-900/90 border border-slate-800 rounded-xl">
+                        <p class="text-slate-400 text-[10px]">Eco Optimizations</p>
+                        <p id="doneOptimizations" class="text-emerald-400 font-bold text-sm">--</p>
+                    </div>
+                    <div class="p-2.5 bg-slate-900/90 border border-slate-800 rounded-xl">
+                        <p class="text-slate-400 text-[10px]">Web Scans Audited</p>
+                        <p id="doneScans" class="text-teal-300 font-bold text-sm">--</p>
+                    </div>
+                    <div class="p-2.5 bg-slate-900/90 border border-slate-800 rounded-xl">
+                        <p class="text-slate-400 text-[10px]">Boss Raid Strikes</p>
+                        <p id="doneBossAttacks" class="text-rose-400 font-bold text-sm">--</p>
+                    </div>
+                    <div class="p-2.5 bg-slate-900/90 border border-slate-800 rounded-xl">
+                        <p class="text-slate-400 text-[10px]">Trees Caught</p>
+                        <p id="doneSaplings" class="text-amber-300 font-bold text-sm">--</p>
+                    </div>
+                </div>
+            </div>
 
             <!-- Top Metrics -->
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4">
@@ -388,10 +513,10 @@
                 <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3 flex flex-col justify-between">
                     <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-1.5"><span>🤖</span> GREENBYTE REAL-TIME AI CHATBOT</h2>
                     <div id="chatHistory" class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 h-36 overflow-y-auto text-xs space-y-2 font-mono">
-                        <p class="text-emerald-400">🤖: Hello! I am GreenByte AI. Ask me anything about digital footprint, optimization, boss raids, or developers!</p>
+                        <p class="text-emerald-400">🤖: Hello! I am GreenByte AI. Ask me about time, date, optimization mechanics, or platform features!</p>
                     </div>
                     <div class="flex gap-2">
-                        <input id="chatInput" type="text" placeholder="Ask anything (e.g. How are you?)" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none focus:border-emerald-500" onkeypress="if(event.key==='Enter') sendChat()">
+                        <input id="chatInput" type="text" placeholder="Ask anything (e.g. What is the time? How does optimization work?)" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none focus:border-emerald-500" onkeypress="if(event.key==='Enter') sendChat()">
                         <button onclick="sendChat()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-lg text-xs transition shrink-0">Ask</button>
                     </div>
                 </div>
@@ -427,6 +552,7 @@
         let lastTelemetryData = null;
         let currentUser = "";
         let globalLeaderboard = [];
+        let qrGenerated = false;
 
         let subsystemOptimizedState = { gpu: false, ram: false, net: false, disk: false, cpu: false };
         let subsystemOptTimestamps = { gpu: 0, ram: 0, net: 0, disk: 0, cpu: 0 };
@@ -480,6 +606,23 @@
         function closeBossModal() { document.getElementById('bossModal').classList.add('hidden'); }
         function openForestModal() { document.getElementById('forestModal').classList.remove('hidden'); }
         function closeForestModal() { document.getElementById('forestModal').classList.add('hidden'); }
+        function openBadgesModal() { document.getElementById('badgesModal').classList.remove('hidden'); }
+        function closeBadgesModal() { document.getElementById('badgesModal').classList.add('hidden'); }
+
+        function openQrModal() {
+            document.getElementById('qrModal').classList.remove('hidden');
+            if (!qrGenerated) {
+                new QRCode(document.getElementById("qrcodeDisplay"), {
+                    text: window.location.href || "http://localhost:5000",
+                    width: 160,
+                    height: 160,
+                    colorDark : "#0f172a",
+                    colorLight : "#ffffff"
+                });
+                qrGenerated = true;
+            }
+        }
+        function closeQrModal() { document.getElementById('qrModal').classList.add('hidden'); }
 
         const ctx = document.getElementById('powerChart').getContext('2d');
         const powerChart = new Chart(ctx, {
@@ -530,11 +673,21 @@
                 const data = await res.json();
                 lastTelemetryData = data;
 
+                document.getElementById('clockDate').innerText = data.current_date || "--";
+                document.getElementById('clockTime').innerText = data.current_time || "--";
+
                 document.getElementById('scoreVal').innerText = data.sustainability_score;
                 document.getElementById('scoreBar').style.width = `${data.sustainability_score}%`;
                 document.getElementById('cpuVal').innerText = `${data.cpu_percent}%`;
                 document.getElementById('wattsVal').innerText = data.current_watts;
                 document.getElementById('co2Val').innerText = data.co2_grams;
+
+                if (data.daily_actions) {
+                    document.getElementById('doneOptimizations').innerText = data.daily_actions.optimizations || 0;
+                    document.getElementById('doneScans').innerText = data.daily_actions.scans || 0;
+                    document.getElementById('doneBossAttacks').innerText = data.daily_actions.boss_attacks || 0;
+                    document.getElementById('doneSaplings').innerText = data.daily_actions.saplings || 0;
+                }
 
                 const anomalyBanner = document.getElementById('anomalyBanner');
                 if (data.anomaly && data.anomaly.detected) {
@@ -652,7 +805,7 @@
             } catch(e) {}
         }
 
-        // --- ARCADE SAPLING CATCHER MINI-GAME ENGINE (SLOW-TO-MEDIUM FALL SPEED) ---
+        // --- ARCADE SAPLING CATCHER MINI-GAME ENGINE ---
         let gameCanvas = document.getElementById('gameCanvas');
         let gameCtx = gameCanvas.getContext('2d');
         let gameRunning = false;
@@ -713,13 +866,12 @@
 
             gameCtx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 
-            // Moderate spawn frequency with slow-to-medium fall speeds
             if (Math.random() < 0.045) {
-                let isHazard = Math.random() < 0.55; // Balanced hazard ratio
+                let isHazard = Math.random() < 0.55;
                 fallingItems.push({
                     x: Math.random() * (gameCanvas.width - 24),
                     y: -20,
-                    speed: 2.0 + Math.random() * 2.0, // Slow to medium fall speed (2.0 to 4.0 px/frame)
+                    speed: 2.0 + Math.random() * 2.0,
                     type: isHazard ? '💨' : (Math.random() > 0.5 ? '🌱' : '🌲')
                 });
             }
