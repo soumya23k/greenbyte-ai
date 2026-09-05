@@ -35,54 +35,71 @@
             </div>
         </div>
 
-        <!-- ECO BATTLE MODAL -->
+        <!-- MULTI-PLAYER ECO BATTLE MODAL -->
         <div id="battleModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
             <div class="glass max-w-xl w-full p-6 rounded-2xl border border-emerald-500/30 space-y-5 glow-emerald">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                     <h2 class="text-lg font-black text-emerald-400 flex items-center gap-2">⚔️ LIVE REAL-TIME ECO BATTLE MODE</h2>
                     <button onclick="closeBattleModal()" class="text-slate-400 hover:text-slate-100 text-sm font-mono">✕ Close</button>
                 </div>
-                <p class="text-xs text-slate-300">Who can achieve the lowest carbon footprint ($g\text{ CO}_2/\text{hr}$)? Optimize your system to win the battle!</p>
                 
-                <div class="grid grid-cols-2 gap-4 text-center font-mono">
-                    <div class="p-4 bg-slate-900 border border-emerald-500/40 rounded-xl space-y-2">
-                        <p class="text-xs font-bold text-emerald-400">Player 1 (You: <span id="battleP1Name">User</span>)</p>
-                        <p id="battleP1Draw" class="text-2xl font-black text-slate-100">-- g/hr</p>
-                        <span id="battleP1Status" class="inline-block px-2 py-0.5 bg-emerald-500/20 text-emerald-300 text-[10px] rounded">Competing</span>
-                    </div>
-                    <div class="p-4 bg-slate-900 border border-rose-500/40 rounded-xl space-y-2">
-                        <p class="text-xs font-bold text-rose-400">Player 2 (Competitor: Alex)</p>
-                        <p id="battleP2Draw" class="text-2xl font-black text-slate-100">14.2 g/hr</p>
-                        <span id="battleP2Status" class="inline-block px-2 py-0.5 bg-rose-500/20 text-rose-300 text-[10px] rounded">Competing</span>
-                    </div>
+                <div id="battleRequirementNotice" class="hidden text-center p-3 bg-rose-950/80 border border-rose-500/40 rounded-xl text-xs text-rose-300 font-mono">
+                    ⚠️ At least 2 registered users are required in the leaderboard to initiate an Eco Battle. Please register another player!
                 </div>
 
-                <div id="battleResult" class="text-center p-3 bg-slate-900/80 border border-slate-800 rounded-xl text-xs font-bold text-amber-300">
-                    Battle in progress... Run 'Master Eco-Optimize' to reduce your footprint!
+                <div id="battleControls" class="space-y-4">
+                    <div class="flex items-center justify-between gap-3 bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs">
+                        <span class="text-slate-300 font-bold">Select Competitor:</span>
+                        <select id="opponentSelect" onchange="changeOpponent()" class="bg-slate-950 border border-slate-700 text-xs text-emerald-400 rounded px-2.5 py-1.5 font-bold outline-none">
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 text-center font-mono">
+                        <div class="p-4 bg-slate-900 border border-emerald-500/40 rounded-xl space-y-2">
+                            <p class="text-xs font-bold text-emerald-400">Player 1 (You: <span id="battleP1Name">User</span>)</p>
+                            <p id="battleP1Draw" class="text-2xl font-black text-slate-100">-- g/hr</p>
+                            <span id="battleP1Status" class="inline-block px-2 py-0.5 bg-emerald-500/20 text-emerald-300 text-[10px] rounded">Competing</span>
+                        </div>
+                        <div class="p-4 bg-slate-900 border border-amber-500/40 rounded-xl space-y-2">
+                            <p class="text-xs font-bold text-amber-400">Player 2 (<span id="battleP2Name">Opponent</span>)</p>
+                            <p id="battleP2Draw" class="text-2xl font-black text-slate-100">14.8 g/hr</p>
+                            <span id="battleP2Status" class="inline-block px-2 py-0.5 bg-amber-500/20 text-amber-300 text-[10px] rounded">Competing</span>
+                        </div>
+                    </div>
+
+                    <div id="battleResult" class="text-center p-3 bg-slate-900/80 border border-slate-800 rounded-xl text-xs font-bold text-amber-300">
+                        Battle in progress... Run 'Master Eco-Optimize' to reduce your footprint!
+                    </div>
+                    
+                    <button onclick="triggerEcoOptimizer()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-lg text-xs transition">
+                        ⚡ ACTIVATE ECO-OPTIMIZER FOR BATTLE
+                    </button>
                 </div>
-                
-                <button onclick="triggerEcoOptimizer()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-lg text-xs transition">
-                    ⚡ ACTIVATE ECO-OPTIMIZER FOR BATTLE
-                </button>
             </div>
         </div>
 
-        <!-- QR ECO PASSPORT MODAL -->
+        <!-- QR ECO PASSPORT & ACHIEVEMENTS MODAL -->
         <div id="passportModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
-            <div class="glass max-w-sm w-full p-6 rounded-2xl border border-emerald-500/30 text-center space-y-4 glow-emerald">
+            <div class="glass max-w-md w-full p-6 rounded-2xl border border-emerald-500/30 text-center space-y-4 glow-emerald">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                    <h2 class="text-sm font-black text-emerald-400">📱 QR ECO PASSPORT</h2>
+                    <h2 class="text-sm font-black text-emerald-400">📱 QR ECO PASSPORT & ACHIEVEMENTS</h2>
                     <button onclick="closePassportModal()" class="text-slate-400 hover:text-slate-100 text-xs font-mono">✕ Close</button>
                 </div>
                 
                 <div class="p-3 bg-slate-900 border border-slate-800 rounded-xl text-left text-xs space-y-1 font-mono">
                     <p>👤 <strong>User:</strong> <span id="passportUser" class="text-emerald-400">Guest User</span></p>
                     <p>🌿 <strong>Sustainability Score:</strong> <span id="passportScore" class="text-emerald-400">--</span>/100</p>
-                    <p>🏆 <strong>Eco Status:</strong> <span id="passportBadge" class="text-teal-300">Green Champion</span></p>
+                </div>
+
+                <!-- UNLOCKED ACHIEVEMENTS DISPLAY -->
+                <div class="text-left space-y-1.5">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">🏆 Unlocked Achievements</p>
+                    <div id="achievementsContainer" class="grid grid-cols-2 gap-2 text-[10px] font-mono">
+                    </div>
                 </div>
 
                 <div class="flex justify-center p-3 bg-white rounded-xl" id="qrcode"></div>
-                <p class="text-[10px] text-slate-400">Scan this QR code with any smartphone to inspect user profile and eco stats live.</p>
+                <p class="text-[10px] text-slate-400">Scan this QR code with any smartphone to inspect user profile and eco badges live.</p>
             </div>
         </div>
 
@@ -353,13 +370,13 @@
 
                 <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3 flex flex-col justify-between">
                     <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
-                        <span>🤖</span> GREENBYTE CONVERSATIONAL AI CHATBOT
+                        <span>🤖</span> GREENBYTE REAL-TIME AI CHATBOT
                     </h2>
                     <div id="chatHistory" class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 h-36 overflow-y-auto text-xs space-y-2 font-mono">
-                        <p class="text-emerald-400">🤖: Hello! I am GreenByte AI. You can ask me conversational questions like "How are you?", "How is GreenByte useful to me?", or "Who developed this project?"</p>
+                        <p class="text-emerald-400">🤖: Hello! I am GreenByte AI. Ask me anything about digital footprint, optimization, eco battles, or developers!</p>
                     </div>
                     <div class="flex gap-2">
-                        <input id="chatInput" type="text" placeholder="Ask anything (e.g. How is GreenByte useful to me?)" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none focus:border-emerald-500" onkeypress="if(event.key==='Enter') sendChat()">
+                        <input id="chatInput" type="text" placeholder="Ask anything (e.g. How are you?)" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none focus:border-emerald-500" onkeypress="if(event.key==='Enter') sendChat()">
                         <button onclick="sendChat()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-lg text-xs transition shrink-0">Ask</button>
                     </div>
                 </div>
@@ -397,8 +414,16 @@
         const API = "/api";
         let lastTelemetryData = null;
         let currentUser = "";
+        let globalLeaderboard = [];
 
-        // DYNAMIC WORKLOAD ENGINE (Subsystems can be optimized individually and load rebuilds over time)
+        // Achievement Tracking Engine
+        let userAchievements = {
+            novice: true,
+            optimizer: false,
+            warrior: false,
+            battleWon: false
+        };
+
         let subsystemStates = {
             gpu: { optimized: false, strength: 0.0 },
             ram: { optimized: false, strength: 0.0 },
@@ -475,13 +500,12 @@
             }
         });
 
-        // Decay optimization strength slightly every cycle so workload naturally rebuilds as you work!
         function decayWorkloadStrength() {
             let totalStrength = 0;
             const keys = Object.keys(subsystemStates);
             keys.forEach(key => {
                 if (subsystemStates[key].strength > 0) {
-                    subsystemStates[key].strength = Math.max(0, subsystemStates[key].strength - 0.08); // Decays over ~12 cycles (~40 sec)
+                    subsystemStates[key].strength = Math.max(0, subsystemStates[key].strength - 0.08);
                     if (subsystemStates[key].strength === 0) {
                         subsystemStates[key].optimized = false;
                     }
@@ -505,7 +529,11 @@
                 document.getElementById('wattsVal').innerText = data.current_watts;
                 document.getElementById('co2Val').innerText = data.co2_grams;
 
-                // Anomaly Banner - shows dynamically when load accumulates and power draw spikes
+                // Achievement Unlock Checks
+                if (data.sustainability_score >= 85 || data.current_watts < 12.0) {
+                    userAchievements.warrior = true;
+                }
+
                 const anomalyBanner = document.getElementById('anomalyBanner');
                 if (data.anomaly && data.anomaly.detected) {
                     anomalyBanner.classList.remove('hidden');
@@ -597,7 +625,7 @@
             let advice = "🌿 System is running in an optimal energy state. Maintain ~60% screen brightness to maximize battery longevity.";
             
             if (cpu > 25.0) {
-                advice = `⚡ High CPU Load Detected (${cpu}%): System workload is increasing due to active tasks. Click 'MASTER ECO-OPTIMIZE' or target individual subsystem buttons to drop wattage!`;
+                advice = `⚡ High CPU Load Detected (${cpu}%): Workload is rebuilding. Click 'Master Eco-Optimize' to trim power draw!`;
             } else if (score < 75) {
                 advice = "⚠️ Lower Sustainability Score: Operating in Eco-Mode or switching to EU Clean Grid lowers emissions intensity.";
             }
@@ -612,12 +640,44 @@
         function optimizeIndividualSubsystem(subsystemId) {
             subsystemStates[subsystemId].optimized = true;
             subsystemStates[subsystemId].strength = 1.0;
+            userAchievements.optimizer = true;
             updateTelemetry();
         }
 
+        // --- MULTI-PLAYER ECO BATTLE CONTROLLER ---
         function openBattleModal() {
             document.getElementById('battleModal').classList.remove('hidden');
             document.getElementById('battleP1Name').innerText = currentUser || "You";
+
+            const reqNotice = document.getElementById('battleRequirementNotice');
+            const battleControls = document.getElementById('battleControls');
+            const selectBox = document.getElementById('opponentSelect');
+
+            // Filter out current user from opponents list
+            const opponents = globalLeaderboard.filter(item => item.name !== currentUser);
+
+            if (opponents.length === 0) {
+                reqNotice.classList.remove('hidden');
+                battleControls.classList.add('hidden');
+            } else {
+                reqNotice.classList.add('hidden');
+                battleControls.classList.remove('hidden');
+
+                selectBox.innerHTML = '';
+                opponents.forEach(op => {
+                    const opt = document.createElement('option');
+                    opt.value = op.name;
+                    opt.innerText = `${op.name} (Score: ${op.score})`;
+                    selectBox.appendChild(opt);
+                });
+                changeOpponent();
+            }
+        }
+
+        function changeOpponent() {
+            const selectBox = document.getElementById('opponentSelect');
+            const p2Name = selectBox.value || "Opponent";
+            document.getElementById('battleP2Name').innerText = p2Name;
         }
 
         function closeBattleModal() {
@@ -628,30 +688,54 @@
             const p1DrawG = ((watts / 1000.0) * gridFactor).toFixed(2);
             document.getElementById('battleP1Draw').innerText = `${p1DrawG} g/hr`;
             
+            // Opponent baseline load estimation
+            const p2DrawG = 14.2;
+            document.getElementById('battleP2Draw').innerText = `${p2DrawG} g/hr`;
+
             const resultBox = document.getElementById('battleResult');
-            if (p1DrawG < 14.2) {
+            if (p1DrawG < p2DrawG) {
                 resultBox.className = "text-center p-3 bg-emerald-950/80 border border-emerald-500/40 rounded-xl text-xs font-bold text-emerald-300";
-                resultBox.innerText = `🏆 YOU ARE WINNING! Your emission (${p1DrawG} g/hr) is lower than Competitor (14.2 g/hr)!`;
+                resultBox.innerText = `🏆 YOU ARE WINNING! Your emission (${p1DrawG} g/hr) is lower than ${document.getElementById('battleP2Name').innerText} (${p2DrawG} g/hr)!`;
+                userAchievements.battleWon = true;
             } else {
                 resultBox.className = "text-center p-3 bg-rose-950/80 border border-rose-500/40 rounded-xl text-xs font-bold text-rose-300";
-                resultBox.innerText = `⚠️ YOU ARE BEHIND! Your emission (${p1DrawG} g/hr) is higher than Competitor (14.2 g/hr). Run Master Eco-Optimize!`;
+                resultBox.innerText = `⚠️ YOU ARE BEHIND! Your emission (${p1DrawG} g/hr) is higher than ${document.getElementById('battleP2Name').innerText} (${p2DrawG} g/hr). Run Master Eco-Optimize!`;
             }
         }
 
+        // --- QR PASSPORT & ACHIEVEMENTS CONTROLLER ---
         function openPassportModal() {
             document.getElementById('passportModal').classList.remove('hidden');
             const score = lastTelemetryData ? lastTelemetryData.sustainability_score : 75;
             document.getElementById('passportUser').innerText = currentUser || "Guest User";
             document.getElementById('passportScore').innerText = score;
 
+            // Render Achievements
+            const achBox = document.getElementById('achievementsContainer');
+            achBox.innerHTML = `
+                <div class="p-2 border rounded ${userAchievements.novice ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-600'}">
+                    🥉 <strong>Eco Novice</strong> ${userAchievements.novice ? '✓' : '🔒'}
+                </div>
+                <div class="p-2 border rounded ${userAchievements.optimizer ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-600'}">
+                    ⚡ <strong>Optimizer</strong> ${userAchievements.optimizer ? '✓' : '🔒'}
+                </div>
+                <div class="p-2 border rounded ${userAchievements.warrior ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-600'}">
+                    🛡️ <strong>Carbon Warrior</strong> ${userAchievements.warrior ? '✓' : '🔒'}
+                </div>
+                <div class="p-2 border rounded ${userAchievements.battleWon ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-600'}">
+                    ⚔️ <strong>Battle Winner</strong> ${userAchievements.battleWon ? '✓' : '🔒'}
+                </div>
+            `;
+
+            // QR Code render
             const qrContainer = document.getElementById("qrcode");
             qrContainer.innerHTML = "";
-            const qrText = `GreenByte Passport | User: ${currentUser || 'Guest'} | Score: ${score}/100 | Developer: Soumyadeep Ghosh`;
+            const qrText = `GreenByte Eco Passport | User: ${currentUser || 'Guest'} | Score: ${score}/100 | Developer: Soumyadeep Ghosh | Badges: ${Object.keys(userAchievements).filter(k=>userAchievements[k]).join(', ')}`;
             
             new QRCode(qrContainer, {
                 text: qrText,
-                width: 140,
-                height: 140,
+                width: 130,
+                height: 130,
                 colorDark : "#0f172a",
                 colorLight : "#ffffff"
             });
@@ -666,6 +750,7 @@
                 subsystemStates[k].optimized = true;
                 subsystemStates[k].strength = 1.0;
             });
+            userAchievements.optimizer = true;
 
             try {
                 const res = await fetch(`${API}/eco-optimize`, { method: 'POST' });
@@ -679,6 +764,7 @@
             try {
                 const res = await fetch(`${API}/leaderboard`);
                 const data = await res.json();
+                globalLeaderboard = data.leaderboard || [];
                 const tbody = document.getElementById('leaderboardBody');
                 tbody.innerHTML = '';
                 
