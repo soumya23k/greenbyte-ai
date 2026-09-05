@@ -79,28 +79,65 @@ def fallback_news():
 def serve_index():
     return send_from_directory('.', 'index.html')
 
-@app.route('/api/telemetry', methods=['GET'])
+@app.route('/api/telemetry', methods=['POST'])
 def telemetry():
-    selected_grid = request.args.get('grid', 'WB Grid (Thermal/Coal)')
-    opt_strength = float(request.args.get('opt_strength', '0.0'))
+    data = request.get_json() or {}
+    selected_grid = data.get('grid', 'WB Grid (Thermal/Coal)')
+    subsystem_opt = data.get('subsystems', {})
+    
     grid_factor = GRID_INTENSITY.get(selected_grid, GRID_INTENSITY["WB Grid (Thermal/Coal)"])["factor"]
 
-    base_raw_cpu = random.uniform(18.0, 52.0)
-    raw_cpu = round((base_raw_cpu * (1.0 - opt_strength)) + (random.uniform(4.0, 7.5) * opt_strength), 1)
-    current_watts = round(11.5 + (raw_cpu * 0.32) + random.uniform(-0.8, 1.8), 1)
-
-    if raw_cpu < 12.0:
-        score = random.choice([91, 93, 95, 97])
-    elif raw_cpu < 28.0:
-        score = random.choice([78, 80, 82, 85])
+    # Natural dynamic simulation for each subsystem independently
+    sub_data = {}
+    
+    # 1. GPU / Display
+    if subsystem_opt.get('gpu', False):
+        sub_data['gpu'] = {"dna": "🟢 Low", "activity": "Eco Frame Throttle", "load": f"{round(random.uniform(3.0, 6.0), 1)}% Load", "watts": 1.1}
     else:
-        score = random.choice([52, 56, 61, 68])
+        load_val = round(random.uniform(18.0, 34.0), 1)
+        sub_data['gpu'] = {"dna": "🔴 High" if load_val > 24 else "🟡 Moderate", "activity": "Screen Render Stream", "load": f"{load_val}% Load", "watts": round(2.5 + (load_val * 0.05), 2)}
 
-    anomaly_detected = current_watts > 22.5
-    anomaly_msg = f"UNUSUAL CARBON SPIKE: Subsystem load increased power draw to {current_watts}W!" if anomaly_detected else ""
+    # 2. RAM / Memory
+    if subsystem_opt.get('ram', False):
+        sub_data['ram'] = {"dna": "🟢 Low", "activity": "Cache Recycled", "load": "420 MB Allocated", "watts": 0.7}
+    else:
+        ram_mb = round(random.uniform(1.1, 1.8), 2)
+        sub_data['ram'] = {"dna": "🟡 Moderate" if ram_mb < 1.5 else "🔴 High", "activity": "Active RAM Buffer", "load": f"{ram_mb} GB Allocated", "watts": round(1.2 + ram_mb, 2)}
+
+    # 3. Network / I/O
+    if subsystem_opt.get('net', False):
+        sub_data['net'] = {"dna": "🟢 Low", "activity": "Compressed Packets", "load": "8 KB/s Packets", "watts": 0.3}
+    else:
+        pkts = random.randint(28, 85)
+        sub_data['net'] = {"dna": "🟢 Low" if pkts < 40 else "🟡 Moderate", "activity": "HTTP Telemetry Stream", "load": f"{pkts} KB/s Packets", "watts": round(0.5 + (pkts * 0.01), 2)}
+
+    # 4. Storage / Disk
+    if subsystem_opt.get('disk', False):
+        sub_data['disk'] = {"dna": "🟢 Low", "activity": "I/O Low Power", "load": "I/O Idle", "watts": 0.2}
+    else:
+        active = random.choice([True, False])
+        sub_data['disk'] = {"dna": "🟡 Moderate" if active else "🟢 Low", "activity": "Pagefile Read/Write" if active else "I/O Idle", "load": "I/O Active" if active else "I/O Standby", "watts": 0.6 if active else 0.3}
+
+    # 5. CPU Engine
+    if subsystem_opt.get('cpu', False):
+        sub_data['cpu'] = {"dna": "🟢 Low", "activity": "C-State Parked", "load": f"{round(random.uniform(3.0, 7.0), 1)}% Load", "watts": 0.8}
+    else:
+        cpu_load = round(random.uniform(12.0, 38.0), 1)
+        sub_data['cpu'] = {"dna": "🔴 High" if cpu_load > 22 else "🟡 Moderate", "activity": "Worker Threads", "load": f"{cpu_load}% Load", "watts": round(1.2 + (cpu_load * 0.08), 2)}
+
+    # Aggregate System Telemetry
+    total_watts = round(sum(item['watts'] for item in sub_data.values()) + random.uniform(2.5, 4.0), 1)
+    cpu_percent = float(sub_data['cpu']['load'].replace('% Load', ''))
+    
+    # Calculate Score
+    unopt_count = sum(1 for v in subsystem_opt.values() if not v)
+    score = max(50, 98 - (unopt_count * 8) - int(cpu_percent * 0.3))
+
+    anomaly_detected = total_watts > 22.0
+    anomaly_msg = f"UNUSUAL CARBON SPIKE: Subsystem load increased power draw to {total_watts}W!" if anomaly_detected else ""
 
     uptime_hours = (time.time() - BOOT_TIME) / 3600.0
-    system_kwh = (current_watts * max(uptime_hours, 0.1)) / 1000.0
+    system_kwh = (total_watts * max(uptime_hours, 0.1)) / 1000.0
     co2_grams = round(system_kwh * grid_factor, 2)
     cost_saved = round(system_kwh * ELECTRICITY_RATE_PER_KWH_INR, 2)
 
@@ -110,24 +147,20 @@ def telemetry():
         "video_streaming_g": round(14.5 + random.uniform(-1.0, 1.5), 1)
     }
 
-    cpu_share = round(raw_cpu * 0.75, 1)
-    ram_share = round(random.uniform(25.0, 42.0), 1)
-    disk_share = round(random.uniform(8.0, 16.0), 1)
-    cloud_share = round(max(100.0 - (cpu_share + ram_share + disk_share), 5.0), 1)
-
     trees = round(co2_grams / 60.0, 2)
     car_km = round(co2_grams / 120.0, 2)
     led_hours = round(co2_grams / 7.0, 1)
 
     return jsonify({
-        "cpu_percent": raw_cpu,
-        "current_watts": current_watts,
+        "cpu_percent": cpu_percent,
+        "current_watts": total_watts,
         "co2_grams": co2_grams,
         "cost_saved_inr": cost_saved,
         "sustainability_score": score,
         "grid_factor": grid_factor,
+        "subsystem_details": sub_data,
         "anomaly": {"detected": anomaly_detected, "message": anomaly_msg},
-        "carbon_map": {"cpu": cpu_share, "ram": ram_share, "disk": disk_share, "cloud": cloud_share},
+        "carbon_map": {"cpu": round(cpu_percent * 0.7, 1), "ram": 32.5, "disk": 12.0, "cloud": 18.2},
         "cloud_est": cloud_est,
         "impact": {"trees": trees, "car_km": car_km, "led_hours": led_hours},
         "news": fetch_live_eco_news()
@@ -155,7 +188,6 @@ def leaderboard():
         "total_users": len(sorted_lb)
     })
 
-# --- ADVANCED CONVERSATIONAL REAL-TIME CHATBOT ENGINE ---
 @app.route('/api/chatbot', methods=['POST'])
 def chatbot():
     data = request.get_json()
@@ -164,59 +196,24 @@ def chatbot():
     score = data.get('score', 75)
     watts = data.get('watts', 18.0)
 
-    # 1. External GenAI LLM API Integration (if GEMINI_API_KEY or OPENAI_API_KEY is configured in env)
-    api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("OPENAI_API_KEY")
-    if api_key:
-        try:
-            # Flexible prompt forwarding to standard LLM endpoints
-            prompt_payload = json.dumps({
-                "contents": [{"parts": [{"text": f"You are GreenByte AI, an authentic real-time intelligent assistant created for digital sustainability. System metrics: {watts}W draw, score: {score}/100. Answer the user prompt naturally like ChatGPT: {query}"}]}]
-            }).encode('utf-8')
-            req = urllib.request.Request(
-                f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={api_key}",
-                data=prompt_payload,
-                headers={'Content-Type': 'application/json'}
-            )
-            with urllib.request.urlopen(req, timeout=4) as response:
-                res_data = json.loads(response.read().decode('utf-8'))
-                llm_reply = res_data['candidates'][0]['content']['parts'][0]['text']
-                return jsonify({"answer": llm_reply})
-        except Exception:
-            pass
-
-    # 2. Dynamic Conversational Inference Engine (Answers unlimited questions gracefully)
-    if any(k in q_lower for k in ["how are you", "how do you do", "how r u", "how is it going"]):
+    if any(k in q_lower for k in ["how are you", "how do you do", "how r u"]):
         ans = "I am doing great, thank you! I am active and keeping track of system energy telemetry. How can I help you today?"
-    
-    elif any(k in q_lower for k in ["useful", "use of", "why use", "benefit", "what does it do", "how does it help"]):
+    elif any(k in q_lower for k in ["useful", "use of", "why use", "benefit", "what does it do"]):
         ans = "GreenByte AI provides real-time digital carbon intelligence! It monitors live CPU power draw, audits web asset carbon weight, and optimizes memory buffers so you save battery and lower carbon emissions."
-    
     elif any(k in q_lower for k in ["who developed", "developer", "creator", "who built", "who made", "soumyadeep"]):
-        ans = "GreenByte AI was created by Soumyadeep Ghosh, with project team members Satadru Roy, Sougata Mondal, Subhadip Bera, and Susmit Sen for the IEM Sustainability Hackathon 2026!"
-    
-    elif any(k in q_lower for k in ["hi", "hello", "hey", "greetings", "sup"]):
+        ans = "GreenByte AI was created by Soumyadeep Ghosh (Phone: +91 8100127066, Email: soumyadeepghosh1tb@gmail.com), alongside team members Satadru Roy, Sougata Mondal, Subhadip Bera, and Susmit Sen for the IEM Sustainability Hackathon 2026!"
+    elif any(k in q_lower for k in ["hi", "hello", "hey", "greetings"]):
         ans = f"Hello there! I'm GreenByte AI. Current system draw is {watts}W with a score of {score}/100. Ask me any general or green computing question!"
-
-    elif any(k in q_lower for k in ["weather", "temperature", "rain", "forecast"]):
-        ans = "I specialize in digital telemetry, but checking real-time eco feeds shows weather patterns are heavily influenced by climate trends! Lowering digital footprints helps curb long-term global warming."
-
-    elif any(k in q_lower for k in ["battle", "eco battle", "compete", "vs"]):
+    elif any(k in q_lower for k in ["battle", "eco battle", "compete"]):
         ans = "In Eco Battle Mode, you select an opponent from registered leaderboard users to compete on who maintains the lowest emissions ($g\\text{ CO}_2/\\text{hr}$)!"
-
-    elif any(k in q_lower for k in ["passport", "qr", "achievement", "badge"]):
-        ans = "Your QR Eco Passport displays scannable badges unlocked as you reach sustainability milestones like 'Optimization Specialist' or 'Battle Champion'!"
-
+    elif any(k in q_lower for k in ["passport", "qr", "achievement"]):
+        ans = "Your QR Eco Passport displays scannable badges unlocked as you reach sustainability milestones!"
     elif any(k in q_lower for k in ["why", "high", "footprint", "reason", "spike"]):
         ans = f"Carbon footprint spikes occur when power draw increases (currently {watts}W) due to unoptimized background processes, heavy screen rendering, or high-carbon electricity grid sources."
-
-    elif any(k in q_lower for k in ["optimize", "fix", "lower", "reduce", "clean"]):
+    elif any(k in q_lower for k in ["optimize", "fix", "lower", "reduce"]):
         ans = "Click 'Master Eco-Optimize' or use individual subsystem buttons to flush unneeded RAM buffers and drop system draw below 10W!"
-
-    elif any(k in q_lower for k in ["save", "money", "rupees", "cost"]):
-        ans = "Maintaining low-power states can save approximately ₹120–₹180 per month on electricity while preventing over 8.5 kg of atmospheric CO₂!"
-
     else:
-        ans = f"That's an interesting question regarding '{query}'. GreenByte AI is designed to process dynamic user inputs. Current system telemetry stands at {watts}W with a {score}/100 sustainability index. Ask me about optimization, developers, or eco battles!"
+        ans = f"GreenByte AI Assistant: I am here to help! Telemetry stands at {watts}W with a {score}/100 sustainability index. Ask me about optimization, developers, or eco battles!"
 
     return jsonify({"answer": ans})
 
@@ -266,7 +263,7 @@ def eco_optimize():
         collected = gc.collect()
         return jsonify({
             "success": True,
-            "message": f"Eco-Optimization complete! Flushed {collected} background memory buffers & throttled high-draw threads."
+            "message": f"Master Eco-Optimization complete! Recycled {collected} memory buffers & throttled all subsystem draw."
         })
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 400

@@ -35,6 +35,36 @@
             </div>
         </div>
 
+        <!-- CONTACT DEVELOPER MODAL -->
+        <div id="contactModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+            <div class="glass max-w-sm w-full p-6 rounded-2xl border border-emerald-500/30 text-center space-y-4 glow-emerald">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <h2 class="text-sm font-black text-emerald-400 uppercase">📞 Contact Lead Developer</h2>
+                    <button onclick="closeContactModal()" class="text-slate-400 hover:text-slate-100 text-xs font-mono">✕ Close</button>
+                </div>
+                
+                <div class="space-y-3">
+                    <img src="WhatsApp Image 2026-09-02 at 21.48.14.jpeg" alt="Soumyadeep Ghosh" class="w-24 h-24 rounded-full mx-auto border-2 border-emerald-400 object-cover shadow-lg glow-emerald">
+                    
+                    <div>
+                        <h3 class="text-base font-black text-slate-100">Soumyadeep Ghosh</h3>
+                        <p class="text-[11px] text-emerald-400 font-bold uppercase tracking-wider">Lead Web Developer & AI Architect</p>
+                    </div>
+
+                    <div class="p-3 bg-slate-900/90 border border-slate-800 rounded-xl text-xs space-y-2 text-left font-mono">
+                        <div class="flex items-center gap-2 text-slate-300">
+                            <span>📞</span>
+                            <a href="tel:8100127066" class="hover:text-emerald-400 transition">+91 8100127066</a>
+                        </div>
+                        <div class="flex items-center gap-2 text-slate-300 truncate">
+                            <span>✉️</span>
+                            <a href="mailto:soumyadeepghosh1tb@gmail.com" class="hover:text-emerald-400 transition truncate">soumyadeepghosh1tb@gmail.com</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- MULTI-PLAYER ECO BATTLE MODAL -->
         <div id="battleModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
             <div class="glass max-w-xl w-full p-6 rounded-2xl border border-emerald-500/30 space-y-5 glow-emerald">
@@ -71,14 +101,14 @@
                         Battle in progress... Run 'Master Eco-Optimize' to reduce your footprint!
                     </div>
                     
-                    <button onclick="triggerEcoOptimizer()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-lg text-xs transition">
-                        ⚡ ACTIVATE ECO-OPTIMIZER FOR BATTLE
+                    <button onclick="triggerMasterEcoOptimizer()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-lg text-xs transition">
+                        ⚡ ACTIVATE MASTER ECO-OPTIMIZER FOR BATTLE
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- QR ECO PASSPORT & ACHIEVEMENTS MODAL -->
+        <!-- QR ECO PASSPORT MODAL -->
         <div id="passportModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
             <div class="glass max-w-md w-full p-6 rounded-2xl border border-emerald-500/30 text-center space-y-4 glow-emerald">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
@@ -91,7 +121,6 @@
                     <p>🌿 <strong>Sustainability Score:</strong> <span id="passportScore" class="text-emerald-400">--</span>/100</p>
                 </div>
 
-                <!-- UNLOCKED ACHIEVEMENTS DISPLAY -->
                 <div class="text-left space-y-1.5">
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">🏆 Unlocked Achievements</p>
                     <div id="achievementsContainer" class="grid grid-cols-2 gap-2 text-[10px] font-mono">
@@ -118,7 +147,7 @@
                 <span>🚨</span>
                 <span id="anomalyText" class="font-bold">UNUSUAL CARBON ACTIVITY DETECTED!</span>
             </div>
-            <button onclick="triggerEcoOptimizer()" class="px-2 py-0.5 bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold rounded text-[10px]">
+            <button onclick="triggerMasterEcoOptimizer()" class="px-2 py-0.5 bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold rounded text-[10px]">
                 OPTIMIZE NOW
             </button>
         </div>
@@ -138,15 +167,19 @@
             </div>
 
             <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
+                <button onclick="openContactModal()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold rounded-lg text-xs transition flex items-center gap-1">
+                    📞 Contact Dev
+                </button>
+
                 <button onclick="openBattleModal()" class="px-3 py-1.5 bg-amber-500/20 border border-amber-500/40 hover:bg-amber-500/30 text-amber-300 font-bold rounded-lg text-xs transition flex items-center gap-1">
-                    ⚔️ Live Eco Battle
+                    ⚔️ Eco Battle
                 </button>
 
                 <button onclick="openPassportModal()" class="px-3 py-1.5 bg-teal-500/20 border border-teal-500/40 hover:bg-teal-500/30 text-teal-300 font-bold rounded-lg text-xs transition flex items-center gap-1">
-                    📱 QR Eco Passport
+                    📱 QR Passport
                 </button>
 
-                <button onclick="triggerEcoOptimizer()" class="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-lg text-xs transition flex items-center gap-1.5 shrink-0">
+                <button onclick="triggerMasterEcoOptimizer()" class="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-lg text-xs transition flex items-center gap-1.5 shrink-0">
                     ⚡ MASTER ECO-OPTIMIZE
                 </button>
 
@@ -161,7 +194,7 @@
 
         <main class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
 
-            <!-- Top Metrics & REAL HARDWARE BATTERY SYNC -->
+            <!-- Top Metrics -->
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4">
                 <div class="glass rounded-2xl p-4 border border-slate-800">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Sustainability Score</span>
@@ -199,7 +232,7 @@
                     </div>
                 </div>
 
-                <!-- REAL HARDWARE BATTERY SYNC -->
+                <!-- Live Battery Level -->
                 <div class="glass rounded-2xl p-4 border border-slate-800 col-span-2 sm:col-span-3 md:col-span-2">
                     <div class="flex justify-between">
                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">🔋 Live Battery Level</span>
@@ -407,6 +440,11 @@
             <span class="text-slate-600">|</span>
             <span>Susmit Sen</span>
         </div>
+        <div class="pt-1">
+            <button onclick="openContactModal()" class="text-emerald-400 hover:underline text-[11px]">
+                📞 Contact Developer Details
+            </button>
+        </div>
         <p class="text-[10px] text-slate-500">IEM Sustainability Hackathon 2026</p>
     </footer>
 
@@ -416,7 +454,6 @@
         let currentUser = "";
         let globalLeaderboard = [];
 
-        // Achievement Tracking Engine
         let userAchievements = {
             novice: true,
             optimizer: false,
@@ -424,12 +461,13 @@
             battleWon: false
         };
 
-        let subsystemStates = {
-            gpu: { optimized: false, strength: 0.0 },
-            ram: { optimized: false, strength: 0.0 },
-            net: { optimized: false, strength: 0.0 },
-            disk: { optimized: false, strength: 0.0 },
-            cpu: { optimized: false, strength: 0.0 }
+        // Independent state tracker for each individual subsystem
+        let subsystemOptimizedState = {
+            gpu: false,
+            ram: false,
+            net: false,
+            disk: false,
+            cpu: false
         };
 
         async function syncRealBattery() {
@@ -475,6 +513,14 @@
             }
         }
 
+        function openContactModal() {
+            document.getElementById('contactModal').classList.remove('hidden');
+        }
+
+        function closeContactModal() {
+            document.getElementById('contactModal').classList.add('hidden');
+        }
+
         const ctx = document.getElementById('powerChart').getContext('2d');
         const powerChart = new Chart(ctx, {
             type: 'line',
@@ -500,26 +546,14 @@
             }
         });
 
-        function decayWorkloadStrength() {
-            let totalStrength = 0;
-            const keys = Object.keys(subsystemStates);
-            keys.forEach(key => {
-                if (subsystemStates[key].strength > 0) {
-                    subsystemStates[key].strength = Math.max(0, subsystemStates[key].strength - 0.08);
-                    if (subsystemStates[key].strength === 0) {
-                        subsystemStates[key].optimized = false;
-                    }
-                }
-                totalStrength += subsystemStates[key].strength;
-            });
-            return (totalStrength / keys.length).toFixed(2);
-        }
-
         async function updateTelemetry() {
             try {
-                const avgStrength = decayWorkloadStrength();
                 const grid = document.getElementById('gridSelect').value;
-                const res = await fetch(`${API}/telemetry?grid=${encodeURIComponent(grid)}&opt_strength=${avgStrength}`);
+                const res = await fetch(`${API}/telemetry`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ grid: grid, subsystems: subsystemOptimizedState })
+                });
                 const data = await res.json();
                 lastTelemetryData = data;
 
@@ -529,7 +563,6 @@
                 document.getElementById('wattsVal').innerText = data.current_watts;
                 document.getElementById('co2Val').innerText = data.co2_grams;
 
-                // Achievement Unlock Checks
                 if (data.sustainability_score >= 85 || data.current_watts < 12.0) {
                     userAchievements.warrior = true;
                 }
@@ -560,7 +593,7 @@
                     document.getElementById('newsTicker').innerText = `[${randomNews.tag}] ${randomNews.title}`;
                 }
 
-                renderSubsystems(data.cpu_percent, data.grid_factor || 710.0);
+                renderSubsystems(data.subsystem_details, data.grid_factor || 710.0);
                 updateAdvisor(data.cpu_percent, data.sustainability_score);
                 updateEcoBattleUI(data.current_watts, data.grid_factor || 710.0);
 
@@ -585,33 +618,35 @@
             } catch (err) {}
         }
 
-        function renderSubsystems(cpu, gridFactor) {
-            const subsystems = [
-                { id: 'gpu', name: "Display & GPU Render Pipeline", activity: subsystemStates.gpu.optimized ? "Eco Frame Throttle" : "Screen Render Stream", load: subsystemStates.gpu.optimized ? "4.2% Load" : `${(cpu * 0.8 + 12).toFixed(1)}% Load`, baseWatts: subsystemStates.gpu.optimized ? 1.2 : 4.8 },
-                { id: 'ram', name: "Memory & Page Cache Allocator", activity: subsystemStates.ram.optimized ? "Cache Recycled" : "Active RAM Buffer", load: subsystemStates.ram.optimized ? "420 MB Allocated" : "1.2 GB Allocated", baseWatts: subsystemStates.ram.optimized ? 0.8 : 2.1 },
-                { id: 'net', name: "Network & Web Socket I/O", activity: subsystemStates.net.optimized ? "Compressed Packets" : "HTTP Telemetry Stream", load: subsystemStates.net.optimized ? "8 KB/s Packets" : "42 KB/s Packets", baseWatts: subsystemStates.net.optimized ? 0.4 : 1.4 },
-                { id: 'disk', name: "Storage & System Disk I/O", activity: subsystemStates.disk.optimized ? "I/O Low Power" : "Pagefile Read/Write", load: subsystemStates.disk.optimized ? "I/O Idle" : "I/O Active", baseWatts: subsystemStates.disk.optimized ? 0.2 : 0.6 },
-                { id: 'cpu', name: "CPU Multi-Core Thread Engine", activity: subsystemStates.cpu.optimized ? "C-State Parked" : "Worker Threads", load: `${cpu}% Load`, baseWatts: subsystemStates.cpu.optimized ? 0.6 : (cpu * 0.25) }
+        function renderSubsystems(subDetails, gridFactor) {
+            if(!subDetails) return;
+
+            const list = [
+                { id: 'gpu', name: "Display & GPU Render Pipeline" },
+                { id: 'ram', name: "Memory & Page Cache Allocator" },
+                { id: 'net', name: "Network & Web Socket I/O" },
+                { id: 'disk', name: "Storage & System Disk I/O" },
+                { id: 'cpu', name: "CPU Multi-Core Thread Engine" }
             ];
 
             const tbody = document.getElementById('subsystemTableBody');
             tbody.innerHTML = '';
             
-            subsystems.forEach((sub) => {
-                const drawG = (((sub.baseWatts) / 1000.0) * gridFactor).toFixed(2);
-                const isOpt = subsystemStates[sub.id].optimized;
-                let dna = isOpt ? "🟢 Low" : (drawG > 2.0 ? "🔴 High" : (drawG > 0.8 ? "🟡 Moderate" : "🟢 Low"));
+            list.forEach((item) => {
+                const sub = subDetails[item.id];
+                const drawG = (((sub.watts) / 1000.0) * gridFactor).toFixed(2);
+                const isOpt = subsystemOptimizedState[item.id];
 
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-slate-800/40 transition';
                 tr.innerHTML = `
-                    <td class="py-2.5 font-semibold text-slate-200">${sub.name}</td>
-                    <td class="py-2.5 font-bold">${dna}</td>
+                    <td class="py-2.5 font-semibold text-slate-200">${item.name}</td>
+                    <td class="py-2.5 font-bold ${sub.dna.includes('High') ? 'text-rose-400' : (sub.dna.includes('Moderate') ? 'text-amber-400' : 'text-emerald-400')}">${sub.dna}</td>
                     <td class="py-2.5 text-slate-300">${sub.activity}</td>
                     <td class="py-2.5 text-slate-300">${sub.load}</td>
-                    <td class="py-2.5 font-bold ${dna.includes('High') ? 'text-rose-400' : 'text-emerald-400'}">${drawG} g/hr</td>
+                    <td class="py-2.5 font-bold ${sub.dna.includes('High') ? 'text-rose-400' : 'text-emerald-400'}">${drawG} g/hr</td>
                     <td class="py-2.5 text-right">
-                        <button onclick="optimizeIndividualSubsystem('${sub.id}')" class="px-2.5 py-1 ${isOpt ? 'bg-slate-800 text-emerald-400 border border-emerald-500/30' : 'bg-emerald-500/10 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/20'} rounded font-sans text-[10px]">
+                        <button onclick="toggleSingleSubsystem('${item.id}')" class="px-2.5 py-1 ${isOpt ? 'bg-slate-800 text-emerald-400 border border-emerald-500/30' : 'bg-emerald-500/10 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/20'} rounded font-sans text-[10px]">
                             ${isOpt ? 'Optimized ✓' : 'Optimize'}
                         </button>
                     </td>
@@ -620,14 +655,34 @@
             });
         }
 
+        function toggleSingleSubsystem(id) {
+            subsystemOptimizedState[id] = true;
+            userAchievements.optimizer = true;
+            updateTelemetry();
+        }
+
+        function triggerMasterEcoOptimizer() {
+            // Optimizes ALL 5 subsystems at once
+            Object.keys(subsystemOptimizedState).forEach(k => {
+                subsystemOptimizedState[k] = true;
+            });
+            userAchievements.optimizer = true;
+
+            fetch(`${API}/eco-optimize`, { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    alert("🌱 " + data.message);
+                    updateTelemetry();
+                });
+        }
+
         function updateAdvisor(cpu, score) {
             const sugContainer = document.getElementById('suggestionsContainer');
             let advice = "🌿 System is running in an optimal energy state. Maintain ~60% screen brightness to maximize battery longevity.";
             
-            if (cpu > 25.0) {
-                advice = `⚡ High CPU Load Detected (${cpu}%): Workload is rebuilding. Click 'Master Eco-Optimize' to trim power draw!`;
-            } else if (score < 75) {
-                advice = "⚠️ Lower Sustainability Score: Operating in Eco-Mode or switching to EU Clean Grid lowers emissions intensity.";
+            const unoptCount = Object.values(subsystemOptimizedState).filter(v => !v).length;
+            if (unoptCount > 0) {
+                advice = `⚡ ${unoptCount} Subsystems Unoptimized: Target individual subsystem buttons or click 'MASTER ECO-OPTIMIZE' to lower power draw!`;
             }
 
             sugContainer.innerHTML = `
@@ -637,14 +692,6 @@
             `;
         }
 
-        function optimizeIndividualSubsystem(subsystemId) {
-            subsystemStates[subsystemId].optimized = true;
-            subsystemStates[subsystemId].strength = 1.0;
-            userAchievements.optimizer = true;
-            updateTelemetry();
-        }
-
-        // --- MULTI-PLAYER ECO BATTLE CONTROLLER ---
         function openBattleModal() {
             document.getElementById('battleModal').classList.remove('hidden');
             document.getElementById('battleP1Name').innerText = currentUser || "You";
@@ -653,7 +700,6 @@
             const battleControls = document.getElementById('battleControls');
             const selectBox = document.getElementById('opponentSelect');
 
-            // Filter out current user from opponents list
             const opponents = globalLeaderboard.filter(item => item.name !== currentUser);
 
             if (opponents.length === 0) {
@@ -688,7 +734,6 @@
             const p1DrawG = ((watts / 1000.0) * gridFactor).toFixed(2);
             document.getElementById('battleP1Draw').innerText = `${p1DrawG} g/hr`;
             
-            // Opponent baseline load estimation
             const p2DrawG = 14.2;
             document.getElementById('battleP2Draw').innerText = `${p2DrawG} g/hr`;
 
@@ -703,14 +748,12 @@
             }
         }
 
-        // --- QR PASSPORT & ACHIEVEMENTS CONTROLLER ---
         function openPassportModal() {
             document.getElementById('passportModal').classList.remove('hidden');
             const score = lastTelemetryData ? lastTelemetryData.sustainability_score : 75;
             document.getElementById('passportUser').innerText = currentUser || "Guest User";
             document.getElementById('passportScore').innerText = score;
 
-            // Render Achievements
             const achBox = document.getElementById('achievementsContainer');
             achBox.innerHTML = `
                 <div class="p-2 border rounded ${userAchievements.novice ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-600'}">
@@ -727,10 +770,9 @@
                 </div>
             `;
 
-            // QR Code render
             const qrContainer = document.getElementById("qrcode");
             qrContainer.innerHTML = "";
-            const qrText = `GreenByte Eco Passport | User: ${currentUser || 'Guest'} | Score: ${score}/100 | Developer: Soumyadeep Ghosh | Badges: ${Object.keys(userAchievements).filter(k=>userAchievements[k]).join(', ')}`;
+            const qrText = `GreenByte Eco Passport | User: ${currentUser || 'Guest'} | Score: ${score}/100 | Developer: Soumyadeep Ghosh (+91 8100127066)`;
             
             new QRCode(qrContainer, {
                 text: qrText,
@@ -743,21 +785,6 @@
 
         function closePassportModal() {
             document.getElementById('passportModal').classList.add('hidden');
-        }
-
-        async function triggerEcoOptimizer() {
-            Object.keys(subsystemStates).forEach(k => {
-                subsystemStates[k].optimized = true;
-                subsystemStates[k].strength = 1.0;
-            });
-            userAchievements.optimizer = true;
-
-            try {
-                const res = await fetch(`${API}/eco-optimize`, { method: 'POST' });
-                const data = await res.json();
-                alert("🌱 " + data.message);
-                updateTelemetry();
-            } catch(e) {}
         }
 
         async function loadLeaderboard() {
