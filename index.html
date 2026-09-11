@@ -101,7 +101,6 @@
                         <div id="cardBadgeShowcase" class="flex gap-1.5 overflow-x-auto pb-1 text-base"></div>
                     </div>
 
-                    <!-- Embedded Card QR Code -->
                     <div class="flex items-center justify-between border-t border-slate-800 pt-3">
                         <div class="text-[9px] text-slate-500">
                             <p>IEM HACKATHON 2026</p>
@@ -293,22 +292,28 @@
                 </div>
             </div>
 
-            <!-- Date, Time, Timezone & Live Dynamic Weather Box -->
-            <div class="flex flex-wrap items-center gap-2 px-3 py-1.5 bg-slate-900/90 border border-slate-800 rounded-xl text-xs font-mono">
-                <span class="text-emerald-400">📅 <span id="clockDate">--</span></span>
-                <span class="text-slate-600">|</span>
-                <span class="text-amber-400">🕒 <span id="clockTime">--</span></span>
-                <span class="text-slate-600">|</span>
-                <span class="text-cyan-300">📍 <span id="weatherLoc">Locating...</span>: <span id="weatherTemp">--°C</span></span>
-                <select id="timezoneSelect" onchange="updateTelemetry()" class="bg-slate-950 border border-slate-700 text-teal-300 rounded px-1.5 py-0.5 text-[10px] outline-none">
-                    <option value="IST" selected>IST (UTC+5:30)</option>
-                    <option value="UTC">UTC (Universal)</option>
-                    <option value="EST">EST (New York)</option>
-                    <option value="PST">PST (Los Angeles)</option>
-                    <option value="GMT">GMT (London)</option>
-                    <option value="CET">CET (Paris)</option>
-                    <option value="JST">JST (Tokyo)</option>
-                </select>
+            <!-- Date, Time, Timezone Select & Live Dynamic Weather Box -->
+            <div class="flex flex-col gap-1.5 px-3 py-2 bg-slate-900/90 border border-slate-800 rounded-xl text-xs font-mono">
+                <!-- Top Row: Date, Time & Timezone Dropdown Beside Time -->
+                <div class="flex items-center gap-2">
+                    <span class="text-emerald-400">📅 <span id="clockDate">--</span></span>
+                    <span class="text-slate-600">|</span>
+                    <span class="text-amber-400">🕒 <span id="clockTime">--</span></span>
+                    <select id="timezoneSelect" onchange="updateTelemetry()" class="bg-slate-950 border border-slate-700 text-teal-300 rounded px-1.5 py-0.5 text-[10px] outline-none">
+                        <option value="IST" selected>IST (UTC+5:30)</option>
+                        <option value="UTC">UTC (Universal)</option>
+                        <option value="EST">EST (New York)</option>
+                        <option value="PST">PST (Los Angeles)</option>
+                        <option value="GMT">GMT (London)</option>
+                        <option value="CET">CET (Paris)</option>
+                        <option value="JST">JST (Tokyo)</option>
+                    </select>
+                </div>
+                
+                <!-- Bottom Row: Dynamic Location & Real-Time Weather -->
+                <div class="flex items-center gap-2 pt-1 border-t border-slate-800/60">
+                    <span class="text-cyan-300">📍 <span id="weatherLoc">Locating...</span>: <span id="weatherTemp">--°C</span></span>
+                </div>
             </div>
 
             <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
@@ -514,7 +519,6 @@
                         <button onclick="exportReport()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs rounded-lg font-mono">📥 Export JSON</button>
                     </div>
 
-                    <!-- JUDGES' LIVE OPTIMIZATION PROOF PANEL -->
                     <div class="p-3 bg-slate-900/90 border border-emerald-500/30 rounded-xl space-y-2 font-mono text-xs">
                         <div class="flex justify-between items-center">
                             <span class="text-emerald-400 font-bold text-[11px] uppercase flex items-center gap-1.5">⚖️ JUDGES' WORKING CRITERIA & OPTIMIZATION PROOF</span>
@@ -732,7 +736,6 @@
             { icon: "🏅", name: "Hall of Fame", unlocked: false, desc: "Ref Code" }
         ];
 
-        // Automatic Client-Side Real-Time Geolocation Detection
         function initRealTimeLocation() {
             if ("geolocation" in navigator) {
                 navigator.geolocation.getCurrentPosition(
@@ -743,7 +746,6 @@
                         updateTelemetry();
                     },
                     (error) => {
-                        // IP Fallback
                         fetch('https://ipapi.co/json/')
                             .then(res => res.json())
                             .then(data => {
@@ -1050,7 +1052,7 @@
                 lastTelemetryData = data;
 
                 document.getElementById('clockDate').innerText = data.current_date || "--";
-                document.getElementById('clockTime').innerText = (data.current_time || "--") + ` (${tz})`;
+                document.getElementById('clockTime').innerText = data.current_time || "--";
 
                 if (data.weather) {
                     document.getElementById('weatherLoc').innerText = data.weather.location || "Local";

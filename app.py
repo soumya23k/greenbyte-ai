@@ -172,7 +172,6 @@ def fetch_weather_data(lat=None, lon=None, location_name="Dynamic Location"):
     except Exception:
         pass
 
-    # Fallback structure
     return {
         "location": location_name,
         "temp": "28°C",
@@ -319,7 +318,6 @@ def telemetry():
     selected_tz = data.get('timezone', 'IST')
     opt_timestamps = data.get('opt_timestamps', {})
     
-    # Lat/Lon passed from browser geolocation
     user_lat = data.get('lat')
     user_lon = data.get('lon')
     user_city = data.get('city_name', 'Dynamic Location')
@@ -555,7 +553,6 @@ def leaderboard():
 
 @app.route('/api/reset-data', methods=['POST'])
 def reset_data():
-    """Resets ONLY the requesting user's profile data."""
     global user_ids_db, game_data
     data = request.get_json() or {}
     username = data.get('username', '').strip()
