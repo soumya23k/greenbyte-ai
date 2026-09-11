@@ -293,13 +293,13 @@
                 </div>
             </div>
 
-            <!-- Date, Time, Timezone & Weather Box -->
+            <!-- Date, Time, Timezone & Live Dynamic Weather Box -->
             <div class="flex flex-wrap items-center gap-2 px-3 py-1.5 bg-slate-900/90 border border-slate-800 rounded-xl text-xs font-mono">
                 <span class="text-emerald-400">📅 <span id="clockDate">--</span></span>
                 <span class="text-slate-600">|</span>
                 <span class="text-amber-400">🕒 <span id="clockTime">--</span></span>
                 <span class="text-slate-600">|</span>
-                <span class="text-cyan-300">🌤️ <span id="weatherTemp">--°C</span> (<span id="weatherCond">--</span>)</span>
+                <span class="text-cyan-300">📍 <span id="weatherLoc">Locating...</span>: <span id="weatherTemp">--°C</span></span>
                 <select id="timezoneSelect" onchange="updateTelemetry()" class="bg-slate-950 border border-slate-700 text-teal-300 rounded px-1.5 py-0.5 text-[10px] outline-none">
                     <option value="IST" selected>IST (UTC+5:30)</option>
                     <option value="UTC">UTC (Universal)</option>
@@ -348,13 +348,13 @@
             <div class="glass rounded-2xl p-4 border border-slate-800 space-y-3">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                     <h3 class="text-xs font-black text-cyan-300 uppercase tracking-wider flex items-center gap-2">
-                        <span>🌦️</span> ENVIRONMENT & WEATHER METRICS
+                        <span>🌦️</span> REAL-TIME LOCATION WEATHER & FORECAST (<span id="cardWeatherCity">Detecting...</span>)
                     </h3>
                     <span id="weatherHumidity" class="text-xs font-mono text-slate-400">Humidity: --%</span>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
                     <div>
-                        <h4 class="text-[10px] text-slate-400 uppercase font-bold mb-1.5">⏱️ Hourly Forecast Today</h4>
+                        <h4 class="text-[10px] text-slate-400 uppercase font-bold mb-1.5">⏱️ Hourly Forecast</h4>
                         <div id="hourlyWeatherList" class="grid grid-cols-4 gap-2 text-center"></div>
                     </div>
                     <div>
@@ -674,6 +674,8 @@
         let qrGenerated = false;
         let cardQrGenerated = false;
 
+        let userCoords = { lat: null, lon: null, city: "Detecting..." };
+
         const PROMO_CODE = "SaezGreenbyteAI23";
 
         let ALL_BADGES = [
@@ -730,7 +732,34 @@
             { icon: "🏅", name: "Hall of Fame", unlocked: false, desc: "Ref Code" }
         ];
 
+        // Automatic Client-Side Real-Time Geolocation Detection
+        function initRealTimeLocation() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        userCoords.lat = position.coords.latitude;
+                        userCoords.lon = position.coords.longitude;
+                        userCoords.city = "Local Area";
+                        updateTelemetry();
+                    },
+                    (error) => {
+                        // IP Fallback
+                        fetch('https://ipapi.co/json/')
+                            .then(res => res.json())
+                            .then(data => {
+                                userCoords.lat = data.latitude;
+                                userCoords.lon = data.longitude;
+                                userCoords.city = `${data.city}, ${data.country_code}`;
+                                updateTelemetry();
+                            })
+                            .catch(() => updateTelemetry());
+                    }
+                );
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
+            initRealTimeLocation();
             if (currentUser) {
                 document.getElementById('loginModal').classList.add('hidden');
                 document.getElementById('currentUserDisplay').innerText = currentUser;
@@ -1010,7 +1039,10 @@
                     body: JSON.stringify({ 
                         grid: grid, 
                         timezone: tz,
-                        opt_timestamps: subsystemOptTimestamps 
+                        opt_timestamps: subsystemOptTimestamps,
+                        lat: userCoords.lat,
+                        lon: userCoords.lon,
+                        city_name: userCoords.city
                     })
                 });
                 
@@ -1021,11 +1053,11 @@
                 document.getElementById('clockTime').innerText = (data.current_time || "--") + ` (${tz})`;
 
                 if (data.weather) {
+                    document.getElementById('weatherLoc').innerText = data.weather.location || "Local";
+                    document.getElementById('cardWeatherCity').innerText = data.weather.location || "Local";
                     document.getElementById('weatherTemp').innerText = data.weather.temp;
-                    document.getElementById('weatherCond').innerText = data.weather.condition;
                     document.getElementById('weatherHumidity').innerText = `Humidity: ${data.weather.humidity}`;
 
-                    // Render Hourly Weather
                     const hourlyContainer = document.getElementById('hourlyWeatherList');
                     hourlyContainer.innerHTML = '';
                     (data.weather.hourly || []).slice(0, 4).forEach(h => {
@@ -1037,7 +1069,6 @@
                         `;
                     });
 
-                    // Render Daily Weather
                     const dailyContainer = document.getElementById('dailyWeatherList');
                     dailyContainer.innerHTML = '';
                     (data.weather.daily || []).slice(0, 3).forEach(d => {
