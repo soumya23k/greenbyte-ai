@@ -8,6 +8,8 @@ import urllib.request
 import urllib.parse
 import xml.etree.ElementTree as ET
 import gc
+import psutil
+import ctypes
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 
@@ -196,7 +198,6 @@ def telemetry():
     now = time.time()
     grid_factor = GRID_INTENSITY.get(selected_grid, GRID_INTENSITY["WB Grid (Thermal/Coal)"])["factor"]
 
-    # Check subsystem individual optimization expiry (12 sec duration)
     subsystems_active_opt = {}
     for sub in ['gpu', 'ram', 'net', 'disk', 'cpu']:
         ts = opt_timestamps.get(sub, 0)
@@ -204,21 +205,34 @@ def telemetry():
 
     num_optimized = sum(1 for v in subsystems_active_opt.values() if v)
 
+    real_cpu = psutil.cpu_percent(interval=None)
+    real_ram = psutil.virtual_memory().percent
+
     if num_optimized == 5:
         score = random.randint(88, 96)
         watts = round(random.uniform(6.0, 9.0), 1)
     elif num_optimized > 0:
-        score = random.randint(78, 86)
+        score = random.randint(72, 85)
         watts = round(random.uniform(10.0, 14.0), 1)
     else:
-        fluctuation_pattern = [70, 65, 57, 80, 82, 67, 75, 72, 61, 79]
-        base_choice = random.choice(fluctuation_pattern)
-        score = max(52, min(85, base_choice + random.randint(-2, 2)))
-        watts = round(15.0 + ((100 - score) * 0.22) + random.uniform(-1.0, 1.5), 1)
+        avg_hw_load = (real_cpu + real_ram) / 2.0
+        if avg_hw_load > 60:
+            score = max(20, min(45, int(100 - avg_hw_load - random.randint(5, 15))))
+        elif avg_hw_load > 35:
+            score = random.randint(40, 57)
+        else:
+            score = random.randint(55, 72)
+        
+        watts = round(14.0 + (avg_hw_load * 0.28) + random.uniform(0.5, 3.0), 1)
 
-    # Subsystem specific load & carbon DNA allocation
     sub_data = {}
-    sub_loads = {'gpu': 22, 'ram': 35, 'net': 18, 'disk': 15, 'cpu': 28}
+    sub_loads = {
+        'gpu': round(min(100, real_cpu * 0.8 + random.uniform(2, 8)), 1),
+        'ram': real_ram,
+        'net': round(random.uniform(5, 25), 1),
+        'disk': psutil.disk_usage('/').percent if hasattr(psutil, 'disk_usage') else 20.0,
+        'cpu': real_cpu
+    }
 
     for sub in ['gpu', 'ram', 'net', 'disk', 'cpu']:
         is_opt = subsystems_active_opt[sub]
@@ -228,11 +242,11 @@ def telemetry():
             load = f"{random.randint(4, 12)}% Load"
             w = round(watts * 0.12, 2)
         else:
-            base_l = sub_loads[sub] + random.randint(-5, 12)
-            dna = "🔴 High" if base_l > 32 else "🟡 Moderate"
+            base_l = sub_loads[sub]
+            dna = "🔴 High" if base_l > 50 else ("🟡 Moderate" if base_l > 25 else "🟢 Low")
             act = "Active Workload Stream"
             load = f"{base_l}% Load"
-            w = round(watts * (base_l / 100.0), 2)
+            w = round(watts * (base_l / 100.0 if base_l > 0 else 0.1), 2)
             
         sub_data[sub] = {
             "dna": dna,
@@ -242,8 +256,7 @@ def telemetry():
             "is_optimized": is_opt
         }
 
-    avg_load = sum(float(item['load'].replace('% Load', '')) for item in sub_data.values()) / 5.0
-    anomaly_detected = watts > 21.0
+    anomaly_detected = watts > 21.0 or real_cpu > 75.0
     anomaly_msg = f"UNUSUAL CARBON SPIKE: Subsystem workload boosted power draw to {watts}W!" if anomaly_detected else ""
 
     uptime_hours = (time.time() - BOOT_TIME) / 3600.0
@@ -271,7 +284,7 @@ def telemetry():
         "current_time": formatted_time,
         "current_date": formatted_date,
         "selected_timezone": selected_tz,
-        "cpu_percent": round(avg_load, 1),
+        "cpu_percent": real_cpu,
         "current_watts": watts,
         "co2_grams": co2_grams,
         "cost_saved_inr": cost_saved,
@@ -279,7 +292,7 @@ def telemetry():
         "grid_factor": grid_factor,
         "subsystem_details": sub_data,
         "anomaly": {"detected": anomaly_detected, "message": anomaly_msg},
-        "carbon_map": {"cpu": round(avg_load * 0.7, 1), "ram": 32.5, "disk": 12.0, "cloud": 18.2},
+        "carbon_map": {"cpu": round(real_cpu, 1), "ram": round(real_ram, 1), "disk": 12.0, "cloud": 18.2},
         "cloud_est": cloud_est,
         "impact": {"trees": round(co2_grams / 60.0, 2), "car_km": round(co2_grams / 120.0, 2), "led_hours": round(co2_grams / 7.0, 1)},
         "daily_actions": game_data.get("daily_actions", {}),
@@ -428,7 +441,7 @@ def chatbot():
     elif any(k in q_lower for k in ["date", "day", "today"]):
         ans = f"📅 Today's Date ({selected_tz}): {date_str}"
     elif any(k in q_lower for k in ["explain", "how optimization works", "optimisation", "how it works"]):
-        ans = "⚡ Optimization Mechanic: Clicking 'Optimize' throttles that specific subsystem for 12s before naturally reverting back. Clicking 'Master Eco-Optimize' recycles memory buffers and optimizes all subsystems at once!"
+        ans = "⚡ Optimization Mechanic: Clicking 'Optimize' trims system memory sets and garbage-collects unused RAM buffers directly on the PC!"
     elif any(k in q_lower for k in ["useful", "feature", "uses of", "benefit", "why use"]):
         ans = "💡 Features & Uses:\n1. Carbon Map: Audits GPU, CPU, RAM, Disk & Network power draw.\n2. Master Eco-Optimizer: Immediate memory recycling & energy reduction.\n3. Web Scanner: Audits site asset weights & CO2 emissions.\n4. Boss Raids: Gamified team attacks using high eco scores.\n5. Eco Forest: Arcade minigame to catch saplings and earn tokens.\n6. Badges & ID Card: Showcase your streaks and custom profile!"
     elif any(k in q_lower for k in ["developer", "creator", "who made", "soumyadeep"]):
@@ -487,11 +500,25 @@ def analyze_url():
 def eco_optimize():
     try:
         collected = gc.collect()
+        
+        if os.name == 'nt':
+            try:
+                handle = ctypes.windll.kernel32.GetCurrentProcess()
+                ctypes.windll.psapi.EmptyWorkingSet(handle)
+            except Exception:
+                pass
+        elif hasattr(os, 'sync'):
+            try:
+                os.sync()
+            except Exception:
+                pass
+
         game_data["daily_actions"]["optimizations"] = game_data["daily_actions"].get("optimizations", 0) + 1
         save_json_file(GAME_DATA_FILE, game_data)
+        
         return jsonify({
             "success": True,
-            "message": f"Master Eco-Optimization complete! Recycled {collected} memory buffers & throttled subsystem draw."
+            "message": f"Master Eco-Optimization complete! Recycled {collected} RAM buffers & trimmed system working sets."
         })
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 400

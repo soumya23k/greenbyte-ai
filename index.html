@@ -65,24 +65,17 @@
                     <div class="grid grid-cols-2 gap-2 text-center text-xs">
                         <div class="p-2 bg-slate-900/90 rounded-xl border border-slate-800">
                             <p class="text-slate-400 text-[9px]">Avg Eco Score</p>
-                            <p id="cardAvgScore" class="text-emerald-400 font-bold text-sm">88 / 100</p>
+                            <p id="cardAvgScore" class="text-emerald-400 font-bold text-sm">-- / 100</p>
                         </div>
                         <div class="p-2 bg-slate-900/90 rounded-xl border border-slate-800">
                             <p class="text-slate-400 text-[9px]">Active Streak</p>
-                            <p id="cardStreak" class="text-amber-300 font-bold text-sm">7 Days 🔥</p>
+                            <p id="cardStreak" class="text-amber-300 font-bold text-sm">1 Day 🔥</p>
                         </div>
                     </div>
 
                     <div class="space-y-1.5">
                         <p class="text-[10px] text-slate-400 uppercase font-bold">Earned Badges Showcase</p>
-                        <div id="cardBadgeShowcase" class="flex gap-1.5 overflow-x-auto pb-1 text-base">
-                            <span title="7-Day Streak">⚡</span>
-                            <span title="Clean Record">🧹</span>
-                            <span title="Master Optimizer">🔌</span>
-                            <span title="Boss Slayer">⚔️</span>
-                            <span title="Forest Guardian">🌲</span>
-                            <span title="Web Auditor">🌐</span>
-                        </div>
+                        <div id="cardBadgeShowcase" class="flex gap-1.5 overflow-x-auto pb-1 text-base"></div>
                     </div>
 
                     <!-- Embedded Card QR Code -->
@@ -106,13 +99,13 @@
             <div class="glass max-w-3xl w-full p-6 rounded-2xl border border-amber-500/30 space-y-4 glow-amber max-h-[85vh] overflow-y-auto">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                     <h2 class="text-sm font-black text-amber-400 uppercase tracking-wider flex items-center gap-2">
-                        🏅 51 GREENBYTE ACHIEVEMENT BADGES & STREAKS
+                        🏅 GREENBYTE ACHIEVEMENT BADGES & STREAKS
                     </h2>
                     <button onclick="closeBadgesModal()" class="text-slate-400 hover:text-slate-100 text-xs font-mono">✕ Close</button>
                 </div>
 
                 <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs font-mono">
-                    <span>🔥 Current Active Streak: <strong id="streakDaysCount" class="text-amber-400 text-sm">7 Days</strong></span>
+                    <span>🔥 Current Active Streak: <strong id="streakDaysCount" class="text-amber-400 text-sm">1 Day</strong></span>
                     <div class="flex items-center gap-2">
                         <button onclick="openIdCardModal()" class="px-3 py-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded text-xs">
                             💳 View ID Card
@@ -277,7 +270,7 @@
                 </div>
             </div>
 
-            <!-- Date, Time (No Seconds), and Timezone Selector -->
+            <!-- Date, Time, and Timezone Selector -->
             <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-900/90 border border-slate-800 rounded-xl text-xs font-mono">
                 <span class="text-emerald-400">📅 <span id="clockDate">--</span></span>
                 <span class="text-slate-600">|</span>
@@ -583,66 +576,75 @@
     <script>
         const API = "/api";
         let lastTelemetryData = null;
-        let currentUser = "";
-        let currentUserId = "GB-2026-01";
+        let currentUser = localStorage.getItem("gb_username") || "";
+        let currentUserId = localStorage.getItem("gb_userid") || "GB-2026-01";
         let globalLeaderboard = [];
         let qrGenerated = false;
         let cardQrGenerated = false;
 
         let subsystemOptTimestamps = { gpu: 0, ram: 0, net: 0, disk: 0, cpu: 0 };
 
+        window.addEventListener('DOMContentLoaded', () => {
+            if (currentUser) {
+                document.getElementById('loginModal').classList.add('hidden');
+                document.getElementById('currentUserDisplay').innerText = currentUser;
+                document.getElementById('userHeaderId').innerText = currentUserId;
+                updateTelemetry();
+            }
+        });
+
         let ALL_BADGES = [
-            { icon: "⚡", name: "7-Day Spark", unlocked: true },
-            { icon: "🌱", name: "30-Day Sprout", unlocked: false, desc: "7/30 Days" },
+            { icon: "🔌", name: "First Spark", unlocked: true },
+            { icon: "⚡", name: "7-Day Spark", unlocked: false, desc: "1/7 Days" },
+            { icon: "🌱", name: "30-Day Sprout", unlocked: false, desc: "1/30 Days" },
             { icon: "🌿", name: "180-Day Growth", unlocked: false },
             { icon: "🏆", name: "365-Day Solar", unlocked: false },
             { icon: "👑", name: "730-Day Titan", unlocked: false },
             { icon: "💎", name: "1825-Day Planet", unlocked: false },
-            { icon: "🔌", name: "First Spark", unlocked: true },
-            { icon: "🧹", name: "Buffer Sweeper", unlocked: true },
-            { icon: "🚀", name: "Speed Demon", unlocked: true },
-            { icon: "♻️", name: "Zero-Waste", unlocked: true },
+            { icon: "🧹", name: "Buffer Sweeper", unlocked: false },
+            { icon: "🚀", name: "Speed Demon", unlocked: false },
+            { icon: "♻️", name: "Zero-Waste", unlocked: false },
             { icon: "🛡️", name: "Clean Record", unlocked: true },
-            { icon: "⚡", name: "Master Optimizer", unlocked: true },
-            { icon: "🌌", name: "Quantum Efficiency", unlocked: true },
+            { icon: "⚡", name: "Master Optimizer", unlocked: false },
+            { icon: "🌌", name: "Quantum Efficiency", unlocked: false },
             { icon: "🔋", name: "Battery Whisperer", unlocked: true },
-            { icon: "🗡️", name: "Rookie Striker", unlocked: true },
-            { icon: "💥", name: "Critical Hit", unlocked: true },
-            { icon: "🛡️", name: "Shield Breaker", unlocked: true },
+            { icon: "🗡️", name: "Rookie Striker", unlocked: false },
+            { icon: "💥", name: "Critical Hit", unlocked: false },
+            { icon: "🛡️", name: "Shield Breaker", unlocked: false },
             { icon: "🩸", name: "Titan Decimator", unlocked: false },
-            { icon: "🏆", name: "Boss Slayer", unlocked: true },
-            { icon: "🥇", name: "Raid MVP", unlocked: true },
-            { icon: "⚔️", name: "Raid Veteran", unlocked: true },
+            { icon: "🏆", name: "Boss Slayer", unlocked: false },
+            { icon: "🥇", name: "Raid MVP", unlocked: false },
+            { icon: "⚔️", name: "Raid Veteran", unlocked: false },
             { icon: "🌋", name: "Thermal Overlord", unlocked: false },
-            { icon: "🌿", name: "First Sapling", unlocked: true },
-            { icon: "🧺", name: "Agile Collector", unlocked: true },
-            { icon: "💨", name: "Smog Dodger", unlocked: true },
-            { icon: "🌲", name: "Forest Guardian", unlocked: true },
-            { icon: "🪙", name: "Token Earner", unlocked: true },
+            { icon: "🌿", name: "First Sapling", unlocked: false },
+            { icon: "🧺", name: "Agile Collector", unlocked: false },
+            { icon: "💨", name: "Smog Dodger", unlocked: false },
+            { icon: "🌲", name: "Forest Guardian", unlocked: false },
+            { icon: "🪙", name: "Token Earner", unlocked: false },
             { icon: "👑", name: "Monthly Champ", unlocked: false },
             { icon: "🏆", name: "Yearly Legend", unlocked: false },
             { icon: "🌳", name: "Ancient Arborist", unlocked: false },
-            { icon: "🔍", name: "First Audit", unlocked: true },
-            { icon: "🟢", name: "A+ Certifier", unlocked: true },
-            { icon: "🔴", name: "Heavy Spotter", unlocked: true },
-            { icon: "🌐", name: "Web Auditor", unlocked: true },
-            { icon: "📊", name: "Code Analyst", unlocked: true },
+            { icon: "🔍", name: "First Audit", unlocked: false },
+            { icon: "🟢", name: "A+ Certifier", unlocked: false },
+            { icon: "🔴", name: "Heavy Spotter", unlocked: false },
+            { icon: "🌐", name: "Web Auditor", unlocked: false },
+            { icon: "📊", name: "Code Analyst", unlocked: false },
             { icon: "🏫", name: "Campus Scout", unlocked: true },
-            { icon: "⚡", name: "Lightweight", unlocked: true },
+            { icon: "⚡", name: "Lightweight", unlocked: false },
             { icon: "🌍", name: "Global Inspector", unlocked: false },
-            { icon: "🏭", name: "Coal Auditor", unlocked: true },
-            { icon: "🇮🇳", name: "National Inspector", unlocked: true },
-            { icon: "🇪🇺", name: "Renewable Explorer", unlocked: true },
-            { icon: "☀️", name: "Solar Integrator", unlocked: true },
-            { icon: "🌎", name: "Global Citizen", unlocked: true },
-            { icon: "📉", name: "Grid Stabilizer", unlocked: true },
-            { icon: "💬", name: "Curious Mind", unlocked: true },
-            { icon: "🕒", name: "Time Keeper", unlocked: true },
-            { icon: "💡", name: "Knowledge Seeker", unlocked: true },
-            { icon: "📞", name: "Dev Connector", unlocked: true },
-            { icon: "📱", name: "Mobile Synced", unlocked: true },
+            { icon: "🏭", name: "Coal Auditor", unlocked: false },
+            { icon: "🇮🇳", name: "National Inspector", unlocked: false },
+            { icon: "🇪🇺", name: "Renewable Explorer", unlocked: false },
+            { icon: "☀️", name: "Solar Integrator", unlocked: false },
+            { icon: "🌎", name: "Global Citizen", unlocked: false },
+            { icon: "📉", name: "Grid Stabilizer", unlocked: false },
+            { icon: "💬", name: "Curious Mind", unlocked: false },
+            { icon: "🕒", name: "Time Keeper", unlocked: false },
+            { icon: "💡", name: "Knowledge Seeker", unlocked: false },
+            { icon: "📞", name: "Dev Connector", unlocked: false },
+            { icon: "📱", name: "Mobile Synced", unlocked: false },
             { icon: "🎓", name: "Hackathon Star", unlocked: true },
-            { icon: "🏅", name: "Hall of Fame", unlocked: true }
+            { icon: "🏅", name: "Hall of Fame", unlocked: false }
         ];
 
         function renderBadgesGrid() {
@@ -658,6 +660,17 @@
                 `;
                 container.appendChild(item);
             });
+            
+            const showcase = document.getElementById('cardBadgeShowcase');
+            showcase.innerHTML = '';
+            const unlockedList = ALL_BADGES.filter(b => b.unlocked);
+            if (unlockedList.length === 0) {
+                showcase.innerHTML = '<span class="text-slate-500 text-xs">No unlocked badges</span>';
+            } else {
+                unlockedList.forEach(b => {
+                    showcase.innerHTML += `<span title="${b.name}">${b.icon}</span>`;
+                });
+            }
         }
 
         renderBadgesGrid();
@@ -740,6 +753,9 @@
                     if (data.success) {
                         currentUserId = data.user_id;
                         document.getElementById('userHeaderId').innerText = currentUserId;
+                        
+                        localStorage.setItem("gb_username", currentUser);
+                        localStorage.setItem("gb_userid", currentUserId);
                     }
                 } catch(e) {}
 
@@ -751,12 +767,11 @@
         async function resetAllData() {
             if (confirm("⚠️ Are you sure you want to permanently reset all badges, daily streaks, and user records?")) {
                 try {
+                    localStorage.removeItem("gb_username");
+                    localStorage.removeItem("gb_userid");
                     const res = await fetch(`${API}/reset-data`, { method: 'POST' });
                     const data = await res.json();
                     if (data.success) {
-                        ALL_BADGES.forEach(b => b.unlocked = false);
-                        renderBadgesGrid();
-                        document.getElementById('cardBadgeShowcase').innerHTML = '<span class="text-slate-500 text-xs">No unlocked badges</span>';
                         alert("🧹 " + data.message);
                         window.location.reload();
                     }
@@ -816,6 +831,9 @@
             ['gpu', 'ram', 'net', 'disk', 'cpu'].forEach(k => {
                 subsystemOptTimestamps[k] = nowSec;
             });
+
+            const badgeOpt = ALL_BADGES.find(b => b.name === "Master Optimizer");
+            if (badgeOpt) { badgeOpt.unlocked = true; renderBadgesGrid(); }
 
             fetch(`${API}/eco-optimize`, { method: 'POST' })
                 .then(r => r.json())
@@ -975,7 +993,6 @@
             } catch(e) {}
         }
 
-        // --- ARCADE SAPLING CATCHER MINI-GAME ENGINE ---
         let gameCanvas = document.getElementById('gameCanvas');
         let gameCtx = gameCanvas.getContext('2d');
         let gameRunning = false;
@@ -1149,6 +1166,13 @@
                 
                 document.getElementById('campusAvgVal').innerText = `${data.average_score} / 100`;
 
+                const myItem = globalLeaderboard.find(i => i.name === currentUser);
+                if (myItem) {
+                    document.getElementById('cardAvgScore').innerText = `${myItem.score} / 100`;
+                } else if (lastTelemetryData) {
+                    document.getElementById('cardAvgScore').innerText = `${lastTelemetryData.sustainability_score} / 100`;
+                }
+
                 if (!data.leaderboard || data.leaderboard.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="3" class="py-2 text-center text-slate-500">No registered users yet. Enter your name in login!</td></tr>';
                     return;
@@ -1215,6 +1239,8 @@
                         <p>⚡ <strong>Est. Carbon / Visit:</strong> <span class="text-emerald-400 font-bold">${data.co2_per_visit_g} g CO₂</span></p>
                         <p>🏅 <strong>Eco Rating:</strong> <span class="text-teal-300 font-bold">${data.green_rating}</span></p>
                     `;
+                    const badgeAudit = ALL_BADGES.find(b => b.name === "First Audit");
+                    if (badgeAudit) { badgeAudit.unlocked = true; renderBadgesGrid(); }
                 } else {
                     resBox.innerHTML = `<p class="text-rose-400">${data.message}</p>`;
                 }
