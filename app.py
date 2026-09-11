@@ -170,8 +170,22 @@ def register_user():
     global user_ids_db
     data = request.get_json() or {}
     username = data.get('username', '').strip()
+    previous_username = data.get('previous_username', '').strip()
+
     if not username:
         return jsonify({"success": False, "error": "Username required"}), 400
+
+    # Purge old account if user reset or renamed their profile
+    if previous_username and previous_username != username:
+        if previous_username in user_ids_db:
+            del user_ids_db[previous_username]
+            save_json_file(USER_IDS_FILE, user_ids_db)
+
+        # Remove previous account from Leaderboard JSON directly
+        db = load_json_file(LEADERBOARD_FILE, {})
+        if previous_username in db:
+            del db[previous_username]
+            save_json_file(LEADERBOARD_FILE, db)
 
     if username not in user_ids_db:
         next_seq = len(user_ids_db) + 1
@@ -186,6 +200,36 @@ def register_user():
         "username": username,
         "user_id": formatted_id
     })
+
+@app.route('/api/delete-user', methods=['POST'])
+def delete_user():
+    """Explicitly deletes a user account from leaderboard and system databases."""
+    global user_ids_db
+    data = request.get_json() or {}
+    username = data.get('username', '').strip()
+
+    if username:
+        # Remove from user_ids database
+        if username in user_ids_db:
+            del user_ids_db[username]
+            save_json_file(USER_IDS_FILE, user_ids_db)
+
+        # Remove from leaderboard database
+        db = load_json_file(LEADERBOARD_FILE, {})
+        if username in db:
+            del db[username]
+            save_json_file(LEADERBOARD_FILE, db)
+
+        # Remove from game data damage leaderboards
+        if username in game_data.get("forest_monthly", {}):
+            del game_data["forest_monthly"][username]
+        if username in game_data.get("forest_yearly", {}):
+            del game_data["forest_yearly"][username]
+        if username in game_data["active_boss"].get("damage_leaderboard", {}):
+            del game_data["active_boss"]["damage_leaderboard"][username]
+        save_json_file(GAME_DATA_FILE, game_data)
+
+    return jsonify({"success": True, "message": f"User '{username}' purged successfully from leaderboard."})
 
 @app.route('/api/telemetry', methods=['POST'])
 def telemetry():
@@ -208,12 +252,20 @@ def telemetry():
     real_cpu = psutil.cpu_percent(interval=None)
     real_ram = psutil.virtual_memory().percent
 
+    # Real Hardware Battery & Charging State Detection (HP Victus / Laptops)
+    battery = psutil.sensors_battery()
+    is_charging = False
+    charger_wattage = 75.0  # Baseline charging adapter boost for HP Victus
+
+    if battery:
+        is_charging = battery.power_plugged
+
     if num_optimized == 5:
         score = random.randint(88, 96)
-        watts = round(random.uniform(6.0, 9.0), 1)
+        baseline_watts = round(random.uniform(6.0, 9.0), 1)
     elif num_optimized > 0:
         score = random.randint(72, 85)
-        watts = round(random.uniform(10.0, 14.0), 1)
+        baseline_watts = round(random.uniform(10.0, 14.0), 1)
     else:
         avg_hw_load = (real_cpu + real_ram) / 2.0
         if avg_hw_load > 60:
@@ -223,7 +275,10 @@ def telemetry():
         else:
             score = random.randint(55, 72)
         
-        watts = round(14.0 + (avg_hw_load * 0.28) + random.uniform(0.5, 3.0), 1)
+        baseline_watts = round(27.0 + (avg_hw_load * 0.12) + random.uniform(0.5, 3.0), 1)
+
+    # Dynamic Watts Surge when Laptop is Plugged In & Charging
+    watts = round(baseline_watts + (charger_wattage if is_charging else 0.0), 1)
 
     sub_data = {}
     sub_loads = {
@@ -256,7 +311,7 @@ def telemetry():
             "is_optimized": is_opt
         }
 
-    anomaly_detected = watts > 21.0 or real_cpu > 75.0
+    anomaly_detected = watts > 85.0 or real_cpu > 75.0
     anomaly_msg = f"UNUSUAL CARBON SPIKE: Subsystem workload boosted power draw to {watts}W!" if anomaly_detected else ""
 
     uptime_hours = (time.time() - BOOT_TIME) / 3600.0
@@ -286,6 +341,8 @@ def telemetry():
         "selected_timezone": selected_tz,
         "cpu_percent": real_cpu,
         "current_watts": watts,
+        "is_charging": is_charging,
+        "charger_wattage": charger_wattage,
         "co2_grams": co2_grams,
         "cost_saved_inr": cost_saved,
         "sustainability_score": score,
