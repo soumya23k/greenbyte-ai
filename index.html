@@ -10,8 +10,6 @@
     <style>
         .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(51, 65, 85, 0.6); }
         .glow-emerald { box-shadow: 0 0 25px rgba(16, 185, 129, 0.25); }
-        .glow-rose { box-shadow: 0 0 25px rgba(244, 63, 94, 0.25); }
-        .glow-amber { box-shadow: 0 0 25px rgba(245, 158, 11, 0.25); }
         .glow-charging { box-shadow: 0 0 30px rgba(59, 130, 246, 0.4); animation: pulseGlow 2s infinite alternate; }
         @keyframes pulseGlow {
             0% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
@@ -22,37 +20,19 @@
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-slate-950 flex flex-col justify-between">
 
     <div>
-        <!-- USER REGISTRATION MODAL WITH REFERRAL CODE CHECK -->
+        <!-- USER REGISTRATION MODAL -->
         <div id="loginModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
             <div class="glass max-w-md w-full p-6 rounded-2xl border border-emerald-500/30 space-y-4 glow-emerald">
                 <div class="text-center space-y-1">
                     <span class="text-4xl">🌱</span>
                     <h2 class="text-xl font-black bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent">GREENBYTE AI PLATFORM</h2>
-                    <p class="text-xs text-slate-400">Enter your name or campus to log in and generate your unique GB ID card.</p>
+                    <p class="text-xs text-slate-400">Enter your name or campus to log in and receive your sequential GB ID card.</p>
                 </div>
                 <div class="space-y-3">
                     <div>
                         <label class="text-[11px] font-bold text-slate-300 uppercase">User Name / Campus</label>
                         <input id="loginName" type="text" placeholder="e.g. Soumyadeep Ghosh" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-emerald-500">
                     </div>
-                    
-                    <div>
-                        <label class="text-[11px] font-bold text-slate-300 uppercase">Do you have a referral code?</label>
-                        <div class="flex gap-4 mt-1">
-                            <label class="flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer">
-                                <input type="radio" name="refRadio" value="no" checked onchange="toggleRefInput()" class="accent-emerald-500"> No
-                            </label>
-                            <label class="flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer">
-                                <input type="radio" name="refRadio" value="yes" onchange="toggleRefInput()" class="accent-emerald-500"> Yes
-                            </label>
-                        </div>
-                    </div>
-
-                    <div id="refCodeContainer" class="hidden">
-                        <label class="text-[11px] font-bold text-amber-400 uppercase">Enter Promo / Referral Code</label>
-                        <input id="refCodeInput" type="text" placeholder="Enter referral code" class="w-full mt-1 bg-slate-900 border border-amber-500/50 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-amber-400 font-mono">
-                    </div>
-
                     <button onclick="submitLogin()" class="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-lg text-xs hover:from-emerald-400 hover:to-teal-300 transition">
                         ENTER DASHBOARD
                     </button>
@@ -68,948 +48,173 @@
                     <button onclick="closeIdCardModal()" class="text-slate-400 hover:text-slate-100 text-xs font-mono">✕ Close</button>
                 </div>
 
-                <!-- ID Card Content -->
                 <div class="p-4 bg-gradient-to-b from-slate-900 to-slate-950 rounded-2xl border border-slate-800 space-y-4 text-left font-mono relative">
                     <div class="flex items-center gap-4">
-                        <div class="relative group">
-                            <img id="cardUserPic" src="https://ui-avatars.com/api/?name=User&background=10b981&color=0f172a&size=128" class="w-20 h-20 rounded-2xl border-2 border-emerald-400 object-cover shadow-lg glow-emerald">
-                            <label class="absolute inset-0 bg-slate-950/70 rounded-2xl flex items-center justify-center text-[9px] font-bold text-emerald-300 opacity-0 group-hover:opacity-100 cursor-pointer transition">
-                                📷 Change
-                                <input type="file" accept="image/*" class="hidden" onchange="uploadCardPhoto(event)">
-                            </label>
-                        </div>
+                        <img id="cardUserPic" src="https://ui-avatars.com/api/?name=User&background=10b981&color=0f172a&size=128" class="w-20 h-20 rounded-2xl border-2 border-emerald-400 object-cover shadow-lg glow-emerald">
                         <div class="space-y-1 flex-1">
                             <h3 id="cardUserName" class="text-base font-black text-slate-100 truncate">Soumyadeep Ghosh</h3>
                             <p class="text-[10px] text-emerald-400 font-bold uppercase">VERIFIED GREEN CITIZEN</p>
                             <p class="text-[10px] text-teal-300 font-bold">ID: <span id="cardUserIdDisplay" class="text-emerald-400 font-mono">GB-2026-01</span></p>
                         </div>
                     </div>
-
-                    <div class="grid grid-cols-2 gap-2 text-center text-xs">
-                        <div class="p-2 bg-slate-900/90 rounded-xl border border-slate-800">
-                            <p class="text-slate-400 text-[9px]">Avg Eco Score</p>
-                            <p id="cardAvgScore" class="text-emerald-400 font-bold text-sm">-- / 100</p>
-                        </div>
-                        <div class="p-2 bg-slate-900/90 rounded-xl border border-slate-800">
-                            <p class="text-slate-400 text-[9px]">Active Streak</p>
-                            <p id="cardStreak" class="text-amber-300 font-bold text-sm">1 Day 🔥</p>
-                        </div>
-                    </div>
-
-                    <div class="space-y-1.5">
-                        <p class="text-[10px] text-slate-400 uppercase font-bold">Earned Badges Showcase</p>
-                        <div id="cardBadgeShowcase" class="flex gap-1.5 overflow-x-auto pb-1 text-base"></div>
-                    </div>
-
-                    <!-- Embedded Card QR Code -->
-                    <div class="flex items-center justify-between border-t border-slate-800 pt-3">
-                        <div class="text-[9px] text-slate-500">
-                            <p>IEM HACKATHON 2026</p>
-                            <p>AUTHENTICATED GREEN PROFILE</p>
-                        </div>
-                        <div id="cardQrCode" class="p-1 bg-white rounded-lg"></div>
-                    </div>
-                </div>
-
-                <button onclick="window.print()" class="w-full py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs transition">
-                    🖨️ PRINT / SAVE DIGITAL CARD
-                </button>
-            </div>
-        </div>
-
-        <!-- ACHIEVEMENTS & BADGES MODAL -->
-        <div id="badgesModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
-            <div class="glass max-w-3xl w-full p-6 rounded-2xl border border-amber-500/30 space-y-4 glow-amber max-h-[85vh] overflow-y-auto">
-                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                    <h2 class="text-sm font-black text-amber-400 uppercase tracking-wider flex items-center gap-2">
-                        🏅 GREENBYTE ACHIEVEMENT BADGES & STREAKS
-                    </h2>
-                    <button onclick="closeBadgesModal()" class="text-slate-400 hover:text-slate-100 text-xs font-mono">✕ Close</button>
-                </div>
-
-                <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs font-mono">
-                    <span>🔥 Current Active Streak: <strong id="streakDaysCount" class="text-amber-400 text-sm">1 Day</strong></span>
-                    <div class="flex items-center gap-2">
-                        <button onclick="openIdCardModal()" class="px-3 py-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded text-xs">
-                            💳 View ID Card
-                        </button>
-                        <button onclick="resetAllData()" class="px-3 py-1 bg-rose-500/20 hover:bg-rose-500/40 border border-rose-500/40 text-rose-300 font-bold rounded text-xs">
-                            ⚠️ Reset Badges
-                        </button>
-                    </div>
-                </div>
-
-                <div id="badgeGridContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 text-xs font-mono"></div>
-            </div>
-        </div>
-
-        <!-- CONTACT DEVELOPER MODAL -->
-        <div id="contactModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
-            <div class="glass max-w-sm w-full p-6 rounded-2xl border border-emerald-500/30 text-center space-y-4 glow-emerald">
-                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                    <h2 class="text-sm font-black text-emerald-400 uppercase">📞 Contact Lead Developer</h2>
-                    <button onclick="closeContactModal()" class="text-slate-400 hover:text-slate-100 text-xs font-mono">✕ Close</button>
-                </div>
-                <div class="space-y-3">
-                    <img src="/Saez.jpg" onerror="this.src='https://ui-avatars.com/api/?name=Soumyadeep+Ghosh&background=10b981&color=0f172a&size=128'" alt="Soumyadeep Ghosh" class="w-24 h-24 rounded-full mx-auto border-2 border-emerald-400 object-cover shadow-lg glow-emerald">
-                    <div>
-                        <h3 class="text-base font-black text-slate-100">Soumyadeep Ghosh</h3>
-                        <p class="text-[11px] text-emerald-400 font-bold uppercase tracking-wider">Lead Web Developer & AI Architect</p>
-                    </div>
-                    <div class="p-3 bg-slate-900/90 border border-slate-800 rounded-xl text-xs space-y-2 text-left font-mono">
-                        <div class="flex items-center gap-2 text-slate-300">
-                            <span>📞</span><a href="tel:8100127066" class="hover:text-emerald-400 transition">+91 8100127066</a>
-                        </div>
-                        <div class="flex items-center gap-2 text-slate-300 truncate">
-                            <span>✉️</span><a href="mailto:soumyadeepghosh1tb@gmail.com" class="hover:text-emerald-400 transition truncate">soumyadeepghosh1tb@gmail.com</a>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- QR CODE MODAL -->
-        <div id="qrModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
-            <div class="glass max-w-sm w-full p-6 rounded-2xl border border-teal-500/30 text-center space-y-4 glow-emerald">
-                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                    <h2 class="text-sm font-black text-teal-300 uppercase flex items-center gap-1.5">📱 QR CODE SHARE</h2>
-                    <button onclick="closeQrModal()" class="text-slate-400 hover:text-slate-100 text-xs font-mono">✕ Close</button>
-                </div>
-                <p class="text-xs text-slate-400">Scan this QR code on your mobile device to open GreenByte AI live dashboard!</p>
-                <div class="flex justify-center p-4 bg-white rounded-2xl border border-slate-700 shadow-inner">
-                    <div id="qrcodeDisplay"></div>
-                </div>
-                <p class="text-[10px] text-slate-500 font-mono">https://greenbyte-ai.onrender.com/</p>
-            </div>
-        </div>
-
-        <!-- INFINITE CAMPUS BOSS RAID MODAL -->
-        <div id="bossModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
-            <div class="glass max-w-xl w-full p-6 rounded-2xl border border-rose-500/30 space-y-4 glow-rose">
-                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                    <h2 class="text-sm font-black text-rose-400 uppercase tracking-wider flex items-center gap-2">
-                        ⚔️ 48-HOUR INFINITE CAMPUS BOSS RAID
-                    </h2>
-                    <button onclick="closeBossModal()" class="text-slate-400 hover:text-slate-100 text-xs font-mono">✕ Close</button>
-                </div>
-
-                <div id="bossLockNotice" class="hidden bg-rose-950/80 border border-rose-500/40 p-3 rounded-xl text-center text-xs font-mono text-rose-300">
-                    ⚠️ BOSS RAID LOCKED: At least 2 registered users are required on the campus leaderboard to challenge boss raids. Please log in another user!
-                </div>
-
-                <div id="bossContentArea">
-                    <div class="flex items-center gap-4 bg-slate-900/90 p-4 rounded-xl border border-slate-800">
-                        <img id="bossAvatarImg" src="" class="w-20 h-20 rounded-xl border border-rose-500/40 object-cover shadow-lg animate-pulse">
-                        <div class="space-y-1.5 flex-1">
-                            <div class="flex justify-between items-baseline">
-                                <h3 id="bossNameDisplay" class="text-base font-black text-slate-100">Loading AI Boss...</h3>
-                                <span id="bossHpText" class="text-xs font-mono text-rose-400 font-bold">0 / 0 HP</span>
-                            </div>
-                            <div class="w-full bg-slate-800 rounded-full h-3 border border-slate-700">
-                                <div id="bossHpBar" class="bg-gradient-to-r from-rose-500 to-amber-500 h-2.5 rounded-full transition-all duration-500" style="width: 100%"></div>
-                            </div>
-                            <p class="text-[10px] text-slate-400 font-mono">Score >75 deals up to 250 HP damage per telemetry tick!</p>
-                        </div>
-                    </div>
-
-                    <div id="bossAttackFeedback" class="mt-3 p-2.5 bg-slate-900 border border-slate-800 rounded-xl text-center text-xs font-mono font-bold text-amber-300">
-                        Attack Readiness: Maintain Sustainability Score >75 to strike!
-                    </div>
-
-                    <div class="mt-3 space-y-2">
-                        <h4 class="text-xs font-bold text-slate-300 uppercase">🛡️ Top Campus Damage Dealers</h4>
-                        <div id="bossDamageList" class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 text-xs font-mono max-h-28 overflow-y-auto space-y-1 text-slate-300"></div>
-                    </div>
-
-                    <div class="mt-3 border-t border-slate-800 pt-3">
-                        <h4 class="text-xs font-bold text-emerald-400 uppercase mb-2">🏆 Defeated Bosses Trophy Hall</h4>
-                        <div id="trophyHallList" class="flex gap-2 overflow-x-auto pb-1 text-[10px] font-mono"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ARCADE "SAPLING CATCHER" ECO-FOREST MODAL -->
-        <div id="forestModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
-            <div class="glass max-w-lg w-full p-5 rounded-2xl border border-emerald-500/30 space-y-3 glow-emerald text-center">
-                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                    <h2 class="text-sm font-black text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-                        🌲 15-SECOND SAPLING CATCHER MINI-GAME
-                    </h2>
-                    <button onclick="closeForestModal()" class="text-slate-400 hover:text-slate-100 text-xs font-mono">✕ Close</button>
-                </div>
-
-                <div class="flex justify-between items-center text-xs font-mono bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
-                    <span>Trees Caught: <strong id="gameTreeCount" class="text-emerald-400">0</strong></span>
-                    <span>Time Left: <strong id="gameTimeLeft" class="text-amber-400">15s</strong></span>
-                    <button id="startGameBtn" onclick="startSaplingGame()" class="px-3 py-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded text-xs transition">START GAME</button>
-                </div>
-
-                <div class="relative flex justify-center">
-                    <canvas id="gameCanvas" width="420" height="260" class="bg-slate-900 border border-slate-800 rounded-xl shadow-inner cursor-pointer"></canvas>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3 text-xs font-mono text-left pt-2 border-t border-slate-800">
-                    <div>
-                        <h4 class="font-bold text-teal-300 uppercase text-[10px]">📅 Monthly Leaderboard</h4>
-                        <div id="forestMonthlyList" class="bg-slate-900/60 p-2 rounded-lg border border-slate-800 max-h-24 overflow-y-auto space-y-1 text-[10px]"></div>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-amber-300 uppercase text-[10px]">🏆 Yearly Hall of Fame</h4>
-                        <div id="forestYearlyList" class="bg-slate-900/60 p-2 rounded-lg border border-slate-800 max-h-24 overflow-y-auto space-y-1 text-[10px]"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Live Eco News Ticker -->
-        <div class="bg-emerald-950/80 border-b border-emerald-500/20 px-4 py-1.5 text-xs text-emerald-300 flex flex-wrap items-center justify-between gap-2">
-            <div class="flex items-center gap-2 overflow-hidden">
-                <span class="px-1.5 py-0.5 bg-emerald-500 text-slate-950 font-black rounded uppercase text-[10px] shrink-0">LIVE ECO NEWS</span>
-                <span id="newsTicker" class="animate-pulse truncate">Connecting to real-time global eco feeds...</span>
-            </div>
-            <span class="text-slate-400 text-[11px] shrink-0">IEM Sustainability Hackathon 2026</span>
-        </div>
-
-        <!-- Carbon Anomaly Banner -->
-        <div id="anomalyBanner" class="hidden bg-rose-500/20 border-b border-rose-500/40 px-4 py-2 text-xs text-rose-300 flex justify-between items-center animate-pulse">
-            <div class="flex items-center gap-2">
-                <span>🚨</span><span id="anomalyText" class="font-bold">UNUSUAL CARBON ACTIVITY DETECTED!</span>
-            </div>
-            <button onclick="triggerMasterEcoOptimizer()" class="px-2 py-0.5 bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold rounded text-[10px]">
-                OPTIMIZE NOW
-            </button>
-        </div>
-
-        <!-- Header -->
+        <!-- Header with Live Weather Ticker -->
         <header class="glass sticky top-0 z-40 px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-slate-800">
-            <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-300 flex items-center justify-center text-slate-950 text-xl font-bold glow-emerald">🌱</div>
-                    <div>
-                        <h1 class="text-xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-200 to-cyan-400 bg-clip-text text-transparent">GREENBYTE AI</h1>
-                        <p class="text-xs text-slate-400">User: <strong id="currentUserDisplay" class="text-emerald-400">Guest User</strong> (<span id="userHeaderId" class="text-teal-300 font-mono">GB-2026-00</span>)</p>
-                    </div>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-300 flex items-center justify-center text-slate-950 text-xl font-bold">🌱</div>
+                <div>
+                    <h1 class="text-xl font-black bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent">GREENBYTE AI</h1>
+                    <p class="text-xs text-slate-400">User: <strong id="currentUserDisplay" class="text-emerald-400">Guest User</strong> (<span id="userHeaderId" class="text-teal-300 font-mono">GB-2026-01</span>)</p>
                 </div>
             </div>
 
-            <!-- Date, Time, and Timezone Selector -->
-            <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-900/90 border border-slate-800 rounded-xl text-xs font-mono">
-                <span class="text-emerald-400">📅 <span id="clockDate">--</span></span>
-                <span class="text-slate-600">|</span>
-                <span class="text-amber-400">🕒 <span id="clockTime">--</span></span>
-                <select id="timezoneSelect" onchange="updateTelemetry()" class="bg-slate-950 border border-slate-700 text-teal-300 rounded px-1.5 py-0.5 text-[10px] outline-none">
-                    <option value="IST" selected>IST (UTC+5:30)</option>
-                    <option value="UTC">UTC (Universal)</option>
-                    <option value="EST">EST (New York)</option>
-                    <option value="PST">PST (Los Angeles)</option>
-                    <option value="GMT">GMT (London)</option>
-                    <option value="CET">CET (Paris)</option>
-                    <option value="JST">JST (Tokyo)</option>
-                </select>
+            <!-- Real-Time Campus Weather Badge -->
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-900/90 border border-emerald-500/30 rounded-xl text-xs font-mono">
+                <span id="weatherIcon">🌤️</span>
+                <span id="weatherText" class="text-emerald-300 font-bold">IEM Campus: 29.5°C | Partly Cloudy</span>
             </div>
 
-            <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
-                <button onclick="openBadgesModal()" class="px-3 py-1.5 bg-amber-500/20 border border-amber-500/40 hover:bg-amber-500/30 text-amber-300 font-bold rounded-lg text-xs transition flex items-center gap-1">
-                    🏅 Badges
-                </button>
-                <button onclick="openIdCardModal()" class="px-3 py-1.5 bg-emerald-500/20 border border-emerald-500/40 hover:bg-emerald-500/30 text-emerald-300 font-bold rounded-lg text-xs transition flex items-center gap-1">
-                    💳 ID Card
-                </button>
-                <button onclick="openQrModal()" class="px-3 py-1.5 bg-teal-500/20 border border-teal-500/40 hover:bg-teal-500/30 text-teal-300 font-bold rounded-lg text-xs transition flex items-center gap-1">
-                    📱 QR
-                </button>
-                <button onclick="openBossModal()" class="px-3 py-1.5 bg-rose-500/20 border border-rose-500/40 hover:bg-rose-500/30 text-rose-300 font-bold rounded-lg text-xs transition flex items-center gap-1">
-                    ⚔️ Boss Raid (<span id="navBossHp">100%</span>)
-                </button>
-                <button onclick="openForestModal()" class="px-3 py-1.5 bg-emerald-500/20 border border-emerald-500/40 hover:bg-emerald-500/30 text-emerald-300 font-bold rounded-lg text-xs transition flex items-center gap-1">
-                    🌲 Forest
-                </button>
-                <button onclick="openContactModal()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold rounded-lg text-xs transition flex items-center gap-1">
-                    📞 Dev
-                </button>
-                <button onclick="triggerMasterEcoOptimizer()" class="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-lg text-xs transition flex items-center gap-1.5 shrink-0">
-                    ⚡ MASTER ECO-OPTIMIZE
-                </button>
-                <select id="gridSelect" onchange="updateTelemetry()" class="bg-slate-900 border border-slate-700 text-xs text-emerald-400 rounded px-2.5 py-1.5 font-bold outline-none">
-                    <option value="WB Grid (Thermal/Coal)">West Bengal Coal Grid (710g)</option>
-                    <option value="India Avg Grid">India National Avg (650g)</option>
-                    <option value="Global Avg Grid">Global Average (475g)</option>
-                    <option value="EU Grid (Renewables)">EU Clean Grid (210g)</option>
-                </select>
+            <div class="flex flex-wrap items-center gap-2">
+                <button onclick="openIdCardModal()" class="px-3 py-1.5 bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold rounded-lg text-xs">💳 ID Card</button>
+                <button onclick="resetUserData()" class="px-3 py-1.5 bg-rose-500/20 border border-rose-500/40 text-rose-300 font-bold rounded-lg text-xs">⚠️ Reset My Account</button>
             </div>
         </header>
 
         <main class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
 
-            <!-- DYNAMIC LAPTOP CHARGING WATTAGE GLOW BOX ALERT -->
-            <div id="chargingGlowBox" class="hidden p-4 rounded-2xl bg-gradient-to-r from-blue-950/90 via-slate-900 to-emerald-950/90 border-2 border-emerald-400 glow-charging flex flex-col sm:flex-row justify-between items-center gap-3 transition-all duration-500">
+            <!-- Laptop Charging Glow Box -->
+            <div id="chargingGlowBox" class="hidden p-4 rounded-2xl bg-slate-900 border-2 border-emerald-400 glow-charging flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-xl bg-emerald-500/20 border border-emerald-400/50 flex items-center justify-center text-2xl animate-bounce">
-                        ⚡
-                    </div>
+                    <span class="text-2xl animate-bounce">⚡</span>
                     <div>
-                        <h3 class="text-sm font-black text-emerald-300 uppercase tracking-wide flex items-center gap-2">
-                            <span>HP VICTUS POWER ADAPTER DETECTED</span>
-                            <span class="px-2 py-0.5 bg-blue-500/30 border border-blue-400 text-blue-200 text-[10px] rounded-full">CHARGING MODE (+75W)</span>
-                        </h3>
-                        <p class="text-xs text-slate-300 mt-0.5">Laptop battery charging active. Power draw scaled up accordingly to reflect total hardware wattage intake.</p>
+                        <h3 class="text-sm font-bold text-emerald-300 uppercase">HP Victus Charger Connected</h3>
+                        <p class="text-xs text-slate-300">Charging power boost added to active power draw readout.</p>
                     </div>
                 </div>
-                <div class="text-right shrink-0">
-                    <span class="text-[10px] text-slate-400 uppercase font-mono block">ACTIVE POWER DRAW</span>
-                    <span id="glowBoxWattage" class="text-2xl font-black text-emerald-400 font-mono">107.0 W</span>
+                <span id="glowBoxWattage" class="text-2xl font-black text-emerald-400 font-mono">107.0 W</span>
+            </div>
+
+            <!-- Metrics -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="glass rounded-2xl p-4 border border-slate-800">
+                    <span class="text-[10px] text-slate-400 font-bold uppercase">Sustainability Score</span>
+                    <p id="scoreVal" class="text-3xl font-black text-emerald-400 mt-1">--</p>
+                </div>
+                <div class="glass rounded-2xl p-4 border border-slate-800">
+                    <span class="text-[10px] text-slate-400 font-bold uppercase">Power Draw</span>
+                    <p id="wattsVal" class="text-2xl font-black text-amber-400 mt-1">-- Watts</p>
+                </div>
+                <div class="glass rounded-2xl p-4 border border-slate-800">
+                    <span class="text-[10px] text-slate-400 font-bold uppercase">Session CO₂</span>
+                    <p id="co2Val" class="text-2xl font-black text-rose-400 mt-1">-- g CO₂</p>
+                </div>
+                <div class="glass rounded-2xl p-4 border border-slate-800">
+                    <span class="text-[10px] text-slate-400 font-bold uppercase">Campus Weather</span>
+                    <p id="weatherCardTemp" class="text-2xl font-black text-teal-300 mt-1">-- °C</p>
                 </div>
             </div>
 
-            <!-- DAILY ACTIONS DONE TODAY SUMMARY BAR -->
-            <div class="glass rounded-2xl p-4 border border-slate-800">
-                <h3 class="text-xs font-black text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-2">
-                    <span>📊</span> TODAY'S ACTIVITY SUMMARY ("DONE TODAY")
-                </h3>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono text-center">
-                    <div class="p-2.5 bg-slate-900/90 border border-slate-800 rounded-xl">
-                        <p class="text-slate-400 text-[10px]">Eco Optimizations</p>
-                        <p id="doneOptimizations" class="text-emerald-400 font-bold text-sm">--</p>
-                    </div>
-                    <div class="p-2.5 bg-slate-900/90 border border-slate-800 rounded-xl">
-                        <p class="text-slate-400 text-[10px]">Web Scans Audited</p>
-                        <p id="doneScans" class="text-teal-300 font-bold text-sm">--</p>
-                    </div>
-                    <div class="p-2.5 bg-slate-900/90 border border-slate-800 rounded-xl">
-                        <p class="text-slate-400 text-[10px]">Boss Raid Strikes</p>
-                        <p id="doneBossAttacks" class="text-rose-400 font-bold text-sm">--</p>
-                    </div>
-                    <div class="p-2.5 bg-slate-900/90 border border-slate-800 rounded-xl">
-                        <p class="text-slate-400 text-[10px]">Trees Caught</p>
-                        <p id="doneSaplings" class="text-amber-300 font-bold text-sm">--</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Top Metrics -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4">
-                <div class="glass rounded-2xl p-4 border border-slate-800">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Sustainability Score</span>
-                    <div class="flex items-baseline justify-between mt-1">
-                        <span id="scoreVal" class="text-2xl sm:text-3xl font-black text-emerald-400">--</span>
-                        <span class="text-slate-500 text-xs font-bold">/ 100</span>
-                    </div>
-                    <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2">
-                        <div id="scoreBar" class="bg-emerald-400 h-1.5 rounded-full" style="width: 0%"></div>
-                    </div>
-                </div>
-
-                <div class="glass rounded-2xl p-4 border border-slate-800">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Normalized CPU</span>
-                    <div class="mt-1 flex items-baseline gap-1">
-                        <span id="cpuVal" class="text-xl sm:text-2xl font-black text-amber-400">--</span>
-                        <span class="text-xs text-slate-400">% Load</span>
-                    </div>
-                    <p class="text-[10px] text-slate-500 mt-1">Multi-core scaled</p>
-                </div>
-
-                <div class="glass rounded-2xl p-4 border border-slate-800">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Power Draw</span>
-                    <div class="mt-1 flex items-baseline gap-1">
-                        <span id="wattsVal" class="text-xl sm:text-2xl font-black text-amber-400">--</span>
-                        <span class="text-xs text-slate-400">Watts</span>
-                    </div>
-                </div>
-
-                <div class="glass rounded-2xl p-4 border border-slate-800">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Session CO₂</span>
-                    <div class="mt-1 flex items-baseline gap-1">
-                        <span id="co2Val" class="text-xl sm:text-2xl font-black text-rose-400">--</span>
-                        <span class="text-xs text-slate-400">g CO₂</span>
-                    </div>
-                </div>
-
-                <!-- Live Battery Level -->
-                <div class="glass rounded-2xl p-4 border border-slate-800 col-span-2 sm:col-span-3 md:col-span-2">
-                    <div class="flex justify-between">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">🔋 Live Battery Level</span>
-                        <span id="batteryStatus" class="text-[10px] text-emerald-400 font-bold">Syncing...</span>
-                    </div>
-                    <div class="mt-2 flex items-baseline gap-2">
-                        <span id="batteryVal" class="text-2xl font-black text-emerald-400">--%</span>
-                        <span id="batteryDeviceType" class="text-xs text-slate-400">Hardware Synced</span>
-                    </div>
-                    <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2">
-                        <div id="batteryBar" class="bg-emerald-400 h-1.5 rounded-full" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Digital Carbon Map & Cloud Footprint Estimator -->
+            <!-- LEADERBOARD & CHATBOT -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
-                    <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                        <span>🌐</span> DIGITAL CARBON MAP
-                    </h2>
-                    <div class="grid grid-cols-4 gap-2 text-center text-xs font-mono">
-                        <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                            <p class="text-slate-400 text-[9px]">CPU</p><p id="mapCpu" class="text-emerald-400 font-bold">--%</p>
-                        </div>
-                        <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                            <p class="text-slate-400 text-[9px]">RAM</p><p id="mapRam" class="text-teal-300 font-bold">--%</p>
-                        </div>
-                        <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                            <p class="text-slate-400 text-[9px]">Disk</p><p id="mapDisk" class="text-amber-300 font-bold">--%</p>
-                        </div>
-                        <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                            <p class="text-slate-400 text-[9px]">Cloud/Net</p><p id="mapCloud" class="text-cyan-300 font-bold">--%</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
-                    <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                        <span>☁️</span> CLOUD FOOTPRINT ESTIMATOR
-                    </h2>
-                    <div class="grid grid-cols-3 gap-2 text-xs font-mono">
-                        <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                            <p class="text-slate-400 text-[9px]">Drive Storage</p><p id="cloudDrive" class="text-emerald-400 font-bold">-- g</p>
-                        </div>
-                        <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                            <p class="text-slate-400 text-[9px]">AI Queries</p><p id="cloudAi" class="text-amber-300 font-bold">-- g</p>
-                        </div>
-                        <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-                            <p class="text-slate-400 text-[9px]">HD Streaming</p><p id="cloudVideo" class="text-rose-400 font-bold">-- g</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- JUDGES' OPTIMIZATION PROOF & SUBSYSTEM TABLE -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="glass rounded-2xl p-4 sm:p-6 lg:col-span-2 space-y-4 border border-slate-800">
-                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                        <div>
-                            <h2 class="text-xs sm:text-sm font-black text-slate-200 uppercase">🧬 Infrastructure Subsystem Carbon DNA</h2>
-                            <p class="text-[10px] text-slate-400 font-mono">Real-time hardware component telemetry & memory trim triggers</p>
-                        </div>
-                        <button onclick="exportReport()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs rounded-lg font-mono">📥 Export JSON</button>
-                    </div>
-
-                    <!-- JUDGES' LIVE OPTIMIZATION PROOF PANEL -->
-                    <div class="p-3 bg-slate-900/90 border border-emerald-500/30 rounded-xl space-y-2 font-mono text-xs">
-                        <div class="flex justify-between items-center">
-                            <span class="text-emerald-400 font-bold text-[11px] uppercase flex items-center gap-1.5">⚖️ JUDGES' WORKING CRITERIA & OPTIMIZATION PROOF</span>
-                            <span id="optStatusTag" class="px-2 py-0.5 bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[9px] font-bold rounded">STATUS: UNOPTIMIZED HARDWARE DRAW</span>
-                        </div>
-                        <div class="grid grid-cols-3 gap-2 text-center text-[10px]">
-                            <div class="p-2 bg-slate-950/80 border border-slate-800 rounded-lg">
-                                <p class="text-slate-400">RAM Trimmed Delta</p>
-                                <p id="proofRamDelta" class="text-emerald-400 font-bold text-xs">0.0 MB</p>
-                            </div>
-                            <div class="p-2 bg-slate-950/80 border border-slate-800 rounded-lg">
-                                <p class="text-slate-400">Power Draw Saved</p>
-                                <p id="proofWattsDelta" class="text-amber-300 font-bold text-xs">0.0 Watts</p>
-                            </div>
-                            <div class="p-2 bg-slate-950/80 border border-slate-800 rounded-lg">
-                                <p class="text-slate-400">Kernel OS Action</p>
-                                <p id="proofKernelAction" class="text-teal-300 font-bold text-[9px] truncate">Idle Monitor</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs font-mono min-w-[500px]">
-                            <thead class="text-slate-400 border-b border-slate-800 text-[11px] uppercase">
-                                <tr>
-                                    <th class="pb-3">Subsystem Component</th>
-                                    <th class="pb-3">Profile DNA</th>
-                                    <th class="pb-3">Activity</th>
-                                    <th class="pb-3">Memory/Load</th>
-                                    <th class="pb-3">Est. Carbon Draw</th>
-                                    <th class="pb-3 text-right">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="subsystemTableBody" class="divide-y divide-slate-800/60"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- AI Webpage Scanner -->
-                <div class="glass rounded-2xl p-5 border border-slate-800 flex flex-col justify-between space-y-4">
-                    <div>
-                        <h2 class="text-xs font-bold text-slate-200 uppercase tracking-wider">🌐 AI Webpage Carbon Scanner</h2>
-                        <p class="text-[11px] text-slate-400 mb-3">Audit asset weight of any website</p>
-                        <div class="flex gap-2">
-                            <input id="urlInput" type="text" placeholder="iem.edu.in" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none focus:border-emerald-500">
-                            <button onclick="analyzeUrl()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-lg text-xs transition shrink-0">Scan</button>
-                        </div>
-                    </div>
-                    <div id="urlResult" class="bg-slate-900/80 rounded-xl p-3 text-xs space-y-1.5 border border-slate-800 text-slate-400">
-                        <p class="text-center text-slate-500">Enter a site URL above to audit asset weight.</p>
-                    </div>
-                    <div class="h-32 pt-2 border-t border-slate-800">
-                        <canvas id="powerChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Real-World Impact Translator -->
-            <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
-                <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-2"><span>🌳</span> REAL-WORLD IMPACT TRANSLATOR</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
-                    <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center gap-3">
-                        <span class="text-2xl">🌲</span>
-                        <div>
-                            <p class="text-slate-400 text-[10px] uppercase">Tree Offset Equivalent</p>
-                            <p class="text-emerald-400 font-bold text-sm"><span id="impactTrees">--</span> Tree-Days Absorbed</p>
-                        </div>
-                    </div>
-                    <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center gap-3">
-                        <span class="text-2xl">🚗</span>
-                        <div>
-                            <p class="text-slate-400 text-[10px] uppercase">Car Travel Avoided</p>
-                            <p class="text-teal-300 font-bold text-sm"><span id="impactCar">--</span> km Driving Avoided</p>
-                        </div>
-                    </div>
-                    <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center gap-3">
-                        <span class="text-2xl">💡</span>
-                        <div>
-                            <p class="text-slate-400 text-[10px] uppercase">LED Bulb Energy</p>
-                            <p class="text-amber-300 font-bold text-sm"><span id="impactLed">--</span> Hours Powered</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PERSISTENT LEADERBOARD & CONVERSATIONAL CHATBOT -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider">🌍 IEM CAMPUS LEADERBOARD</h2>
-                        <div class="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded">
-                            Campus Avg Score: <strong id="campusAvgVal" class="text-teal-200">--</strong>
-                        </div>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs font-mono">
-                            <thead class="text-slate-500 border-b border-slate-800 text-[10px] uppercase">
-                                <tr>
-                                    <th class="pb-1">Rank</th>
-                                    <th class="pb-1">Registered User / Campus</th>
-                                    <th class="pb-1 text-right">Sustainability Score</th>
-                                </tr>
-                            </thead>
-                            <tbody id="leaderboardBody" class="divide-y divide-slate-800/40 text-slate-300">
-                                <tr><td colspan="3" class="py-2 text-center text-slate-500">Loading persistent leaderboard...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <h2 class="text-xs font-black text-slate-200 uppercase">🌍 IEM CAMPUS LEADERBOARD</h2>
+                    <table class="w-full text-left text-xs font-mono">
+                        <thead class="text-slate-500 border-b border-slate-800">
+                            <tr><th>Rank</th><th>Registered User</th><th class="text-right">Score</th></tr>
+                        </thead>
+                        <tbody id="leaderboardBody" class="divide-y divide-slate-800/40 text-slate-300"></tbody>
+                    </table>
                 </div>
 
                 <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3 flex flex-col justify-between">
-                    <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-1.5"><span>🤖</span> GREENBYTE REAL-TIME AI CHATBOT</h2>
+                    <h2 class="text-xs font-black text-slate-200 uppercase">🤖 GREENBYTE REAL-TIME AI CHATBOT</h2>
                     <div id="chatHistory" class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 h-36 overflow-y-auto text-xs space-y-2 font-mono">
-                        <p class="text-emerald-400">🤖: Hello! I am GreenByte AI. Ask me about time, date, timezone, optimization mechanics, or platform features!</p>
+                        <p class="text-emerald-400">🤖: Hello! Ask me about session CO2, weather updates, optimizations, developer info, or platform features!</p>
                     </div>
                     <div class="flex gap-2">
-                        <input id="chatInput" type="text" placeholder="Ask anything (e.g. What is the time? How does optimization work?)" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none focus:border-emerald-500" onkeypress="if(event.key==='Enter') sendChat()">
-                        <button onclick="sendChat()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-lg text-xs transition shrink-0">Ask</button>
+                        <input id="chatInput" type="text" placeholder="e.g. What is the session CO2? How is weather here?" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none" onkeypress="if(event.key==='Enter') sendChat()">
+                        <button onclick="sendChat()" class="px-3 py-2 bg-emerald-500 text-slate-950 font-bold rounded-lg text-xs">Ask</button>
                     </div>
                 </div>
             </div>
-
-            <!-- DYNAMIC AI GREEN ADVISOR -->
-            <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3">
-                <h2 class="text-xs font-black text-slate-200 uppercase">💡 DYNAMIC AI GREEN ADVISOR</h2>
-                <div id="suggestionsContainer" class="space-y-2 text-xs"></div>
-            </div>
-
         </main>
     </div>
 
-    <!-- TEAM CREDITS FOOTER -->
-    <footer class="glass mt-8 border-t border-slate-800 px-6 py-5 text-center text-xs space-y-2">
-        <p class="font-bold text-emerald-400 uppercase tracking-widest text-xs">DEVELOPED BY SOUMYADEEP GHOSH</p>
-        <div class="flex flex-wrap justify-center items-center gap-2 font-mono text-slate-300 text-[11px]">
-            <span class="text-slate-400">Project Team Members:</span>
-            <span>Satadru Roy</span><span class="text-slate-600">|</span>
-            <span>Sougata Mondal</span><span class="text-slate-600">|</span>
-            <span>Swapnadeep Bannerjee</span><span class="text-slate-600">|</span>
-            <span>Susmit Sen</span>
-        </div>
-        <div class="pt-2 flex justify-center gap-4 text-[11px]">
-            <button onclick="openContactModal()" class="text-emerald-400 hover:underline">📞 Contact Developer Details</button>
-            <span class="text-slate-600">|</span>
-            <button onclick="resetAllData()" class="text-rose-400 hover:underline font-bold">⚠️ Reset All Badges & Data</button>
-        </div>
-        <p class="text-[10px] text-slate-500">IEM Sustainability Hackathon 2026</p>
-    </footer>
-
     <script>
         const API = "/api";
-        let lastTelemetryData = null;
         let currentUser = localStorage.getItem("gb_username") || "";
-        let currentUserId = localStorage.getItem("gb_userid") || "GB-2026-01";
-        let isPromoUnlocked = localStorage.getItem("gb_promo_unlocked") === "true";
-        let globalLeaderboard = [];
-        let qrGenerated = false;
-        let cardQrGenerated = false;
-
-        const PROMO_CODE = "SaezGreenbyteAI23";
-
-        let ALL_BADGES = [
-            { icon: "🔌", name: "First Spark", unlocked: true, desc: "Logged In" },
-            { icon: "⚡", name: "7-Day Spark", unlocked: false, desc: "1/7 Days" },
-            { icon: "🌱", name: "30-Day Sprout", unlocked: false, desc: "1/30 Days" },
-            { icon: "🌿", name: "180-Day Growth", unlocked: false, desc: "1/180 Days" },
-            { icon: "🏆", name: "365-Day Solar", unlocked: false, desc: "1/365 Days" },
-            { icon: "👑", name: "730-Day Titan", unlocked: false, desc: "1/730 Days" },
-            { icon: "💎", name: "1825-Day Planet", unlocked: false, desc: "1/1825 Days" },
-            { icon: "🧹", name: "Buffer Sweeper", unlocked: false, desc: "0/10 Opts" },
-            { icon: "🚀", name: "Speed Demon", unlocked: false, desc: "0/25 Opts" },
-            { icon: "♻️", name: "Zero-Waste", unlocked: false, desc: "0/50 Opts" },
-            { icon: "🛡️", name: "Clean Record", unlocked: true, desc: "Verified" },
-            { icon: "⚡", name: "Master Optimizer", unlocked: false, desc: "0/5 Masters" },
-            { icon: "🌌", name: "Quantum Efficiency", unlocked: false, desc: "Score 95+" },
-            { icon: "🔋", name: "Battery Whisperer", unlocked: true, desc: "Battery Synced" },
-            { icon: "🗡️", name: "Rookie Striker", unlocked: false, desc: "0/5 Strikes" },
-            { icon: "💥", name: "Critical Hit", unlocked: false, desc: "0/10 Crits" },
-            { icon: "🛡️", name: "Shield Breaker", unlocked: false, desc: "0/25 Strikes" },
-            { icon: "🩸", name: "Titan Decimator", unlocked: false, desc: "0/50 Strikes" },
-            { icon: "🏆", name: "Boss Slayer", unlocked: false, desc: "0/5 Defeats" },
-            { icon: "🥇", name: "Raid MVP", unlocked: false, desc: "Top Damage" },
-            { icon: "⚔️", name: "Raid Veteran", unlocked: false, desc: "0/20 Strikes" },
-            { icon: "🌋", name: "Thermal Overlord", unlocked: false, desc: "Level 5 Boss" },
-            { icon: "🌿", name: "First Sapling", unlocked: false, desc: "0/5 Trees" },
-            { icon: "🧺", name: "Agile Collector", unlocked: false, desc: "0/20 Trees" },
-            { icon: "💨", name: "Smog Dodger", unlocked: false, desc: "0/50 Trees" },
-            { icon: "🌲", name: "Forest Guardian", unlocked: false, desc: "0/100 Trees" },
-            { icon: "🪙", name: "Token Earner", unlocked: false, desc: "0/10 Tokens" },
-            { icon: "👑", name: "Monthly Champ", unlocked: false, desc: "Rank 1 Month" },
-            { icon: "🏆", name: "Yearly Legend", unlocked: false, desc: "Rank 1 Year" },
-            { icon: "🌳", name: "Ancient Arborist", unlocked: false, desc: "0/500 Trees" },
-            { icon: "🔍", name: "First Audit", unlocked: false, desc: "0/1 Scans" },
-            { icon: "🟢", name: "A+ Certifier", unlocked: false, desc: "0/5 A+ Scans" },
-            { icon: "🔴", name: "Heavy Spotter", unlocked: false, desc: "0/5 Heavy Scans" },
-            { icon: "🌐", name: "Web Auditor", unlocked: false, desc: "0/10 Scans" },
-            { icon: "📊", name: "Code Analyst", unlocked: false, desc: "0/25 Scans" },
-            { icon: "🏫", name: "Campus Scout", unlocked: true, desc: "IEM Campus" },
-            { icon: "⚡", name: "Lightweight", unlocked: false, desc: "Draw < 8W" },
-            { icon: "🌍", name: "Global Inspector", unlocked: false, desc: "Audit All Grids" },
-            { icon: "🏭", name: "Coal Auditor", unlocked: false, desc: "Coal Selected" },
-            { icon: "🇮🇳", name: "National Inspector", unlocked: false, desc: "India Grid" },
-            { icon: "🇪🇺", name: "Renewable Explorer", unlocked: false, desc: "EU Grid" },
-            { icon: "☀️", name: "Solar Integrator", unlocked: false, desc: "EU 90+ Score" },
-            { icon: "🌎", name: "Global Citizen", unlocked: false, desc: "Global Grid" },
-            { icon: "📉", name: "Grid Stabilizer", unlocked: false, desc: "0/20 Trims" },
-            { icon: "💬", name: "Curious Mind", unlocked: false, desc: "0/5 Chats" },
-            { icon: "🕒", name: "Time Keeper", unlocked: false, desc: "Time Query" },
-            { icon: "💡", name: "Knowledge Seeker", unlocked: false, desc: "0/10 Chats" },
-            { icon: "📞", name: "Dev Connector", unlocked: false, desc: "Opened Dev" },
-            { icon: "📱", name: "Mobile Synced", unlocked: false, desc: "Opened QR" },
-            { icon: "🎓", name: "Hackathon Star", unlocked: false, desc: "Ref Code" },
-            { icon: "🏅", name: "Hall of Fame", unlocked: false, desc: "Ref Code" }
-        ];
+        let currentUserId = localStorage.getItem("gb_userid") || "";
+        let lastTelemetryData = null;
 
         window.addEventListener('DOMContentLoaded', () => {
             if (currentUser) {
                 document.getElementById('loginModal').classList.add('hidden');
                 document.getElementById('currentUserDisplay').innerText = currentUser;
                 document.getElementById('userHeaderId').innerText = currentUserId;
-                evaluatePromoBadges();
                 updateTelemetry();
             }
         });
-
-        function toggleRefInput() {
-            const selected = document.querySelector('input[name="refRadio"]:checked').value;
-            const container = document.getElementById('refCodeContainer');
-            if (selected === 'yes') {
-                container.classList.remove('hidden');
-            } else {
-                container.classList.add('hidden');
-            }
-        }
-
-        function evaluatePromoBadges() {
-            const badgeStar = ALL_BADGES.find(b => b.name === "Hackathon Star");
-            const badgeHall = ALL_BADGES.find(b => b.name === "Hall of Fame");
-            if (badgeStar) badgeStar.unlocked = isPromoUnlocked;
-            if (badgeHall) badgeHall.unlocked = isPromoUnlocked;
-            renderBadgesGrid();
-        }
-
-        function renderBadgesGrid() {
-            const container = document.getElementById('badgeGridContainer');
-            container.innerHTML = '';
-            ALL_BADGES.forEach(b => {
-                const item = document.createElement('div');
-                item.className = `p-2.5 rounded-xl border text-center space-y-1 ${b.unlocked ? 'bg-slate-900 border-amber-500/40 glow-amber' : 'bg-slate-950/60 border-slate-800 opacity-40'}`;
-                item.innerHTML = `
-                    <span class="text-2xl">${b.icon}</span>
-                    <p class="font-bold text-[11px] ${b.unlocked ? 'text-amber-300' : 'text-slate-400'}">${b.name}</p>
-                    <p class="text-[9px] ${b.unlocked ? 'text-emerald-400 font-bold' : 'text-slate-500'}">${b.unlocked ? 'UNLOCKED ✓' : (b.desc || 'Locked')}</p>
-                `;
-                container.appendChild(item);
-            });
-            
-            const showcase = document.getElementById('cardBadgeShowcase');
-            showcase.innerHTML = '';
-            const unlockedList = ALL_BADGES.filter(b => b.unlocked);
-            if (unlockedList.length === 0) {
-                showcase.innerHTML = '<span class="text-slate-500 text-xs">No unlocked badges</span>';
-            } else {
-                unlockedList.forEach(b => {
-                    showcase.innerHTML += `<span title="${b.name}">${b.icon}</span>`;
-                });
-            }
-        }
-
-        renderBadgesGrid();
-
-        function openIdCardModal() {
-            document.getElementById('idCardModal').classList.remove('hidden');
-            document.getElementById('cardUserName').innerText = currentUser || "Guest User";
-            document.getElementById('cardUserIdDisplay').innerText = currentUserId;
-            
-            if (!cardQrGenerated) {
-                new QRCode(document.getElementById("cardQrCode"), {
-                    text: window.location.href || "https://greenbyte-ai.onrender.com/",
-                    width: 48,
-                    height: 48,
-                    colorDark : "#0f172a",
-                    colorLight : "#ffffff"
-                });
-                cardQrGenerated = true;
-            }
-        }
-        function closeIdCardModal() { document.getElementById('idCardModal').classList.add('hidden'); }
-
-        function uploadCardPhoto(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('cardUserPic').src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        async function syncRealBattery() {
-            const batVal = document.getElementById('batteryVal');
-            const batStat = document.getElementById('batteryStatus');
-            const batBar = document.getElementById('batteryBar');
-            const batDev = document.getElementById('batteryDeviceType');
-
-            if ('getBattery' in navigator) {
-                try {
-                    const battery = await navigator.getBattery();
-                    const updateBat = () => {
-                        const level = Math.round(battery.level * 100);
-                        const isPlugged = battery.charging;
-                        batVal.innerText = `${level}%`;
-                        batStat.innerText = isPlugged ? "Charging ⚡" : "Discharging 🔋";
-                        batBar.style.width = `${level}%`;
-                        batDev.innerText = "Hardware Synced";
-                    };
-                    updateBat();
-                    battery.addEventListener('levelchange', updateBat);
-                    battery.addEventListener('chargingchange', updateBat);
-                } catch(e) { fallbackMobileBattery(); }
-            } else { fallbackMobileBattery(); }
-        }
-
-        function fallbackMobileBattery() {
-            document.getElementById('batteryVal').innerText = "88%";
-            document.getElementById('batteryStatus').innerText = "Mobile Eco Mode 📱";
-            document.getElementById('batteryBar').style.width = "88%";
-            document.getElementById('batteryDeviceType').innerText = "Mobile Estimated Sync";
-        }
-
-        syncRealBattery();
 
         async function submitLogin() {
             const input = document.getElementById('loginName').value.trim();
-            const hasRef = document.querySelector('input[name="refRadio"]:checked').value === 'yes';
-            const refCode = document.getElementById('refCodeInput').value.trim();
-
             if (input) {
-                const previousUser = currentUser;
+                const prevUser = currentUser;
                 currentUser = input;
-                document.getElementById('currentUserDisplay').innerText = currentUser;
-
-                if (hasRef) {
-                    if (refCode === PROMO_CODE) {
-                        isPromoUnlocked = true;
-                        localStorage.setItem("gb_promo_unlocked", "true");
-                        alert("🎉 Referral code accepted! 'Hackathon Star' and 'Hall of Fame' badges UNLOCKED!");
-                    } else {
-                        alert("❌ Invalid referral code. Continuing without bonus badges.");
-                        isPromoUnlocked = false;
-                        localStorage.setItem("gb_promo_unlocked", "false");
-                    }
-                } else {
-                    isPromoUnlocked = false;
-                    localStorage.setItem("gb_promo_unlocked", "false");
-                }
-                
-                try {
-                    const res = await fetch(`${API}/register-user`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            username: currentUser,
-                            previous_username: previousUser 
-                        })
-                    });
-                    const data = await res.json();
-                    if (data.success) {
-                        currentUserId = data.user_id;
-                        document.getElementById('userHeaderId').innerText = currentUserId;
-                        
-                        localStorage.setItem("gb_username", currentUser);
-                        localStorage.setItem("gb_userid", currentUserId);
-                    }
-                } catch(e) {}
-
-                evaluatePromoBadges();
-                document.getElementById('loginModal').classList.add('hidden');
-                updateTelemetry();
-            }
-        }
-
-        async function resetAllData() {
-            if (confirm("⚠️ Are you sure you want to permanently reset all badges, daily streaks, and user records?")) {
-                try {
-                    const prevUser = localStorage.getItem("gb_username");
-                    localStorage.removeItem("gb_username");
-                    localStorage.removeItem("gb_userid");
-                    localStorage.removeItem("gb_promo_unlocked");
-                    
-                    if (prevUser) {
-                        await fetch(`${API}/delete-user`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ username: prevUser })
-                        });
-                    }
-
-                    const res = await fetch(`${API}/reset-data`, { method: 'POST' });
-                    const data = await res.json();
-                    if (data.success) {
-                        alert("🧹 " + data.message);
-                        window.location.reload();
-                    }
-                } catch(e) {
-                    alert("Error resetting server data.");
-                }
-            }
-        }
-
-        function openContactModal() { 
-            document.getElementById('contactModal').classList.remove('hidden'); 
-            const devB = ALL_BADGES.find(b => b.name === "Dev Connector");
-            if(devB) { devB.unlocked = true; renderBadgesGrid(); }
-        }
-        function closeContactModal() { document.getElementById('contactModal').classList.add('hidden'); }
-        function openBossModal() { document.getElementById('bossModal').classList.remove('hidden'); }
-        function closeBossModal() { document.getElementById('bossModal').classList.add('hidden'); }
-        function openForestModal() { document.getElementById('forestModal').classList.remove('hidden'); }
-        function closeForestModal() { document.getElementById('forestModal').classList.add('hidden'); }
-        function openBadgesModal() { document.getElementById('badgesModal').classList.remove('hidden'); }
-        function closeBadgesModal() { document.getElementById('badgesModal').classList.add('hidden'); }
-
-        function openQrModal() {
-            document.getElementById('qrModal').classList.remove('hidden');
-            if (!qrGenerated) {
-                new QRCode(document.getElementById("qrcodeDisplay"), {
-                    text: window.location.href || "https://greenbyte-ai.onrender.com/",
-                    width: 160,
-                    height: 160,
-                    colorDark : "#0f172a",
-                    colorLight : "#ffffff"
+                const res = await fetch(`${API}/register-user`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUser, previous_username: prevUser })
                 });
-                qrGenerated = true;
-            }
-            const mobB = ALL_BADGES.find(b => b.name === "Mobile Synced");
-            if(mobB) { mobB.unlocked = true; renderBadgesGrid(); }
-        }
-        function closeQrModal() { document.getElementById('qrModal').classList.add('hidden'); }
-
-        const ctx = document.getElementById('powerChart').getContext('2d');
-        const powerChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'Watts', data: [], borderColor: '#34d399', backgroundColor: 'rgba(52, 211, 153, 0.08)', fill: true, tension: 0.35
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                scales: { x: { ticks: { display: false }, grid: { display: false } }, y: { ticks: { color: '#64748b', font: { size: 9 } }, grid: { color: '#1e293b' } } },
-                plugins: { legend: { display: false } }
-            }
-        });
-
-        function toggleSingleSubsystem(id) {
-            subsystemOptTimestamps[id] = Date.now() / 1000.0;
-            document.getElementById('proofRamDelta').innerText = "-28.5 MB";
-            document.getElementById('proofWattsDelta').innerText = "-2.4 W";
-            document.getElementById('proofKernelAction').innerText = `Throttled ${id.toUpperCase()} Stream`;
-            document.getElementById('optStatusTag').innerText = "STATUS: SUBSYSTEM OPTIMIZED";
-            document.getElementById('optStatusTag').className = "px-2 py-0.5 bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[9px] font-bold rounded";
-            updateTelemetry();
-        }
-
-        function triggerMasterEcoOptimizer() {
-            const nowSec = Date.now() / 1000.0;
-            ['gpu', 'ram', 'net', 'disk', 'cpu'].forEach(k => {
-                subsystemOptTimestamps[k] = nowSec;
-            });
-
-            fetch(`${API}/eco-optimize`, { method: 'POST' })
-                .then(r => r.json())
-                .then(data => {
-                    document.getElementById('proofRamDelta').innerText = `-${data.freed_mb || 142.4} MB`;
-                    document.getElementById('proofWattsDelta').innerText = "-6.2 W";
-                    document.getElementById('proofKernelAction').innerText = data.kernel_action || "EmptyWorkingSet + gc.collect";
-                    document.getElementById('optStatusTag').innerText = "STATUS: MASTER OPTIMIZED ✓";
-                    document.getElementById('optStatusTag').className = "px-2 py-0.5 bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[9px] font-bold rounded";
-                    
-                    alert("🌱 " + data.message);
+                const data = await res.json();
+                if (data.success) {
+                    currentUserId = data.user_id;
+                    localStorage.setItem("gb_username", currentUser);
+                    localStorage.setItem("gb_userid", currentUserId);
+                    document.getElementById('userHeaderId').innerText = currentUserId;
+                    document.getElementById('currentUserDisplay').innerText = currentUser;
+                    document.getElementById('loginModal').classList.add('hidden');
                     updateTelemetry();
-                });
+                }
+            }
         }
 
-        let subsystemOptTimestamps = { gpu: 0, ram: 0, net: 0, disk: 0, cpu: 0 };
+        async function resetUserData() {
+            if (confirm("⚠️ Are you sure you want to delete ONLY your account from the leaderboard?")) {
+                await fetch(`${API}/reset-user-data`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: currentUser })
+                });
+                localStorage.removeItem("gb_username");
+                localStorage.removeItem("gb_userid");
+                window.location.reload();
+            }
+        }
 
         async function updateTelemetry() {
             try {
-                const grid = document.getElementById('gridSelect').value;
-                const tz = document.getElementById('timezoneSelect').value;
-
                 const res = await fetch(`${API}/telemetry`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        grid: grid, 
-                        timezone: tz,
-                        opt_timestamps: subsystemOptTimestamps 
-                    })
+                    body: JSON.stringify({ grid: "WB Grid (Thermal/Coal)", timezone: "IST" })
                 });
-                
                 const data = await res.json();
                 lastTelemetryData = data;
 
-                document.getElementById('clockDate').innerText = data.current_date || "--";
-                document.getElementById('clockTime').innerText = (data.current_time || "--") + ` (${tz})`;
-
                 document.getElementById('scoreVal').innerText = data.sustainability_score;
-                document.getElementById('scoreBar').style.width = `${data.sustainability_score}%`;
-                document.getElementById('cpuVal').innerText = `${data.cpu_percent}%`;
-                document.getElementById('wattsVal').innerText = data.current_watts;
-                document.getElementById('co2Val').innerText = data.co2_grams;
+                document.getElementById('wattsVal').innerText = `${data.current_watts} Watts`;
+                document.getElementById('co2Val').innerText = `${data.co2_grams} g CO₂`;
 
-                // Handle Laptop Charging Glow Box Banner Trigger
+                // Render Live Weather Updates
+                if (data.weather) {
+                    document.getElementById('weatherText').innerText = `${data.weather.location}: ${data.weather.temp_c}°C | ${data.weather.condition}`;
+                    document.getElementById('weatherCardTemp').innerText = `${data.weather.temp_c} °C`;
+                }
+
+                // Render Laptop Charging Glow Box
                 const glowBox = document.getElementById('chargingGlowBox');
                 if (data.is_charging) {
                     glowBox.classList.remove('hidden');
@@ -1017,66 +222,6 @@
                 } else {
                     glowBox.classList.add('hidden');
                 }
-
-                if (data.daily_actions) {
-                    document.getElementById('doneOptimizations').innerText = data.daily_actions.optimizations || 0;
-                    document.getElementById('doneScans').innerText = data.daily_actions.scans || 0;
-                    document.getElementById('doneBossAttacks').innerText = data.daily_actions.boss_attacks || 0;
-                    document.getElementById('doneSaplings').innerText = data.daily_actions.saplings || 0;
-                    
-                    const opts = data.daily_actions.optimizations || 0;
-                    const bSweeper = ALL_BADGES.find(b => b.name === "Buffer Sweeper");
-                    if (bSweeper) {
-                        bSweeper.desc = `${Math.min(10, opts)}/10 Opts`;
-                        if (opts >= 10) bSweeper.unlocked = true;
-                    }
-                    const bSpeed = ALL_BADGES.find(b => b.name === "Speed Demon");
-                    if (bSpeed) {
-                        bSpeed.desc = `${Math.min(25, opts)}/25 Opts`;
-                        if (opts >= 25) bSpeed.unlocked = true;
-                    }
-                    renderBadgesGrid();
-                }
-
-                const anomalyBanner = document.getElementById('anomalyBanner');
-                if (data.anomaly && data.anomaly.detected) {
-                    anomalyBanner.classList.remove('hidden');
-                    document.getElementById('anomalyText').innerText = data.anomaly.message;
-                } else {
-                    anomalyBanner.classList.add('hidden');
-                }
-
-                document.getElementById('mapCpu').innerText = `${data.carbon_map.cpu}%`;
-                document.getElementById('mapRam').innerText = `${data.carbon_map.ram}%`;
-                document.getElementById('mapDisk').innerText = `${data.carbon_map.disk}%`;
-                document.getElementById('mapCloud').innerText = `${data.carbon_map.cloud}%`;
-
-                document.getElementById('cloudDrive').innerText = `${data.cloud_est.google_drive_g}g`;
-                document.getElementById('cloudAi').innerText = `${data.cloud_est.ai_queries_g}g`;
-                document.getElementById('cloudVideo').innerText = `${data.cloud_est.video_streaming_g}g`;
-
-                document.getElementById('impactTrees').innerText = data.impact.trees;
-                document.getElementById('impactCar').innerText = data.impact.car_km;
-                document.getElementById('impactLed').innerText = data.impact.led_hours;
-
-                if (data.news && data.news.length > 0) {
-                    const randomNews = data.news[Math.floor(Math.random() * data.news.length)];
-                    document.getElementById('newsTicker').innerText = `[${randomNews.tag}] ${randomNews.title}`;
-                }
-
-                renderSubsystems(data.subsystem_details, data.grid_factor || 710.0);
-                updateAdvisor(data.cpu_percent, data.sustainability_score);
-                
-                triggerBossAttack(data.sustainability_score);
-
-                const formattedChartTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                if (powerChart.data.labels.length > 8) {
-                    powerChart.data.labels.shift();
-                    powerChart.data.datasets[0].data.shift();
-                }
-                powerChart.data.labels.push(formattedChartTime);
-                powerChart.data.datasets[0].data.push(data.current_watts);
-                powerChart.update();
 
                 if (currentUser) {
                     await fetch(`${API}/leaderboard`, {
@@ -1086,346 +231,52 @@
                     });
                 }
                 loadLeaderboard();
-
-            } catch (err) {}
-        }
-
-        async function triggerBossAttack(score) {
-            try {
-                const res = await fetch(`${API}/boss-attack`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: currentUser || 'Guest User', score: score })
-                });
-                const data = await res.json();
-                
-                if (!data.success && data.error_type === "USER_REQUIREMENT") {
-                    document.getElementById('bossLockNotice').classList.remove('hidden');
-                    document.getElementById('bossContentArea').classList.add('hidden');
-                    return;
-                }
-
-                document.getElementById('bossLockNotice').classList.add('hidden');
-                document.getElementById('bossContentArea').classList.remove('hidden');
-
-                const boss = data.active_boss;
-                document.getElementById('bossNameDisplay').innerText = boss.name;
-                document.getElementById('bossAvatarImg').src = boss.avatar;
-                document.getElementById('bossHpText').innerText = `${boss.current_hp} / ${boss.max_hp} HP`;
-                
-                const pct = Math.max(0, Math.round((boss.current_hp / boss.max_hp) * 100));
-                document.getElementById('bossHpBar').style.width = `${pct}%`;
-                document.getElementById('navBossHp').innerText = `${pct}%`;
-
-                const fb = document.getElementById('bossAttackFeedback');
-                if (data.damage_dealt > 0) {
-                    fb.innerText = `💥 CRITICAL STRIKE! Dealt ${data.damage_dealt} HP damage to ${boss.name}!`;
-                    fb.className = "p-2.5 bg-emerald-950 border border-emerald-500/40 rounded-xl text-center text-xs font-mono font-bold text-emerald-300";
-                } else {
-                    fb.innerText = "⚠️ Attack Blocked: Maintain Sustainability Score >75 to strike!";
-                    fb.className = "p-2.5 bg-slate-900 border border-slate-800 rounded-xl text-center text-xs font-mono font-bold text-amber-300";
-                }
-
-                const damageList = document.getElementById('bossDamageList');
-                damageList.innerHTML = '';
-                if (data.damage_leaderboard.length === 0) {
-                    damageList.innerHTML = '<p class="text-slate-500">No damage dealt yet.</p>';
-                } else {
-                    data.damage_leaderboard.forEach((item, idx) => {
-                        damageList.innerHTML += `<div class="flex justify-between"><span>${idx+1}. ${item.name}</span><span class="text-rose-400 font-bold">${item.damage} HP</span></div>`;
-                    });
-                }
-
-                const trophyList = document.getElementById('trophyHallList');
-                trophyList.innerHTML = '';
-                if (data.defeated_bosses.length === 0) {
-                    trophyList.innerHTML = '<p class="text-slate-500 text-[10px]">No defeated bosses yet.</p>';
-                } else {
-                    data.defeated_bosses.forEach(b => {
-                        trophyList.innerHTML += `
-                            <div class="p-2 bg-slate-900 border border-emerald-500/40 rounded flex flex-col items-center min-w-[90px] text-center">
-                                <img src="${b.avatar}" class="w-8 h-8 rounded mb-1 object-cover">
-                                <span class="text-emerald-400 font-bold truncate w-20">${b.name}</span>
-                                <span class="text-slate-500 text-[8px]">${b.defeated_at}</span>
-                            </div>
-                        `;
-                    });
-                }
             } catch(e) {}
-        }
-
-        let gameCanvas = document.getElementById('gameCanvas');
-        let gameCtx = gameCanvas.getContext('2d');
-        let gameRunning = false;
-        let gameScore = 0;
-        let gameTimeLeft = 15;
-        let gameTimer = null;
-        let basketX = 180;
-        let fallingItems = [];
-
-        function startSaplingGame() {
-            if (gameRunning) return;
-            gameRunning = true;
-            gameScore = 0;
-            gameTimeLeft = 15;
-            fallingItems = [];
-            basketX = 180;
-
-            document.getElementById('startGameBtn').disabled = true;
-            document.getElementById('gameTreeCount').innerText = gameScore;
-            document.getElementById('gameTimeLeft').innerText = gameTimeLeft + 's';
-
-            gameTimer = setInterval(() => {
-                gameTimeLeft--;
-                document.getElementById('gameTimeLeft').innerText = gameTimeLeft + 's';
-                if (gameTimeLeft <= 0) {
-                    endSaplingGame();
-                }
-            }, 1000);
-
-            requestAnimationFrame(gameLoop);
-        }
-
-        function endSaplingGame() {
-            gameRunning = false;
-            clearInterval(gameTimer);
-            document.getElementById('startGameBtn').disabled = false;
-            
-            fetch(`${API}/forest-claim`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: currentUser || 'Guest User', trees_collected: gameScore })
-            })
-            .then(r => r.json())
-            .then(data => {
-                alert(`🎉 Game Over! You caught ${gameScore} trees and earned ${data.tokens_earned} Sapling Tokens!`);
-                renderForestLeaderboards(data.monthly_leaderboard, data.yearly_leaderboard);
-            });
-        }
-
-        gameCanvas.addEventListener('mousemove', (e) => {
-            let rect = gameCanvas.getBoundingClientRect();
-            basketX = e.clientX - rect.left - 30;
-            basketX = Math.max(0, Math.min(gameCanvas.width - 60, basketX));
-        });
-
-        function gameLoop() {
-            if (!gameRunning) return;
-
-            gameCtx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
-
-            if (Math.random() < 0.045) {
-                let isHazard = Math.random() < 0.55;
-                fallingItems.push({
-                    x: Math.random() * (gameCanvas.width - 24),
-                    y: -20,
-                    speed: 2.0 + Math.random() * 2.0,
-                    type: isHazard ? '💨' : (Math.random() > 0.5 ? '🌱' : '🌲')
-                });
-            }
-
-            gameCtx.font = "28px sans-serif";
-            gameCtx.fillText("🧺", basketX, gameCanvas.height - 10);
-
-            for (let i = fallingItems.length - 1; i >= 0; i--) {
-                let item = fallingItems[i];
-                item.y += item.speed;
-
-                gameCtx.fillText(item.type, item.x, item.y);
-
-                if (item.y >= gameCanvas.height - 35 && item.y <= gameCanvas.height - 5 && item.x >= basketX - 15 && item.x <= basketX + 50) {
-                    if (item.type === '💨') {
-                        gameScore = Math.max(0, gameScore - 1);
-                    } else {
-                        gameScore++;
-                    }
-                    document.getElementById('gameTreeCount').innerText = gameScore;
-                    fallingItems.splice(i, 1);
-                    continue;
-                }
-
-                if (item.y > gameCanvas.height) {
-                    fallingItems.splice(i, 1);
-                }
-            }
-
-            requestAnimationFrame(gameLoop);
-        }
-
-        function renderForestLeaderboards(monthly, yearly) {
-            const mList = document.getElementById('forestMonthlyList');
-            const yList = document.getElementById('forestYearlyList');
-            mList.innerHTML = ''; yList.innerHTML = '';
-
-            monthly.forEach((item, i) => {
-                mList.innerHTML += `<div class="flex justify-between"><span>${i+1}. ${item.name}</span><span class="text-teal-300 font-bold">${item.tokens} Tokens</span></div>`;
-            });
-            yearly.forEach((item, i) => {
-                yList.innerHTML += `<div class="flex justify-between"><span>${i+1}. ${item.name}</span><span class="text-amber-300 font-bold">${item.tokens} Tokens</span></div>`;
-            });
-        }
-
-        function renderSubsystems(subDetails, gridFactor) {
-            if(!subDetails) return;
-
-            const list = [
-                { id: 'gpu', name: "Display & GPU Render Pipeline" },
-                { id: 'ram', name: "Memory & Page Cache Allocator" },
-                { id: 'net', name: "Network & Web Socket I/O" },
-                { id: 'disk', name: "Storage & System Disk I/O" },
-                { id: 'cpu', name: "CPU Multi-Core Thread Engine" }
-            ];
-
-            const tbody = document.getElementById('subsystemTableBody');
-            tbody.innerHTML = '';
-            
-            list.forEach((item) => {
-                const sub = subDetails[item.id];
-                const drawG = (((sub.watts) / 1000.0) * gridFactor).toFixed(2);
-                const isOpt = sub.is_optimized;
-
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-800/40 transition';
-                tr.innerHTML = `
-                    <td class="py-2.5 font-semibold text-slate-200">${item.name}</td>
-                    <td class="py-2.5 font-bold ${sub.dna.includes('High') ? 'text-rose-400' : (sub.dna.includes('Moderate') ? 'text-amber-400' : 'text-emerald-400')}">${sub.dna}</td>
-                    <td class="py-2.5 text-slate-300">${sub.activity}</td>
-                    <td class="py-2.5 text-slate-300">${sub.load}</td>
-                    <td class="py-2.5 font-bold ${sub.dna.includes('High') ? 'text-rose-400' : 'text-emerald-400'}">${drawG} g/hr</td>
-                    <td class="py-2.5 text-right">
-                        <button onclick="toggleSingleSubsystem('${item.id}')" class="px-2.5 py-1 ${isOpt ? 'bg-slate-800 text-emerald-400 border border-emerald-500/30 font-bold' : 'bg-emerald-500/10 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/20'} rounded font-sans text-[10px]">
-                            ${isOpt ? 'Optimized ✓' : 'Optimize'}
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function updateAdvisor(cpu, score) {
-            const sugContainer = document.getElementById('suggestionsContainer');
-            let advice = "🌿 System is running in an optimal energy state. Maintain ~60% screen brightness to maximize battery longevity.";
-            
-            if (score < 80) {
-                advice = `⚡ Telemetry detects dynamic load spikes: Click 'MASTER ECO-OPTIMIZE' to recycle memory buffers and park high-draw threads!`;
-            }
-
-            sugContainer.innerHTML = `
-                <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-lg text-emerald-300 flex items-start gap-2">
-                    <span>🌿</span><span>${advice}</span>
-                </div>
-            `;
         }
 
         async function loadLeaderboard() {
-            try {
-                const res = await fetch(`${API}/leaderboard`);
-                const data = await res.json();
-                globalLeaderboard = data.leaderboard || [];
-                const tbody = document.getElementById('leaderboardBody');
-                tbody.innerHTML = '';
-                
-                document.getElementById('campusAvgVal').innerText = `${data.average_score} / 100`;
-
-                const myItem = globalLeaderboard.find(i => i.name === currentUser);
-                if (myItem) {
-                    document.getElementById('cardAvgScore').innerText = `${myItem.score} / 100`;
-                } else if (lastTelemetryData) {
-                    document.getElementById('cardAvgScore').innerText = `${lastTelemetryData.sustainability_score} / 100`;
-                }
-
-                if (!data.leaderboard || data.leaderboard.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="3" class="py-2 text-center text-slate-500">No registered users yet. Enter your name in login!</td></tr>';
-                    return;
-                }
-
-                data.leaderboard.forEach((item, index) => {
-                    const tr = document.createElement('tr');
-                    const rankStr = index === 0 ? "🥇 1" : (index === 1 ? "🥈 2" : (index === 2 ? "🥉 3" : `${index + 1}`));
-                    if (item.name === currentUser) tr.className = 'bg-emerald-500/10 font-bold';
-                    tr.innerHTML = `
-                        <td class="py-1.5">${rankStr}</td>
-                        <td>${item.name}</td>
-                        <td class="text-right text-emerald-400 font-bold">${item.score}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            } catch(e) {}
+            const res = await fetch(`${API}/leaderboard`);
+            const data = await res.json();
+            const tbody = document.getElementById('leaderboardBody');
+            tbody.innerHTML = '';
+            (data.leaderboard || []).forEach((item, index) => {
+                const tr = document.createElement('tr');
+                if (item.name === currentUser) tr.className = 'bg-emerald-500/10 font-bold';
+                tr.innerHTML = `<td>${index + 1}</td><td>${item.name}</td><td class="text-right text-emerald-400 font-bold">${item.score}</td>`;
+                tbody.appendChild(tr);
+            });
         }
 
         async function sendChat() {
             const input = document.getElementById('chatInput');
             const history = document.getElementById('chatHistory');
-            const tz = document.getElementById('timezoneSelect').value;
             const query = input.value.trim();
             if (!query) return;
 
             history.innerHTML += `<p class="text-slate-300">👤: ${query}</p>`;
             input.value = '';
 
-            try {
-                const res = await fetch(`${API}/chatbot`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        query: query,
-                        timezone: tz,
-                        score: lastTelemetryData ? lastTelemetryData.sustainability_score : 75,
-                        watts: lastTelemetryData ? lastTelemetryData.current_watts : 18.0
-                    })
-                });
-                const data = await res.json();
-                history.innerHTML += `<p class="text-emerald-400">🤖: ${data.answer}</p>`;
-                history.scrollTop = history.scrollHeight;
-            } catch(e) {}
+            const res = await fetch(`${API}/chatbot`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    query: query,
+                    score: lastTelemetryData ? lastTelemetryData.sustainability_score : 75,
+                    watts: lastTelemetryData ? lastTelemetryData.current_watts : 18.0,
+                    co2: lastTelemetryData ? lastTelemetryData.co2_grams : 0.0
+                })
+            });
+            const data = await res.json();
+            history.innerHTML += `<p class="text-emerald-400">🤖: ${data.answer}</p>`;
+            history.scrollTop = history.scrollHeight;
         }
 
-        async function analyzeUrl() {
-            const url = document.getElementById('urlInput').value;
-            const resBox = document.getElementById('urlResult');
-            if(!url) return;
-
-            resBox.innerHTML = '<p class="text-amber-400 text-center">Auditing site footprint...</p>';
-            try {
-                const res = await fetch(`${API}/analyze-url`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url: url })
-                });
-                const data = await res.json();
-                if(data.success) {
-                    resBox.innerHTML = `
-                        <p>🌐 <strong>Site:</strong> ${data.url}</p>
-                        <p>📦 <strong>Page Size:</strong> ${data.size_kb} KB</p>
-                        <p>⚡ <strong>Est. Carbon / Visit:</strong> <span class="text-emerald-400 font-bold">${data.co2_per_visit_g} g CO₂</span></p>
-                        <p>🏅 <strong>Eco Rating:</strong> <span class="text-teal-300 font-bold">${data.green_rating}</span></p>
-                    `;
-                    const badgeAudit = ALL_BADGES.find(b => b.name === "First Audit");
-                    if (badgeAudit) { badgeAudit.unlocked = true; renderBadgesGrid(); }
-                } else {
-                    resBox.innerHTML = `<p class="text-rose-400">${data.message}</p>`;
-                }
-            } catch(e) {
-                resBox.innerHTML = '<p class="text-rose-400">Scanner connection error.</p>';
-            }
+        function openIdCardModal() {
+            document.getElementById('idCardModal').classList.remove('hidden');
+            document.getElementById('cardUserName').innerText = currentUser || "Guest User";
+            document.getElementById('cardUserIdDisplay').innerText = currentUserId || "GB-2026-01";
         }
-
-        function exportReport() {
-            if (!lastTelemetryData) {
-                alert("No telemetry data recorded yet.");
-                return;
-            }
-            const jsonStr = JSON.stringify(lastTelemetryData, null, 2);
-            const blob = new Blob([jsonStr], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const dlAnchor = document.createElement('a');
-            dlAnchor.href = url;
-            dlAnchor.download = `GreenByte_EcoAudit_Report.json`;
-            document.body.appendChild(dlAnchor);
-            dlAnchor.click();
-            document.body.removeChild(dlAnchor);
-            URL.revokeObjectURL(url);
-        }
+        function closeIdCardModal() { document.getElementById('idCardModal').classList.add('hidden'); }
 
         setInterval(updateTelemetry, 3500);
     </script>
