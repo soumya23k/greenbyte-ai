@@ -81,7 +81,7 @@
                         <div class="space-y-1 flex-1">
                             <h3 id="cardUserName" class="text-base font-black text-slate-100 truncate">Soumyadeep Ghosh</h3>
                             <p class="text-[10px] text-emerald-400 font-bold uppercase">VERIFIED GREEN CITIZEN</p>
-                            <p class="text-[10px] text-teal-300 font-bold">ID: <span id="cardUserIdDisplay" class="text-emerald-400 font-mono">GB-2026-01</span></p>
+                            <p class="text-[10px] text-teal-300 font-bold">ID: <span id="cardUserIdDisplay" class="text-emerald-400 font-mono">2026_01</span></p>
                         </div>
                     </div>
 
@@ -133,8 +133,8 @@
                         <button onclick="openIdCardModal()" class="px-3 py-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded text-xs">
                             💳 View ID Card
                         </button>
-                        <button onclick="resetAllData()" class="px-3 py-1 bg-rose-500/20 hover:bg-rose-500/40 border border-rose-500/40 text-rose-300 font-bold rounded text-xs">
-                            ⚠️ Reset Badges
+                        <button onclick="resetMyData()" class="px-3 py-1 bg-rose-500/20 hover:bg-rose-500/40 border border-rose-500/40 text-rose-300 font-bold rounded text-xs">
+                            ⚠️ Reset My Account
                         </button>
                     </div>
                 </div>
@@ -288,16 +288,18 @@
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-300 flex items-center justify-center text-slate-950 text-xl font-bold glow-emerald">🌱</div>
                     <div>
                         <h1 class="text-xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-200 to-cyan-400 bg-clip-text text-transparent">GREENBYTE AI</h1>
-                        <p class="text-xs text-slate-400">User: <strong id="currentUserDisplay" class="text-emerald-400">Guest User</strong> (<span id="userHeaderId" class="text-teal-300 font-mono">GB-2026-00</span>)</p>
+                        <p class="text-xs text-slate-400">User: <strong id="currentUserDisplay" class="text-emerald-400">Guest User</strong> (<span id="userHeaderId" class="text-teal-300 font-mono">2026_01</span>)</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Date, Time, and Timezone Selector -->
-            <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-900/90 border border-slate-800 rounded-xl text-xs font-mono">
+            <!-- Date, Time, Timezone & Weather Box -->
+            <div class="flex flex-wrap items-center gap-2 px-3 py-1.5 bg-slate-900/90 border border-slate-800 rounded-xl text-xs font-mono">
                 <span class="text-emerald-400">📅 <span id="clockDate">--</span></span>
                 <span class="text-slate-600">|</span>
                 <span class="text-amber-400">🕒 <span id="clockTime">--</span></span>
+                <span class="text-slate-600">|</span>
+                <span class="text-cyan-300">🌤️ <span id="weatherTemp">--°C</span> (<span id="weatherCond">--</span>)</span>
                 <select id="timezoneSelect" onchange="updateTelemetry()" class="bg-slate-950 border border-slate-700 text-teal-300 rounded px-1.5 py-0.5 text-[10px] outline-none">
                     <option value="IST" selected>IST (UTC+5:30)</option>
                     <option value="UTC">UTC (Universal)</option>
@@ -342,6 +344,26 @@
 
         <main class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
 
+            <!-- HOURLY & DAILY WEATHER FORECAST CARD -->
+            <div class="glass rounded-2xl p-4 border border-slate-800 space-y-3">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <h3 class="text-xs font-black text-cyan-300 uppercase tracking-wider flex items-center gap-2">
+                        <span>🌦️</span> ENVIRONMENT & WEATHER METRICS
+                    </h3>
+                    <span id="weatherHumidity" class="text-xs font-mono text-slate-400">Humidity: --%</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+                    <div>
+                        <h4 class="text-[10px] text-slate-400 uppercase font-bold mb-1.5">⏱️ Hourly Forecast Today</h4>
+                        <div id="hourlyWeatherList" class="grid grid-cols-4 gap-2 text-center"></div>
+                    </div>
+                    <div>
+                        <h4 class="text-[10px] text-slate-400 uppercase font-bold mb-1.5">📅 3-Day Daily Outlook</h4>
+                        <div id="dailyWeatherList" class="grid grid-cols-3 gap-2 text-center"></div>
+                    </div>
+                </div>
+            </div>
+
             <!-- DYNAMIC LAPTOP CHARGING WATTAGE GLOW BOX ALERT -->
             <div id="chargingGlowBox" class="hidden p-4 rounded-2xl bg-gradient-to-r from-blue-950/90 via-slate-900 to-emerald-950/90 border-2 border-emerald-400 glow-charging flex flex-col sm:flex-row justify-between items-center gap-3 transition-all duration-500">
                 <div class="flex items-center gap-3">
@@ -350,7 +372,7 @@
                     </div>
                     <div>
                         <h3 class="text-sm font-black text-emerald-300 uppercase tracking-wide flex items-center gap-2">
-                            <span>HP VICTUS POWER ADAPTER DETECTED</span>
+                            <span>POWER ADAPTER DETECTED</span>
                             <span class="px-2 py-0.5 bg-blue-500/30 border border-blue-400 text-blue-200 text-[10px] rounded-full">CHARGING MODE (+75W)</span>
                         </h3>
                         <p class="text-xs text-slate-300 mt-0.5">Laptop battery charging active. Power draw scaled up accordingly to reflect total hardware wattage intake.</p>
@@ -606,10 +628,10 @@
                 <div class="glass rounded-2xl p-5 border border-slate-800 space-y-3 flex flex-col justify-between">
                     <h2 class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-1.5"><span>🤖</span> GREENBYTE REAL-TIME AI CHATBOT</h2>
                     <div id="chatHistory" class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 h-36 overflow-y-auto text-xs space-y-2 font-mono">
-                        <p class="text-emerald-400">🤖: Hello! I am GreenByte AI. Ask me about time, date, timezone, optimization mechanics, or platform features!</p>
+                        <p class="text-emerald-400">🤖: Hello! I am GreenByte AI. Ask me about the developer, optimization, session CO2, sustainability scores, or platform benefits!</p>
                     </div>
                     <div class="flex gap-2">
-                        <input id="chatInput" type="text" placeholder="Ask anything (e.g. What is the time? How does optimization work?)" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none focus:border-emerald-500" onkeypress="if(event.key==='Enter') sendChat()">
+                        <input id="chatInput" type="text" placeholder="Ask anything (e.g. Who built this? How does session CO2 work?)" class="w-full bg-slate-900 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 outline-none focus:border-emerald-500" onkeypress="if(event.key==='Enter') sendChat()">
                         <button onclick="sendChat()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-lg text-xs transition shrink-0">Ask</button>
                     </div>
                 </div>
@@ -637,7 +659,7 @@
         <div class="pt-2 flex justify-center gap-4 text-[11px]">
             <button onclick="openContactModal()" class="text-emerald-400 hover:underline">📞 Contact Developer Details</button>
             <span class="text-slate-600">|</span>
-            <button onclick="resetAllData()" class="text-rose-400 hover:underline font-bold">⚠️ Reset All Badges & Data</button>
+            <button onclick="resetMyData()" class="text-rose-400 hover:underline font-bold">⚠️ Reset Only My Account</button>
         </div>
         <p class="text-[10px] text-slate-500">IEM Sustainability Hackathon 2026</p>
     </footer>
@@ -646,7 +668,7 @@
         const API = "/api";
         let lastTelemetryData = null;
         let currentUser = localStorage.getItem("gb_username") || "";
-        let currentUserId = localStorage.getItem("gb_userid") || "GB-2026-01";
+        let currentUserId = localStorage.getItem("gb_userid") || "2026_01";
         let isPromoUnlocked = localStorage.getItem("gb_promo_unlocked") === "true";
         let globalLeaderboard = [];
         let qrGenerated = false;
@@ -876,30 +898,25 @@
             }
         }
 
-        async function resetAllData() {
-            if (confirm("⚠️ Are you sure you want to permanently reset all badges, daily streaks, and user records?")) {
+        async function resetMyData() {
+            if (!currentUser) return;
+            if (confirm(`⚠️ Reset ONLY your account (${currentUser}) and personal badges? Other registered users will NOT be affected.`)) {
                 try {
-                    const prevUser = localStorage.getItem("gb_username");
-                    localStorage.removeItem("gb_username");
-                    localStorage.removeItem("gb_userid");
-                    localStorage.removeItem("gb_promo_unlocked");
-                    
-                    if (prevUser) {
-                        await fetch(`${API}/delete-user`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ username: prevUser })
-                        });
-                    }
-
-                    const res = await fetch(`${API}/reset-data`, { method: 'POST' });
+                    const res = await fetch(`${API}/reset-data`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: currentUser })
+                    });
                     const data = await res.json();
                     if (data.success) {
+                        localStorage.removeItem("gb_username");
+                        localStorage.removeItem("gb_userid");
+                        localStorage.removeItem("gb_promo_unlocked");
                         alert("🧹 " + data.message);
                         window.location.reload();
                     }
                 } catch(e) {
-                    alert("Error resetting server data.");
+                    alert("Error resetting user profile.");
                 }
             }
         }
@@ -1003,13 +1020,42 @@
                 document.getElementById('clockDate').innerText = data.current_date || "--";
                 document.getElementById('clockTime').innerText = (data.current_time || "--") + ` (${tz})`;
 
+                if (data.weather) {
+                    document.getElementById('weatherTemp').innerText = data.weather.temp;
+                    document.getElementById('weatherCond').innerText = data.weather.condition;
+                    document.getElementById('weatherHumidity').innerText = `Humidity: ${data.weather.humidity}`;
+
+                    // Render Hourly Weather
+                    const hourlyContainer = document.getElementById('hourlyWeatherList');
+                    hourlyContainer.innerHTML = '';
+                    (data.weather.hourly || []).slice(0, 4).forEach(h => {
+                        hourlyContainer.innerHTML += `
+                            <div class="p-1.5 bg-slate-900 border border-slate-800 rounded-lg">
+                                <p class="text-slate-400 text-[9px]">${h.time}</p>
+                                <p class="text-emerald-400 font-bold">${h.temp}°C</p>
+                            </div>
+                        `;
+                    });
+
+                    // Render Daily Weather
+                    const dailyContainer = document.getElementById('dailyWeatherList');
+                    dailyContainer.innerHTML = '';
+                    (data.weather.daily || []).slice(0, 3).forEach(d => {
+                        dailyContainer.innerHTML += `
+                            <div class="p-1.5 bg-slate-900 border border-slate-800 rounded-lg">
+                                <p class="text-slate-400 text-[9px]">${d.date}</p>
+                                <p class="text-cyan-300 font-bold">${d.max_temp}° / ${d.min_temp}°</p>
+                            </div>
+                        `;
+                    });
+                }
+
                 document.getElementById('scoreVal').innerText = data.sustainability_score;
                 document.getElementById('scoreBar').style.width = `${data.sustainability_score}%`;
                 document.getElementById('cpuVal').innerText = `${data.cpu_percent}%`;
                 document.getElementById('wattsVal').innerText = data.current_watts;
                 document.getElementById('co2Val').innerText = data.co2_grams;
 
-                // Handle Laptop Charging Glow Box Banner Trigger
                 const glowBox = document.getElementById('chargingGlowBox');
                 if (data.is_charging) {
                     glowBox.classList.remove('hidden');

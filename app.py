@@ -105,6 +105,61 @@ def get_default_game_data():
 game_data = load_json_file(GAME_DATA_FILE, get_default_game_data())
 user_ids_db = load_json_file(USER_IDS_FILE, {})
 
+def fetch_weather_data():
+    try:
+        url = "https://wttr.in/Kolkata?format=j1"
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=3) as response:
+            data = json.loads(response.read().decode())
+            current = data['current_condition'][0]
+            weather_desc = current['weatherDesc'][0]['value']
+            temp_c = current['temp_C']
+            humidity = current['humidity']
+            
+            # Extract hourly & daily forecast
+            daily_forecast = []
+            for day in data['weather'][:3]:
+                daily_forecast.append({
+                    "date": day['date'],
+                    "max_temp": day['maxtempC'],
+                    "min_temp": day['mintempC'],
+                    "condition": day['hourly'][4]['weatherDesc'][0]['value']
+                })
+            
+            hourly_forecast = []
+            for hour in data['weather'][0]['hourly'][::2]: # Every 2 hours
+                hourly_forecast.append({
+                    "time": f"{int(hour['time'])//100:02d}:00",
+                    "temp": hour['tempC'],
+                    "condition": hour['weatherDesc'][0]['value']
+                })
+
+            return {
+                "temp": f"{temp_c}°C",
+                "condition": weather_desc,
+                "humidity": f"{humidity}%",
+                "daily": daily_forecast,
+                "hourly": hourly_forecast
+            }
+    except Exception:
+        # Fallback simulation
+        return {
+            "temp": "28°C",
+            "condition": "Partly Cloudy",
+            "humidity": "65%",
+            "daily": [
+                {"date": "Today", "max_temp": "31", "min_temp": "25", "condition": "Partly Cloudy"},
+                {"date": "Tomorrow", "max_temp": "32", "min_temp": "26", "condition": "Sunny"},
+                {"date": "Day After", "max_temp": "30", "min_temp": "24", "condition": "Light Rain"}
+            ],
+            "hourly": [
+                {"time": "09:00", "temp": "27", "condition": "Sunny"},
+                {"time": "12:00", "temp": "31", "condition": "Partly Cloudy"},
+                {"time": "15:00", "temp": "30", "condition": "Cloudy"},
+                {"time": "18:00", "temp": "28", "condition": "Clear"}
+            ]
+        }
+
 def check_boss_rotation():
     global game_data
     now = time.time()
@@ -175,13 +230,11 @@ def register_user():
     if not username:
         return jsonify({"success": False, "error": "Username required"}), 400
 
-    # Purge old account if user reset or renamed their profile
     if previous_username and previous_username != username:
         if previous_username in user_ids_db:
             del user_ids_db[previous_username]
             save_json_file(USER_IDS_FILE, user_ids_db)
 
-        # Remove previous account from Leaderboard JSON directly
         db = load_json_file(LEADERBOARD_FILE, {})
         if previous_username in db:
             del db[previous_username]
@@ -189,7 +242,7 @@ def register_user():
 
     if username not in user_ids_db:
         next_seq = len(user_ids_db) + 1
-        formatted_id = f"GB-2026-{next_seq:02d}"
+        formatted_id = f"2026_{next_seq:02d}"  # Format: 2026_01, 2026_02, etc.
         user_ids_db[username] = formatted_id
         save_json_file(USER_IDS_FILE, user_ids_db)
     else:
@@ -209,18 +262,15 @@ def delete_user():
     username = data.get('username', '').strip()
 
     if username:
-        # Remove from user_ids database
         if username in user_ids_db:
             del user_ids_db[username]
             save_json_file(USER_IDS_FILE, user_ids_db)
 
-        # Remove from leaderboard database
         db = load_json_file(LEADERBOARD_FILE, {})
         if username in db:
             del db[username]
             save_json_file(LEADERBOARD_FILE, db)
 
-        # Remove from game data damage leaderboards
         if username in game_data.get("forest_monthly", {}):
             del game_data["forest_monthly"][username]
         if username in game_data.get("forest_yearly", {}):
@@ -252,10 +302,9 @@ def telemetry():
     real_cpu = psutil.cpu_percent(interval=None)
     real_ram = psutil.virtual_memory().percent
 
-    # Real Hardware Battery & Charging State Detection (HP Victus / Laptops)
     battery = psutil.sensors_battery()
     is_charging = False
-    charger_wattage = 75.0  # Baseline charging adapter boost for HP Victus
+    charger_wattage = 75.0
 
     if battery:
         is_charging = battery.power_plugged
@@ -277,7 +326,6 @@ def telemetry():
         
         baseline_watts = round(27.0 + (avg_hw_load * 0.12) + random.uniform(0.5, 3.0), 1)
 
-    # Dynamic Watts Surge when Laptop is Plugged In & Charging
     watts = round(baseline_watts + (charger_wattage if is_charging else 0.0), 1)
 
     sub_data = {}
@@ -335,10 +383,13 @@ def telemetry():
     formatted_time = current_dt.strftime("%I:%M %p")
     formatted_date = current_dt.strftime("%A, %B %d, %Y")
 
+    weather_info = fetch_weather_data()
+
     return jsonify({
         "current_time": formatted_time,
         "current_date": formatted_date,
         "selected_timezone": selected_tz,
+        "weather": weather_info,
         "cpu_percent": real_cpu,
         "current_watts": watts,
         "is_charging": is_charging,
@@ -469,18 +520,38 @@ def leaderboard():
 
 @app.route('/api/reset-data', methods=['POST'])
 def reset_data():
-    global game_data, user_ids_db
-    game_data = get_default_game_data()
-    user_ids_db = {}
+    """Resets ONLY the requesting user's profile data."""
+    global user_ids_db, game_data
+    data = request.get_json() or {}
+    username = data.get('username', '').strip()
+
+    if username:
+        # 1. Remove user ID mapping
+        if username in user_ids_db:
+            del user_ids_db[username]
+            save_json_file(USER_IDS_FILE, user_ids_db)
+
+        # 2. Remove score from leaderboard
+        db = load_json_file(LEADERBOARD_FILE, {})
+        if username in db:
+            del db[username]
+            save_json_file(LEADERBOARD_FILE, db)
+
+        # 3. Purge user from game forest & boss data
+        if username in game_data.get("forest_monthly", {}):
+            del game_data["forest_monthly"][username]
+        if username in game_data.get("forest_yearly", {}):
+            del game_data["forest_yearly"][username]
+        if username in game_data["active_boss"].get("damage_leaderboard", {}):
+            del game_data["active_boss"]["damage_leaderboard"][username]
+        save_json_file(GAME_DATA_FILE, game_data)
+
+        return jsonify({
+            "success": True,
+            "message": f"Your user account '{username}', badges, and personal records have been reset!"
+        })
     
-    save_json_file(GAME_DATA_FILE, game_data)
-    save_json_file(LEADERBOARD_FILE, {})
-    save_json_file(USER_IDS_FILE, user_ids_db)
-    
-    return jsonify({
-        "success": True,
-        "message": "All GreenByte profile data, streaks, badges, and leaderboards have been permanently reset!"
-    })
+    return jsonify({"success": False, "message": "No active user supplied for reset."}), 400
 
 @app.route('/api/chatbot', methods=['POST'])
 def chatbot():
@@ -501,20 +572,32 @@ def chatbot():
     time_str = now_dt.strftime("%I:%M %p")
     date_str = now_dt.strftime("%A, %B %d, %Y")
 
-    if any(k in q_lower for k in ["time", "clock"]):
+    if any(k in q_lower for k in ["developer", "creator", "who made", "soumyadeep", "team", "author"]):
+        ans = "👨‍💻 GreenByte AI was architected and developed by Soumyadeep Ghosh (+91 8100127066 | soumyadeepghosh1tb@gmail.com) alongside team members Satadru Roy, Sougata Mondal, Swapnadeep Bannerjee, and Susmit Sen for the IEM Sustainability Hackathon 2026!"
+    
+    elif any(k in q_lower for k in ["co2", "carbon", "session co2", "session carbon"]):
+        ans = "🌿 Session CO2 represents the total carbon dioxide emitted by your system based on runtime watt consumption multiplied by the regional grid carbon factor (e.g., West Bengal Coal Grid emits ~710g CO2 per kWh)."
+    
+    elif any(k in q_lower for k in ["sustainability", "score", "how score works"]):
+        ans = "📊 Sustainability Score (0-100) measures system energy efficiency. Lowering active hardware load, unplugging unnecessary draw, and running 'Master Eco-Optimizer' elevates your score toward 100!"
+
+    elif any(k in q_lower for k in ["optimize", "optimization", "how it works", "optimise"]):
+        ans = "⚡ Optimization Mechanic: Clicking 'Master Eco-Optimize' trims inactive process working sets via Windows API EmptyWorkingSet / System Sync and executes Python garbage collection (gc.collect()), lowering background power draw."
+
+    elif any(k in q_lower for k in ["feature", "uses", "benefit", "what can it do", "why use"]):
+        ans = "💡 Core Features:\n1. Digital Carbon Map: Audits GPU, CPU, RAM, Disk & Network power draw.\n2. Master Eco-Optimizer: Immediate memory recycling & energy reduction.\n3. Web Scanner: Audits site asset weights & CO2 emissions per visit.\n4. Boss Raids: Gamified team attacks powered by eco scores.\n5. Eco Forest: Catch saplings to earn tokens.\n6. Live Weather & Time Sync: Real-time environmental tracking."
+
+    elif any(k in q_lower for k in ["help the world", "help world", "impact", "global", "environment"]):
+        ans = "🌍 How GreenByte Helps the World: Digital infrastructure accounts for over 3.7% of global greenhouse emissions. By optimizing hardware buffers, auditing web heavy assets, and gamifying green computing in institutions like IEM, GreenByte empowers thousands to reduce gigawatts of waste!"
+
+    elif any(k in q_lower for k in ["time", "clock"]):
         ans = f"🕒 Current Local Time ({selected_tz}): {time_str}"
     elif any(k in q_lower for k in ["date", "day", "today"]):
         ans = f"📅 Today's Date ({selected_tz}): {date_str}"
-    elif any(k in q_lower for k in ["explain", "how optimization works", "optimisation", "how it works"]):
-        ans = "⚡ Optimization Mechanic: Clicking 'Optimize' trims system memory working sets via OS EmptyWorkingSet and Python gc.collect(), reducing background draw."
-    elif any(k in q_lower for k in ["useful", "feature", "uses of", "benefit", "why use"]):
-        ans = "💡 Features & Uses:\n1. Carbon Map: Audits GPU, CPU, RAM, Disk & Network power draw.\n2. Master Eco-Optimizer: Immediate memory recycling & energy reduction.\n3. Web Scanner: Audits site asset weights & CO2 emissions.\n4. Boss Raids: Gamified team attacks using high eco scores.\n5. Eco Forest: Arcade minigame to catch saplings and earn tokens.\n6. Badges & ID Card: Showcase your streaks and custom profile!"
-    elif any(k in q_lower for k in ["developer", "creator", "who made", "soumyadeep"]):
-        ans = "GreenByte AI was built by Soumyadeep Ghosh (+91 8100127066 | soumyadeepghosh1tb@gmail.com) alongside team members Satadru Roy, Sougata Mondal, Swapnadeep Bannerjee, and Susmit Sen for the IEM Sustainability Hackathon 2026!"
     elif any(k in q_lower for k in ["hi", "hello", "hey"]):
-        ans = f"Hello! It is currently {time_str} ({selected_tz}) on {date_str}. Ask me about time, date, timezone, optimization, or badges!"
+        ans = f"Hello! Current system draw is {watts}W with a score of {score}/100. Ask me about developer info, session CO2, sustainability scores, optimization, or global impact!"
     else:
-        ans = f"GreenByte AI Assistant: Current draw is {watts}W with a score of {score}/100. Time ({selected_tz}): {time_str}. Ask me about time, date, optimization, or features!"
+        ans = f"GreenByte AI Assistant: Current draw is {watts}W with score {score}/100. Ask me about the developer, optimization, session CO2, sustainability scores, or global benefits!"
 
     return jsonify({"answer": ans})
 
